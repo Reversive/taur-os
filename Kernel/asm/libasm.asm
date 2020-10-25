@@ -1,4 +1,4 @@
-GLOBAL cpuVendor
+GLOBAL cpuVendor, invalidOpcodeTest
 
 section .text
 	
@@ -22,6 +22,16 @@ cpuVendor:
 
 	pop rbx
 
+	mov rsp, rbp
+	pop rbp
+	ret
+
+
+invalidOpcodeTest:
+	push rbp
+	mov rbp, rsp
+	mov rbx, 0x20
+	mov cr6, rax
 	mov rsp, rbp
 	pop rbp
 	ret

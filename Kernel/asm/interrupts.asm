@@ -14,6 +14,7 @@ GLOBAL _irq04Handler
 GLOBAL _irq05Handler
 
 GLOBAL _exception0Handler
+GLOBAL _exception6Handler
 
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
@@ -74,8 +75,10 @@ SECTION .text
 
 %macro exceptionHandler 1
 	pushState
-
-	mov rdi, %1 ; pasaje de parametro
+	mov rsi, rsp
+	add rsi, 15*8
+	mov rdx, rsp
+	mov rdi, %1
 	call exceptionDispatcher
 
 	popState
@@ -84,9 +87,8 @@ SECTION .text
 
 
 _hlt:
-	sti
 	hlt
-	ret
+	jmp _hlt
 
 _cli:
 	cli
@@ -142,6 +144,10 @@ _irq05Handler:
 ;Zero Division Exception
 _exception0Handler:
 	exceptionHandler 0
+
+;Invalid Opcode Exception
+_exception6Handler:
+	exceptionHandler 6
 
 haltcpu:
 	cli
