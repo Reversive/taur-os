@@ -1,7 +1,8 @@
 GLOBAL cpuVendor, invalidOpcodeTest
+GLOBAL get_Time
 
 section .text
-	
+
 cpuVendor:
 	push rbp
 	mov rbp, rsp
@@ -26,7 +27,6 @@ cpuVendor:
 	pop rbp
 	ret
 
-
 invalidOpcodeTest:
 	push rbp
 	mov rbp, rsp
@@ -35,3 +35,18 @@ invalidOpcodeTest:
 	mov rsp, rbp
 	pop rbp
 	ret
+
+
+get_Time:
+  push rbp
+  mov rbp,rsp
+
+  mov rax, 0
+
+  mov rax, rdi
+  out 70h, al
+  in al, 71h
+
+  mov rsp,rbp
+  pop rbp
+  ret
