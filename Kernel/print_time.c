@@ -1,4 +1,5 @@
 extern void SyscallGetTime(char t,int * result);
+extern void SyscallGetDay(int * result);
 
 /* En kernel por motivos de debug.*/
 void numToString(long num, char * buffer){
@@ -8,7 +9,7 @@ void numToString(long num, char * buffer){
         buffer[i++] = num%10 + '0';
         num = num / 10 ;
     }
-    char aux;   //j apunta al comienzo del buffer, i al final
+    char aux;
     buffer[i--]=0;
      while(j<i){
         aux = buffer[i];
@@ -21,10 +22,11 @@ void numToString(long num, char * buffer){
 
 /* En kernel y probado de forma directa por motivos de debug.*/
 void printTime(){
-	int hours,minutes,seconds;
+	int hours,minutes,seconds,day;
 	SyscallGetTime(4,&hours);
 	SyscallGetTime(2,&minutes);
 	SyscallGetTime(0,&seconds);
+	SyscallGetDay(&day);
 
   char buffer [3];
 	ncPrint("Time: ");
@@ -37,7 +39,10 @@ void printTime(){
   numToString(seconds,buffer);
 	ncPrint(buffer);
 	ncPrint(" s");
-
+	ncNewline();
+	ncPrint("Day: ");
+  numToString(day,buffer);
+	ncPrint(buffer);
 	ncNewline();
   return;
 }

@@ -8,3 +8,8 @@ void SyscallGetTime (char t,int * result){
   *result = get_Time_format(get_Time(t));
   return;
 }
+
+void SyscallGetDay (int * result){
+  *result = get_Time(6);
+  return;
+}
