@@ -1,5 +1,5 @@
-GLOBAL cpuVendor, invalidOpcodeTest
-GLOBAL get_Time
+GLOBAL cpuVendor, invalid_opcode_test
+GLOBAL get_time
 
 section .text
 
@@ -27,7 +27,7 @@ cpuVendor:
 	pop rbp
 	ret
 
-invalidOpcodeTest:
+invalid_opcode_test:
 	push rbp
 	mov rbp, rsp
 	mov rbx, 0x20
@@ -37,7 +37,7 @@ invalidOpcodeTest:
 	ret
 
 
-get_Time:
+get_time:
   push rbp
   mov rbp,rsp
 
@@ -50,3 +50,4 @@ get_Time:
   mov rsp,rbp
   pop rbp
   ret
+

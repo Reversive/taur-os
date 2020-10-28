@@ -2,8 +2,18 @@ include Makefile.inc
 
 KERNEL=kernel.bin
 SOURCES=$(wildcard *.c)
-SOURCES_ASM=$(wildcard asm/*.asm)
 OBJECTS=$(SOURCES:.c=.o)
+
+SOURCES_SYS=$(wildcard sys/*.c)
+OBJECTS_SYS=$(SOURCES_SYS:.c=.o)
+
+SOURCES_CPU=$(wildcard cpu/*.c)
+OBJECTS_CPU=$(SOURCES_CPU:.c=.o)
+
+SOURCES_DRIVERS=$(wildcard drivers/*.c)
+OBJECTS_DRIVERS=$(SOURCES_DRIVERS:.c=.o)
+
+SOURCES_ASM=$(wildcard asm/*.asm)
 OBJECTS_ASM=$(SOURCES_ASM:.asm=.o)
 LOADERSRC=loader.asm
 
@@ -12,8 +22,8 @@ STATICLIBS=
 
 all: $(KERNEL)
 
-$(KERNEL): $(LOADEROBJECT) $(OBJECTS) $(STATICLIBS) $(OBJECTS_ASM)
-	$(LD) $(LDFLAGS) -T kernel.ld -o $(KERNEL) $(LOADEROBJECT) $(OBJECTS) $(OBJECTS_ASM) $(STATICLIBS)
+$(KERNEL): $(LOADEROBJECT) $(OBJECTS) $(STATICLIBS) $(OBJECTS_ASM) $(OBJECTS_SYS) $(OBJECTS_DRIVERS) $(OBJECTS_CPU)
+	$(LD) $(LDFLAGS) -T kernel.ld -o $(KERNEL) $(LOADEROBJECT) $(OBJECTS) $(OBJECTS_ASM) $(OBJECTS_SYS) $(OBJECTS_DRIVERS) $(OBJECTS_CPU) $(STATICLIBS)
 
 %.o: %.c
 	$(GCC) $(GCCFLAGS) -I./include -c $< -o $@
@@ -26,5 +36,7 @@ $(LOADEROBJECT):
 
 clean:
 	rm -rf asm/*.o *.o *.bin
-
+	rm -rf sys/*.o *.o *.bin
+	rm -rf drivers/*.o *.o *.bin
+	rm -rf cpu/*.o *.o *.bin
 .PHONY: all clean

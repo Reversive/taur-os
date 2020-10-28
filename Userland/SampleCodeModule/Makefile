@@ -5,8 +5,12 @@ SOURCES=$(wildcard [^_]*.c)
 
 all: $(MODULE)
 
-$(MODULE): $(SOURCES)
-	$(GCC) $(GCCFLAGS) -T sampleCodeModule.ld _loader.c $(SOURCES) -o ../$(MODULE)
+u_libasm.o: u_libasm.asm
+			$(ASM) -f elf64 u_libasm.asm
+
+
+$(MODULE): $(SOURCES) u_libasm.o
+	$(GCC) $(GCCFLAGS) -T sampleCodeModule.ld _loader.c $(SOURCES) u_libasm.o -o ../$(MODULE)
 
 clean:
 	rm -rf *.o

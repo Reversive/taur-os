@@ -68,7 +68,7 @@ void kernel_panic(uint64_t * rip, uint64_t * rsp, int id, const char * desc, boo
 }
 
 void dump_reg(uint64_t * rip, uint64_t * rsp) {
-	registers * regs = (registers *)rsp;
+	full_reg_snapshot * regs = (full_reg_snapshot *)rsp;
 	ncNewline();
 	ncPrint("[Instruction Pointer address]: ");
 	ncPrintHex(*rip);

@@ -13,11 +13,14 @@ GLOBAL _irq03Handler
 GLOBAL _irq04Handler
 GLOBAL _irq05Handler
 
+GLOBAL _sys80handler
+
 GLOBAL _exception0Handler
 GLOBAL _exception6Handler
 
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
+EXTERN sys80handler
 
 SECTION .text
 
@@ -114,6 +117,15 @@ picSlaveMask:
     out	0A1h,al
     pop     rbp
     retn
+
+_sys80handler:
+	push 	rbp
+	mov 	rbp, rsp
+	call sys80handler
+	mov 	rsp, rbp
+	pop 	rbp
+
+	iretq
 
 
 ;8254 Timer (Timer Tick)

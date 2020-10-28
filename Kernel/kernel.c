@@ -3,7 +3,8 @@
 #include <lib.h>
 #include <moduleLoader.h>
 #include <naiveConsole.h>
-#include <idt_loader.h>
+#include "cpu/include/idt_loader.h"
+#include "sys/include/syscall_time.h"
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -53,16 +54,16 @@ int main()
 {	
 	load_idt();
 	
-	/*ncPrint("[Kernel Main]");
+	ncPrint("[Kernel Main]");
 	ncNewline();
 	ncPrint("  Sample code module at 0x");
 	ncPrintHex((uint64_t)sampleCodeModuleAddress);
 	ncNewline();
-	ncPrint("  Calling the sample code module returned: ");
+	ncPrint("  Calling userland time code.. got: ");
 	ncPrintHex(((EntryPoint)sampleCodeModuleAddress)());
 	ncNewline();
 	ncNewline();
-
+	/*
 	ncPrint("  Sample data module at 0x");
 	ncPrintHex((uint64_t)sampleDataModuleAddress);
 	ncNewline();
@@ -74,11 +75,10 @@ int main()
 
 
 
-	//invalidOpcodeTest(); // Uncomment this to get invalid_opcode exception
+	//invalid_opcode_test(); // Uncomment this to get invalid_opcode exception
 
-	int a = 5 / 0; // Uncomment this to get division by zero exception
-
-
+	//int a = 5 / 0; // Uncomment this to get division by zero exception
+	print_time();
 	for(;;) {}
 	return 0;
 }
