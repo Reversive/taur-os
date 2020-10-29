@@ -1,4 +1,4 @@
-GLOBAL cpuVendor, invalid_opcode_test
+GLOBAL cpuVendor
 GLOBAL get_time
 
 section .text
@@ -27,26 +27,16 @@ cpuVendor:
 	pop rbp
 	ret
 
-invalid_opcode_test:
-	push rbp
-	mov rbp, rsp
-	mov rbx, 0x20
-	mov cr6, rax
-	mov rsp, rbp
-	pop rbp
-	ret
-
 
 get_time:
   push rbp
   mov rbp,rsp
-
   mov rax, 0
-
+  cli
   mov rax, rdi
   out 70h, al
   in al, 71h
-
+  sti
   mov rsp,rbp
   pop rbp
   ret

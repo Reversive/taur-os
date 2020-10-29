@@ -1,18 +1,25 @@
 /* sampleCodeModule.c */
 
-char * v = (char*)0xB8000 + 79 * 2;
-
-static int var1 = 0;
-static int var2 = 0;
-
 #define SECONDS 0
 #define MINUTES 2
 #define HOURS 4
 #define DAYS 6
 
-extern unsigned int sys_get_time(char t);
 
-
+unsigned int sys_get_time(char t);
+void invalid_opcode_test(void);
+void puts(const char * str);
+static char conditional = 'a';
 int main() {
-	return sys_get_time(MINUTES);
+	
+	if(conditional == 'a') {
+		conditional = 'b';
+		int b = 5 / 0;
+	} else if(conditional == 'b') {
+		conditional = 'c';
+		invalid_opcode_test();
+	}
+
+	puts("I reached here!");
+	return 0;
 }

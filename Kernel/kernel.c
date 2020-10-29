@@ -1,18 +1,8 @@
-#include <stdint.h>
-#include <string.h>
-#include <lib.h>
-#include <moduleLoader.h>
-#include <naiveConsole.h>
-#include "cpu/include/idt_loader.h"
-#include "sys/include/syscall_time.h"
+#include "include/kernel.h"
 
-extern uint8_t text;
-extern uint8_t rodata;
-extern uint8_t data;
-extern uint8_t bss;
-extern uint8_t endOfKernelBinary;
-extern uint8_t endOfKernel;
 
+uint64_t * _b_rsp;
+uint64_t * _b_rip;
 static const uint64_t PageSize = 0x1000;
 
 static void * const sampleCodeModuleAddress = (void*)0x400000;
@@ -20,6 +10,9 @@ static void * const sampleDataModuleAddress = (void*)0x500000;
 
 typedef int (*EntryPoint)();
 
+uint64_t get_rsp_position(void) {
+	return _rsp() - sizeof(uint64_t) * 4;
+}
 
 void clearBSS(void * bssAddress, uint64_t bssSize)
 {
@@ -53,15 +46,11 @@ void * initializeKernelBinary()
 int main()
 {	
 	load_idt();
-	
-	ncPrint("[Kernel Main]");
-	ncNewline();
-	ncPrint("  Sample code module at 0x");
-	ncPrintHex((uint64_t)sampleCodeModuleAddress);
-	ncNewline();
-	ncPrint("  Calling userland time code.. got: ");
-	ncPrintHex(((EntryPoint)sampleCodeModuleAddress)());
-	ncNewline();
+
+	_b_rip = sampleCodeModuleAddress;
+	_b_rsp = get_rsp_position();
+
+	((EntryPoint)sampleCodeModuleAddress)();
 	ncNewline();
 	/*
 	ncPrint("  Sample data module at 0x");
@@ -73,12 +62,5 @@ int main()
 
 	//ncPrint("[Finished]");
 
-
-
-	//invalid_opcode_test(); // Uncomment this to get invalid_opcode exception
-
-	//int a = 5 / 0; // Uncomment this to get division by zero exception
-	print_time();
-	for(;;) {}
 	return 0;
 }

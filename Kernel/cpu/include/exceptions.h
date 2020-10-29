@@ -3,10 +3,10 @@
 
 #define ZERO_EXCEPTION_ID 0x0
 #define INVALID_OPCODE_EXCEPTION_ID 0x6
-#include <lib.h>
+#include <kernel.h>
 
 
-void exceptionDispatcher(int exception, uint64_t * rip, uint64_t * rsp);
+void exceptionDispatcher(int exception, uint64_t * rip, uint64_t * rsp, uint64_t * top);
 
 
 #endif

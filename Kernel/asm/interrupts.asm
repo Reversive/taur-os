@@ -5,6 +5,7 @@ GLOBAL picMasterMask
 GLOBAL picSlaveMask
 GLOBAL haltcpu
 GLOBAL _hlt
+GLOBAL _rsp
 
 GLOBAL _irq00Handler
 GLOBAL _irq01Handler
@@ -60,6 +61,40 @@ SECTION .text
 	pop rax
 %endmacro
 
+%macro pushfd 0
+	push rbx
+	push rcx
+	push rdx
+	push rbp
+	push rdi
+	push rsi
+	push r8
+	push r9
+	push r10
+	push r11
+	push r12
+	push r13
+	push r14
+	push r15
+%endmacro
+
+%macro popfd 0
+	pop rbx
+	pop rcx
+	pop rdx
+	pop rbp
+	pop rdi
+	pop rsi
+	pop r8
+	pop r9
+	pop r10
+	pop r11
+	pop r12
+	pop r13
+	pop r14
+	pop r15
+%endmacro
+
 %macro irqHandlerMaster 1
 	pushState
 
@@ -75,12 +110,14 @@ SECTION .text
 %endmacro
 
 
-
-%macro exceptionHandler 1
+; rdi = num_exc, rsi = ret addr, rdx = stack_ptr
+%macro exceptionHandler 1 
 	pushState
 	mov rsi, rsp
 	add rsi, 15*8
+	mov rcx, rsp
 	mov rdx, rsp
+	add rdx, 18*8
 	mov rdi, %1
 	call exceptionDispatcher
 
@@ -88,6 +125,10 @@ SECTION .text
 	iretq
 %endmacro
 
+
+_rsp:
+	mov rax, rsp
+	ret
 
 _hlt:
 	hlt

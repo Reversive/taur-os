@@ -50,8 +50,8 @@ void remask_pic() {
 	picMasterMask(PIC_MASK);
 }
 
-void kernel_panic(uint64_t * rip, uint64_t * rsp, int id, const char * desc, bool halt) {
-	ncNewline();
+void kernel_panic(uint64_t * rip, uint64_t * rsp, uint64_t * top, int id, const char * desc, bool halt) {
+	/*ncNewline();
 	ncPrint("[KERNEL PANIC]");
 	ncNewline();
 	ncPrint("[EXCEPTION ID]: ");
@@ -59,16 +59,22 @@ void kernel_panic(uint64_t * rip, uint64_t * rsp, int id, const char * desc, boo
 	ncNewline();
 	ncPrint("[DESCRIPTION]: ");
 	ncPrint(desc);
-	dump_reg(rip, rsp);
+	dump_reg(rip, rsp, top);
 	if(halt != 0) {
 		clear_interrupts();
 		remask_pic();
 		halt_system();
-	}
+	}*/
 }
 
-void dump_reg(uint64_t * rip, uint64_t * rsp) {
-	full_reg_snapshot * regs = (full_reg_snapshot *)rsp;
+void dump_reg(int id, const char * desc, uint64_t * rip, uint64_t * rsp, uint64_t * top) {
+	full_reg_snapshot * regs = (full_reg_snapshot *)top;
+	ncNewline();
+	ncPrint("[EXCEPTION ID]: ");
+	ncPrintDec(id);
+	ncNewline();
+	ncPrint("[DESCRIPTION]: ");
+	ncPrint(desc);
 	ncNewline();
 	ncPrint("[Instruction Pointer address]: ");
 	ncPrintHex(*rip);
@@ -81,7 +87,8 @@ void dump_reg(uint64_t * rip, uint64_t * rsp) {
 	ncPrintHex(regs->rbx);
 	ncPrint(" [RCX] = ");
 	ncPrintHex(regs->rcx);
-	ncPrint(" [RDX] = ");
+	ncNewline();
+	ncPrint("[RDX] = ");
 	ncPrintHex(regs->rdx);
 	ncPrint(" [RDI] = ");
 	ncPrintHex(regs->rdi);
@@ -96,7 +103,8 @@ void dump_reg(uint64_t * rip, uint64_t * rsp) {
 	ncPrintHex(regs->r10);
 	ncPrint(" [R11] = ");
 	ncPrintHex(regs->r11);
-	ncPrint(" [R12] = ");
+	ncNewline();
+	ncPrint("[R12] = ");
 	ncPrintHex(regs->r12);
 	ncPrint(" [R13] = ");
 	ncPrintHex(regs->r13);

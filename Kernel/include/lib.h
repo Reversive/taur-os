@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <naiveConsole.h>
 #include "../cpu/include/defs.h"
+#include "../cpu/include/interrupts.h"
 typedef unsigned char bool;
 #define PIC_MASK 0xFF
 
@@ -36,11 +37,11 @@ typedef struct ss_register {
 
 void * memset(void * destination, int32_t character, uint64_t length);
 void * memcpy(void * destination, const void * source, uint64_t length);
-void dump_reg(uint64_t * rip, uint64_t * rsp);
-void kernel_panic(uint64_t * rip, uint64_t * rsp, int id, const char * desc, bool halt);
+void dump_reg(int id, const char * desc, uint64_t * rip, uint64_t * rsp, uint64_t * top);
+void kernel_panic(uint64_t * rip, uint64_t * rsp, uint64_t * top, int id, const char * desc, bool halt);
 char *cpuVendor(char *result);
 void clear_interrupts();
 void halt_system();
-void invalid_opcode_test(void);
+
 
 #endif
