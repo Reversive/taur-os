@@ -10,7 +10,7 @@ OBJECTS_SYS=$(SOURCES_SYS:.c=.o)
 SOURCES_CPU=$(wildcard cpu/*.c)
 OBJECTS_CPU=$(SOURCES_CPU:.c=.o)
 
-SOURCES_DRIVERS=$(wildcard drivers/*.c)
+SOURCES_DRIVERS=$(wildcard drivers/keyboard/*.c drivers/video/*.c)
 OBJECTS_DRIVERS=$(SOURCES_DRIVERS:.c=.o)
 
 SOURCES_ASM=$(wildcard asm/*.asm)
@@ -37,6 +37,6 @@ $(LOADEROBJECT):
 clean:
 	rm -rf asm/*.o *.o *.bin
 	rm -rf sys/*.o *.o *.bin
-	rm -rf drivers/*.o *.o *.bin
+	rm -rf drivers/keyboard/*.o drivers/video/*.o *.o *.bin
 	rm -rf cpu/*.o *.o *.bin
 .PHONY: all clean

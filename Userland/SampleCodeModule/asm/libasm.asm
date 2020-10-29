@@ -1,17 +1,6 @@
-GLOBAL sys_get_time, puts
+GLOBAL sys_get_time
 GLOBAL invalid_opcode_test
 
-
-
-puts:
-    push rbp
-	mov rbp, rsp
-    mov rsi, rdi
-    mov rdi, 1
-    int 80h
-    mov rsp, rbp
-	pop rbp
-	ret 
 
 sys_get_time:
     push rbp

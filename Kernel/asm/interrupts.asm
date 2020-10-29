@@ -1,12 +1,3 @@
-
-GLOBAL _cli
-GLOBAL _sti
-GLOBAL picMasterMask
-GLOBAL picSlaveMask
-GLOBAL haltcpu
-GLOBAL _hlt
-GLOBAL _rsp
-
 GLOBAL _irq00Handler
 GLOBAL _irq01Handler
 GLOBAL _irq02Handler
@@ -126,39 +117,6 @@ SECTION .text
 %endmacro
 
 
-_rsp:
-	mov rax, rsp
-	ret
-
-_hlt:
-	hlt
-	jmp _hlt
-
-_cli:
-	cli
-	ret
-
-
-_sti:
-	sti
-	ret
-
-picMasterMask:
-	push rbp
-    mov rbp, rsp
-    mov ax, di
-    out	21h,al
-    pop rbp
-    retn
-
-picSlaveMask:
-	push    rbp
-    mov     rbp, rsp
-    mov     ax, di  ; ax = mascara de 16 bits
-    out	0A1h,al
-    pop     rbp
-    retn
-
 _sys80handler:
 	push 	rbp
 	mov 	rbp, rsp
@@ -201,13 +159,6 @@ _exception0Handler:
 ;Invalid Opcode Exception
 _exception6Handler:
 	exceptionHandler 6
-
-haltcpu:
-	cli
-	hlt
-	ret
-
-
 
 SECTION .bss
 	aux resq 1

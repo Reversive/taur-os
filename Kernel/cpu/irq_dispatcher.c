@@ -1,17 +1,14 @@
-#include <time.h>
-#include <stdint.h>
 
-static void int_20();
+#include "include/irq_dispatcher.h"
 
 void irqDispatcher(uint64_t irq) {
 	switch (irq) {
-		case 0:
-			int_20();
+		case TIMER_TICK:
+			timer_handler();
+			break;
+		case KEYBOARD:
+			kb_trigger();
 			break;
 	}
 	return;
-}
-
-void int_20() {
-	timer_handler();
 }

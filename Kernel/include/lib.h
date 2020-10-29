@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <naiveConsole.h>
 #include "../cpu/include/defs.h"
-#include "../cpu/include/interrupts.h"
+#include "../asm/include/interrupts.h"
 typedef unsigned char bool;
 #define PIC_MASK 0xFF
 
