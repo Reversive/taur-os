@@ -10,10 +10,10 @@ int main() {
 	unsigned int minutes = get_day_minutes();
 	unsigned int seconds = get_day_seconds();
 	unsigned int test = getchar();
-	while (test == -1)
+	while (test == EOF)
 	{
 		test = getchar();
-		if(test != -1) return test;
+		if(test != EOF) return test;
 	}
 	
 	return test;

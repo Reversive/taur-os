@@ -7,7 +7,6 @@
 #include <moduleLoader.h>
 #include <naiveConsole.h>
 #include "../cpu/include/idt_loader.h"
-#include "../sys/include/syscall_time.h"
 
 extern uint8_t text;
 extern uint8_t rodata;
