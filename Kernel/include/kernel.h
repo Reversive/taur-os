@@ -7,7 +7,7 @@
 #include <moduleLoader.h>
 #include <naiveConsole.h>
 #include "../cpu/include/idt_loader.h"
-
+#include "../drivers/video/include/video_driver.h"
 extern uint8_t text;
 extern uint8_t rodata;
 extern uint8_t data;
