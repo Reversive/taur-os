@@ -59,16 +59,21 @@ void kb_trigger() {
         break;
     }
 
+    // https://www.win.tue.nl/~aeb/linux/kbd/scancodes-1.html#ss1.1
+    if(current > OUT_OF_RANGE) return;
+
     if(key_state == SHIFT) {
+        key print = asciiShift[current];
         if(in_caps && is_letter(current)) {
-            ncPrintChar(asciiNonShift[current]);
+            print = asciiNonShift[current];
         }
         ncPrintChar(asciiShift[current]);
     } else {
+        key print = asciiNonShift[current];
         if(in_caps && is_letter(current)) {
-            ncPrintChar(asciiShift[current]);
+            print = asciiShift[current];
         }
-        ncPrintChar(asciiNonShift[current]);
+        ncPrintChar(print);
     }
 
 

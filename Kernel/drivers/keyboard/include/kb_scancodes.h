@@ -1,6 +1,8 @@
 #ifndef _KB_SCANCODES_H
 #define _KB_SCANCODES_H
 
+
+#define OUT_OF_RANGE 0x80
 #define NULL 0
 #define ESC    27
 #define BACKSPACE '\b'
