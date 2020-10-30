@@ -1,16 +1,14 @@
 /* sampleCodeModule.c */
+#include "include/basic_lib.h"
 
-#define SECONDS 0
-#define MINUTES 2
-#define HOURS 4
-#define DAYS 6
-
-
-unsigned int sys_get_time(char t);
 void invalid_opcode_test(void);
 
 
 int main() {
 	
-	return 0;
+	unsigned int hour = sys_time(0x4);
+	unsigned int minutes = sys_time(0x2);
+	unsigned int seconds = sys_time(0x0);
+
+	return minutes;
 }

@@ -1,5 +1,5 @@
 #include "include/syscall_time.h"
-/* ESTE ARCHIVO Y EL .H SE VAN A BORRAR */
+/* ESTE ARCHIVO Y EL .H SE VAN A PASAR A USERLAND, PERO LA MAYORIA SE BORRA, NO HACE FALTA HACER LA CONVERSION HEX=>DEC */
 extern unsigned int get_time(char t);
 
 int get_time_format(int t){

@@ -1,25 +1,13 @@
 #include "include/kb_driver.h"
 static state key_state = NONE;
-static bool in_caps = 0;
-
-int is_letter(key input) {
-    return (input >= 'a' && input <= 'z') || (input >= 'A' && input <= 'Z');
-}
+static ring kb_ring = {0, 0, 0, {0}};
 
 void kb_trigger() {
     
     key current = _fetch_key();
     switch (current)
     {
-    case KRCAPS_LOCK:
-        if(in_caps == 1) {
-            in_caps = 0;
-        } else {
-            in_caps = 1;
-        }
-        return;
-        break;
-
+    // https://www.henkessoft.de/OS_Dev/OS_Dev1.htm#mozTocId185043
     case KRLEFT_SHIFT:
         key_state = SHIFT;
         return;
@@ -34,26 +22,6 @@ void kb_trigger() {
         key_state = NONE;
         return;
         break;
-
-    case KRRIGHT_ALT:
-        key_state = ALT;
-        return;
-        break;
-    
-    case KRALT_RELEASE:
-        key_state = NONE;
-        return;
-        break;
-
-    case KRRIGHT_CTRL:
-        key_state = CTRL;
-        return;
-        break;
-    
-    case KRCTRL_RELEASE:
-        key_state = NONE;
-        return;
-        break;
     
     default:
         break;
@@ -62,20 +30,28 @@ void kb_trigger() {
     // https://www.win.tue.nl/~aeb/linux/kbd/scancodes-1.html#ss1.1
     if(current > OUT_OF_RANGE) return;
 
+    key ascii = asciiNonShift[current];
     if(key_state == SHIFT) {
-        key print = asciiShift[current];
-        if(in_caps && is_letter(current)) {
-            print = asciiNonShift[current];
-        }
-        ncPrintChar(asciiShift[current]);
-    } else {
-        key print = asciiNonShift[current];
-        if(in_caps && is_letter(current)) {
-            print = asciiShift[current];
-        }
-        ncPrintChar(print);
-    }
+        ascii = asciiShift[current];
+    } 
+
+    queue(ascii);
 
 
     return;
 };
+
+void queue(key current_key) {
+    kb_ring.kb_buffer[kb_ring.queue_pos++] = current_key;
+    if(kb_ring.queue_pos == KB_BUFFER_SIZE) kb_ring.queue_pos = 0;
+    kb_ring.pending_read++;
+    if(kb_ring.pending_read >= KB_BUFFER_OVERFLOW) kb_ring.pending_read = 0;
+}
+
+key getchar() {
+    if(kb_ring.pending_read == 0) return 0xFF;
+    key pop = kb_ring.kb_buffer[kb_ring.dequeue_pos++];
+    if(kb_ring.dequeue_pos == KB_BUFFER_SIZE) kb_ring.dequeue_pos = 0;
+    kb_ring.pending_read--;
+    return pop;
+}

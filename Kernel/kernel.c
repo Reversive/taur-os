@@ -49,8 +49,8 @@ int main()
 
 	_b_rip = sampleCodeModuleAddress;
 	_b_rsp = get_rsp_position();
-
-	((EntryPoint)sampleCodeModuleAddress)();
+	ncPrint("Return from useland syscall: ");
+	ncPrintHex(((EntryPoint)sampleCodeModuleAddress)());
 	ncNewline();
 	/*
 	ncPrint("  Sample data module at 0x");

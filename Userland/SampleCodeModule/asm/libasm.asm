@@ -1,17 +1,14 @@
-GLOBAL sys_get_time
+GLOBAL _syscall
 GLOBAL invalid_opcode_test
 
 
-sys_get_time:
-    push rbp
+_syscall:
+	push rbp
 	mov rbp, rsp
-    mov rsi, rdi
-    mov rdi, 0
-    int 80h
-    mov rsp, rbp
+	int 0x80
+	mov rsp, rbp
 	pop rbp
-	ret 
-
+	ret
 
 invalid_opcode_test:
 	push rbp
