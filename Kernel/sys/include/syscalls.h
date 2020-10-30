@@ -2,7 +2,7 @@
 #define _SYSCALLS_H
 #include <stdint.h>
 #include "../../drivers/keyboard/include/kb_driver.h"
-typedef uint64_t syscall(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8);
+typedef uint64_t syscall(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8);
 typedef unsigned int size_t;
 enum syscall_numbers {
     _SYSCALL_READ = 0,
