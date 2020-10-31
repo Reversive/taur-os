@@ -43,3 +43,22 @@ void paint_character(int x, int y, char character, int size, int color, int bg_c
         vertical_slide += size;
     }
 }
+
+void scroll(int times) {
+    struct vbe_mode_info_structure * video_pointer = (struct vbe_mode_info_structure *)0x5C00;
+    char * buffer = video_pointer->framebuffer;
+    int offseted_row = times * WIDTH * BPP;
+    int last = HEIGHT * WIDTH * BPP;
+    int to_remove = 0;
+    while(offseted_row < last) {
+        buffer[to_remove] = buffer[offseted_row];
+        offseted_row++;
+        to_remove++;
+    }
+
+    for(int i = HEIGHT - times; i < HEIGHT; i++) {
+        for(int j = 0; j < WIDTH * BPP; j++) {
+            paint_pixel(j, i, 0x00000000);
+        }
+    }
+}

@@ -50,5 +50,5 @@ void paint_pixel(int x, int y, int color);
 void paint_rectangle(int x, int y, int w, int h, int color);
 void paint_square(int x, int y, int s, int color);
 void paint_character(int x, int y, char character, int size, int color, int bg_color);
-
+void scroll(int times);
 #endif

@@ -21,7 +21,10 @@ uint64_t syscall_read(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8) {
 }
 
 uint64_t syscall_write(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8) {
-    return -1; //TODO
+    unsigned int fd = (unsigned int) rsi;
+    char * buffer = (char *) rdx;
+    size_t count = (size_t) rcx;
+    return write(fd, buffer, count);
 }
 
 uint64_t syscall_time(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8) {

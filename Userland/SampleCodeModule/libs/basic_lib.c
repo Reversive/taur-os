@@ -7,3 +7,7 @@ unsigned int sys_time(char format) {
 size_t sys_read(unsigned int fd, char * buffer, size_t length) {
     return (size_t) _syscall(0x0, fd, (uint64_t) buffer, length, 0);
 }
+
+size_t sys_write(unsigned int fd, char * buffer, size_t length) {
+    return (size_t) _syscall(0x1, fd, (uint64_t) buffer, length, 0);
+}

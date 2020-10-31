@@ -48,23 +48,12 @@ int main()
 	load_idt();
 
 	_b_rip = sampleCodeModuleAddress;
-	_b_rsp = get_rsp_position();
-	//ncPrint("Return from useland syscall: ");
-	//ncPrintHex(((EntryPoint)sampleCodeModuleAddress)());
+	_b_rsp = _rsp() - (sizeof(uint64_t) << 1);
+	ncPrint("Return from userland syscall: ");
+	_enable_cursor();
+	((EntryPoint)sampleCodeModuleAddress)();
 	//ncNewline();
-	
-	/*
-	ncPrint("  Sample data module at 0x");
-	ncPrintHex((uint64_t)sampleDataModuleAddress);
-	ncNewline();
-	ncPrint("  Sample data module contents: ");
-	ncPrint((char*)sampleDataModuleAddress);
-	ncNewline();*/
-	paint_character(300, 300, 'H', 2, 0x000000FF, 0xFFFFFFFF);
-	paint_character(316, 300, 'O', 2, 0x000000FF, 0xFFFFFFFF);
-	paint_character(332, 300, 'L', 2, 0x000000FF, 0xFFFFFFFF);
-	paint_character(348, 300, 'A', 2, 0x000000FF, 0xFFFFFFFF);
-	//ncPrint("[Finished]");
+	ncPrint("[Finished]");
 	while(1) {}
 	return 0;
 }

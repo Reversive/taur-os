@@ -1,59 +1,31 @@
 #include "include/exceptions.h"
 
-const char *exception_messages[] =
-{
-    "Division By Zero",
-    "Debug",
-    "Non Maskable Interrupt",
-    "Breakpoint",
-    "Into Detected Overflow",
-    "Out of Bounds",
-    "Invalid Opcode",
-    "No Corprocessor",
-    "Double Fault",
-    "Coprocessor Segment Overrun",
-    "Bad TSS",
-    "Segment Not Present",
-    "Stack Fault Exception",
-    "General Protection Fault",
-    "Page Fault",
-    "Unknown Interrupt",
-    "Coprocessor Fault",
-    "Alignment Check",
-    "Machine Check",
-    "Reserved",
-    "Reserved",
-    "Reserved",
-    "Reserved",
-    "Reserved",
-    "Reserved",
-    "Reserved",
-    "Reserved",
-    "Reserved",
-    "Reserved",
-    "Reserved",
-    "Reserved",
-    "Reserved",
-    "Reserved",
+
+
+exception * exceptions_table[_EXCEPTIONS_SIZE] = {
+	[_EXCEPTION_DIV_BY_ZERO] = ex_div_by_zero,
+	[_EXCEPTION_DEBUG] = NULL,
+    [_EXCEPTION_NON_MASKABLE_INTERRUPT] = NULL,
+    [_EXCEPTION_BREAKPOINT] = NULL,
+    [_EXCEPTION_OVERFLOW] = NULL,
+    [_EXCEPTION_OUT_OF_BOUNDS] = NULL,
+    [_EXCEPTION_INVALID_OPCODE] = ex_invalid_opcode
 };
 
-
-void exceptionDispatcher(int exception, uint64_t * rip, uint64_t * rsp, uint64_t * top) {
+void exceptionDispatcher(int ex_id, uint64_t * rip, uint64_t * rsp, uint64_t * top) {
     uint64_t *_old_rip = rip;
     uint64_t *_old_rsp = rsp;
+    if( ex_id < 0 || ex_id > _EXCEPTIONS_SIZE) return;
+    exceptions_table[ex_id](_old_rip, _old_rsp, top);
+    *rsp = _b_rsp;
+    *rip = _b_rip;
+    
+}
 
-	switch (exception) {
-		case ZERO_EXCEPTION_ID:
-			//kernel_panic(rip, rsp, ZERO_EXCEPTION_ID, exception_messages[ZERO_EXCEPTION_ID], 0x1);
-            dump_reg(ZERO_EXCEPTION_ID, exception_messages[ZERO_EXCEPTION_ID], _old_rip, _old_rsp, top);
-            *rip = _b_rip;
-            *rsp = _b_rsp;
-			break;
-		case INVALID_OPCODE_EXCEPTION_ID:
-			//kernel_panic(rip, rsp, INVALID_OPCODE_EXCEPTION_ID, exception_messages[INVALID_OPCODE_EXCEPTION_ID], 0x1);
-            dump_reg(INVALID_OPCODE_EXCEPTION_ID, exception_messages[INVALID_OPCODE_EXCEPTION_ID], rip, rsp, top);
-            *rip = _b_rip;
-            *rsp = _b_rsp;
-			break;
-	}
+uint64_t ex_div_by_zero(uint64_t * rip, uint64_t * rsp, uint64_t * top) {
+    dump_reg(_EXCEPTION_DIV_BY_ZERO, exception_messages[_EXCEPTION_DIV_BY_ZERO], rip, rsp, top);
+}
+
+uint64_t ex_invalid_opcode(uint64_t * rip, uint64_t * rsp, uint64_t * top) {
+    dump_reg(_EXCEPTION_INVALID_OPCODE, exception_messages[_EXCEPTION_INVALID_OPCODE], rip, rsp, top);
 }
