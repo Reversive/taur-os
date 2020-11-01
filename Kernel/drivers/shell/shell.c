@@ -22,6 +22,7 @@ void _tick() {
 }
 
 void _slide_cursor_backwards() {
+    if(_cursor_horizontal <= 64) return;
     if(_cursor_horizontal == 0 && _cursor_vertical == 0) return;
     int new_pos = _cursor_horizontal - SCALED_CHAR_WIDTH;
     if( new_pos >= 0) {
