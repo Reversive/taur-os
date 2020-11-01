@@ -16,16 +16,23 @@ enum file_descriptors {
 enum syscall_numbers {
     _SYSCALL_READ = 0,
 	_SYSCALL_WRITE,
-    _SYSCALL_TIME
+    _SYSCALL_TIME,
+    _SYSCALL_SET_BG_COLOR,
+    _SYSCALL_SET_TEXT_COLOR,
+    _SYSCALL_SET_TEXT_SIZE,
+    _SYSCALL_SET_CURSOR_STATE
 };
 
-#define _SYSCALLS_LAST _SYSCALL_TIME
+#define _SYSCALLS_LAST _SYSCALL_SET_CURSOR_STATE
 #define _SYSCALLS_SIZE (_SYSCALLS_LAST + 1)
 
 syscall syscall_read;
 syscall syscall_write;
 syscall syscall_time;
-
+syscall syscall_set_bg_color;
+syscall syscall_set_text_color;
+syscall syscall_set_text_size;
+syscall syscall_set_cursor_state;
 
 extern syscall * syscalls_table[_SYSCALLS_SIZE];
 

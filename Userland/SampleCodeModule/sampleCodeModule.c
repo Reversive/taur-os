@@ -1,17 +1,17 @@
 /* sampleCodeModule.c */
 #include "include/stdio.h"
 #include "include/time.h"
+#include "include/colors.h"
 void invalid_opcode_test(void);
 
-static char tester = 'a';
 int main() {
-	unsigned int hour = get_day_hour();
-	unsigned int minutes = get_day_minutes();
-	unsigned int seconds = get_day_seconds();
-	
+
+	sys_set_cursor_status(_ENABLED);
 	while(1) {
 		char c;
-		puts("TPE> ");
+		sys_set_text_color(WHITE);
+		puts("TaurOS> ");
+		sys_set_text_color(LIME);
 		while(c = getchar(), c != '\n') {
 			if(c != EOF) {
 				putchar(c);
@@ -20,6 +20,7 @@ int main() {
 
 		putchar('\n');
 	}
+	sys_set_cursor_status(_DISABLED);
 
 	
 	return 0x1;

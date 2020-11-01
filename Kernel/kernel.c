@@ -49,8 +49,7 @@ int main()
 
 	_b_rip = sampleCodeModuleAddress;
 	_b_rsp = _rsp() - (sizeof(uint64_t) << 1);
-	ncPrint("Return from userland syscall: ");
-	_enable_cursor();
+	
 	((EntryPoint)sampleCodeModuleAddress)();
 	//ncNewline();
 	ncPrint("[Finished]");
