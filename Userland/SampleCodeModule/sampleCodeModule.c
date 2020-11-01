@@ -25,6 +25,6 @@ int main() {
 	}
 	sys_set_cursor_status(_DISABLED);
 
-	
+
 	return 0x1;
 }

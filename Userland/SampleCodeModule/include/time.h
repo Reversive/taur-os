@@ -6,4 +6,6 @@ unsigned int get_day_seconds();
 unsigned int get_day_minutes();
 unsigned int get_day_hour();
 unsigned int get_day();
+
+void print_time();
 #endif

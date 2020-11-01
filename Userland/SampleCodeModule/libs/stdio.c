@@ -64,10 +64,8 @@ void asignarModulo(char * str) {
 		help();
 	}
 	else if(commandEql(str,"time")){
-		puts("printTime\n");
-		
-        
-    }
+    print_time();
+  }
 	else if(commandEql(str,"inforeg")){
         get_inforeg(data);
 		PrintInfoReg(data);
@@ -91,7 +89,7 @@ unsigned int commandEql(char * str1, char * str2) {
             eql = 0;
     if(str1[i] != 0 && str1[i] != ' ')
         eql = 0;
-    return eql;    
+    return eql;
     }
 
 unsigned int consoleBFinishHandler() {
@@ -117,7 +115,7 @@ void consoleBKeyHandler(char input) {
 		luego de mostrar la leyendo de captura hecha.*/
 
 		//setRegistersFlag(); //Alt hace captura de registros
-		
+
 		//Primero "borro" si es que hay texto impreso antes
 	//	for(int i = 0; i < inputReadSizeB; i++)
 	//		putChar('\b');
@@ -150,7 +148,7 @@ void consoleBKeyHandler(char input) {
 
 void PrintInfoReg( char *data){
 	char buffer [17]; //16 + 1 para el cero
-    char registersName [17][6] = {"R15","R14","R13","R12","R11","R10"," R9"," R8","RAX","RBX","RCX","RDX","RDI","RSI","RBP","RIP","RSP"};  
+    char registersName [17][6] = {"R15","R14","R13","R12","R11","R10"," R9"," R8","RAX","RBX","RCX","RDX","RDI","RSI","RBP","RIP","RSP"};
 	int i=0;
 	int nByte,idx;
 	unsigned char c;
