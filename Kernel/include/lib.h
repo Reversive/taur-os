@@ -1,12 +1,14 @@
 #ifndef LIB_H
 #define LIB_H
 
-#include <stdint.h>
 #include <naiveConsole.h>
 #include "../cpu/include/defs.h"
 #include "../asm/include/interrupts.h"
+
+
 typedef unsigned char bool;
 #define PIC_MASK 0xFF
+
 
 typedef struct fs_register {
     uint64_t r15;
@@ -43,5 +45,11 @@ char *cpuVendor(char *result);
 void clear_interrupts();
 void halt_system();
 
+void get_registers(char *data);
+
+char getcharData(char hexaNum);
+extern void save_registers_data(char* data);
+void print_reg();
+extern int test();
 
 #endif

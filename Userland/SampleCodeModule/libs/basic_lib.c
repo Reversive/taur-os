@@ -28,6 +28,9 @@ void sys_set_cursor_status(unsigned char status) {
     _syscall(_SYSCALL_SET_CURSOR_STATE, status, 0, 0, 0);
 }
 
+void sys_inforeg( char* data) {
+    _syscall(_SYSCALL_INFOREG,(uint64_t)data, 0, 0, 0);
+}
 
 
 

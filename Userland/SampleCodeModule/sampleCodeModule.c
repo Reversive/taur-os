@@ -2,6 +2,7 @@
 #include "include/stdio.h"
 #include "include/time.h"
 #include "include/colors.h"
+
 void invalid_opcode_test(void);
 
 int main() {
@@ -14,10 +15,12 @@ int main() {
 		sys_set_text_color(LIME);
 		while(c = getchar(), c != '\n') {
 			if(c != EOF) {
-				putchar(c);
+				consoleBKeyHandler(c);
 			}
 		}
-
+		if (finishCharB(c)){
+			consoleBFinishHandler();
+		}
 		putchar('\n');
 	}
 	sys_set_cursor_status(_DISABLED);

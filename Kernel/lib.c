@@ -114,3 +114,12 @@ void dump_reg(int id, const char * desc, uint64_t * rip, uint64_t * rsp, uint64_
 	ncPrintHex(regs->r15);
 	ncNewline();
 }
+
+void get_registers(char *data){
+	int i =test();
+	//ncPrintDec(i);
+	save_registers_data(data);
+
+}
+
+

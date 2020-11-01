@@ -8,6 +8,8 @@ GLOBAL haltcpu
 GLOBAL picMasterMask
 GLOBAL picSlaveMask
 GLOBAL _fetch_key
+GLOBAL save_registers_data
+GLOBAL test
 
 section .text
 
@@ -99,4 +101,71 @@ get_time:
   mov rsp,rbp
   pop rbp
   ret
+
+test:
+	mov r15,0xaAbB
+	mov r14,5757
+	mov r13,3939h
+	mov r12,0xaA
+	mov r11,10
+	mov r10,170
+	mov r9,3939h
+	mov r8,50
+	mov rax,15
+	mov rbx,5757
+	mov rcx,3939h
+	mov rdx,50
+	mov rdi,15
+	mov rsi,5757
+	ret
+
+save_registers_data:
+	push rsp ;{"R15","R14","R13","R12","R11","R10"," R9"," R8","RAX","RBX","RCX","RDX","RDI","RSI","RBP","RIP","RSP"}
+	push rax ;rip
+	push rbp
+	push rsi
+	push rdi
+	push rdx
+	push rcx
+	push rbx
+	push rax
+	push r8
+	push r9
+	push r10
+	push r11
+	push r12
+	push r13
+	push r14
+	push r15
+
+	mov rbp,rsp
+	mov rbx,17
+	mov rcx,rdi
+ciclo:
+	mov QWORD rdx,[rbp]
+	mov QWORD [rcx],rdx
+	add rcx,8
+	add rbp,8
+	dec rbx
+	cmp rbx,0
+	jne ciclo
+
+    pop r15
+	pop r14
+	pop r13
+	pop r12
+	pop r11
+	pop r10
+	pop r9
+	pop r8
+	pop rax
+	pop rbx
+	pop rcx
+	pop rdx
+	pop rdi
+	pop rsi
+	pop rbp
+	pop rax
+	pop rsp
+	ret
 
