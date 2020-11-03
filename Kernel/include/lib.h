@@ -42,5 +42,6 @@ void get_registers(char *data);
 extern void save_registers_data(char* data);
 void print_reg();
 extern int test();
+char get_char_data( char hexa_num);
 
 #endif

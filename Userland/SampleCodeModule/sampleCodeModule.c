@@ -4,14 +4,11 @@
 #include "include/colors.h"
 #include "include/console.h"
 
-
-
 int main() {
 
 	sys_set_cursor_status(_ENABLED);
 	while(1) {
 		char c;
-		putchar('\n');
 		sys_set_text_color(WHITE);
 		puts("TaurOS> ");
 		sys_set_text_color(LIME);
@@ -26,7 +23,6 @@ int main() {
 		putchar('\n');
 	}
 	sys_set_cursor_status(_DISABLED);
-
 
 	return 0x1;
 }

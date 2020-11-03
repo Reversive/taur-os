@@ -44,6 +44,5 @@ extern syscall * syscalls_table[_SYSCALLS_SIZE];
 int read(unsigned int fd, char * buffer, size_t count);
 int write(unsigned int fd, char * buffer, size_t count);
 void copy_mem(char* from,char* buffer);
-char get_char_data( char hexaNum);
 
 #endif
