@@ -130,7 +130,11 @@ void _to_string(long num, char * buffer, int mode) {
     int i=0;
     int j=0;
     while(num > 0){
-        buffer[i++] = num % factor + '0';
+        if(mode == 0) {
+            buffer[i++] = num % factor + '0';
+        } else {
+            buffer[i++] = get_char_data(num % factor);
+        }
         num = num / factor ;
     }
     char aux; //j apunta al comienzo del buffer, i al final
