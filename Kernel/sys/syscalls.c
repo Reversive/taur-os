@@ -33,19 +33,19 @@ int write(unsigned int fd, char * buffer, size_t count) {
 }
 
 void copy_mem(char * from, char * buffer) {
-	int iByte;
+	int _byte_idx;
 	unsigned char aux;
 
-	for(iByte = 0; iByte < 32; iByte++) {
+	for(_byte_idx = 0; _byte_idx < 32; _byte_idx++) {
 		//Por cada byte leo 2 valores hexa
-		aux = from[iByte] & 0xF0;// & 1111 0000
+		aux = from[_byte_idx] & 0xF0;// & 1111 0000
 		aux = aux >> 4;
-		buffer[iByte * 2] = get_char_data(aux);
-		aux = from[iByte] & 0x0F;// & 0000 1111
-		buffer[iByte * 2 + 1] = get_char_data(aux);
+		buffer[_byte_idx * 2] = get_char_data(aux);
+		aux = from[_byte_idx] & 0x0F;// & 0000 1111
+		buffer[_byte_idx * 2 + 1] = get_char_data(aux);
 	}
-	buffer[iByte * 2] = 0;
+	buffer[_byte_idx * 2] = 0;
 }
-char get_char_data( char hexaNum) {
-    return (hexaNum < 0xA) ? hexaNum + '0' : hexaNum + 'A' - 10;
+char get_char_data( char hexa_num) {
+    return (hexa_num < 0xA) ? hexa_num + '0' : hexa_num + 'A' - 10;
 }

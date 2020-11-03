@@ -69,57 +69,61 @@ void kernel_panic(uint64_t * rip, uint64_t * rsp, uint64_t * top, int id, const 
 
 void dump_reg(int id, const char * desc, uint64_t * rip, uint64_t * rsp, uint64_t * top) {
 	full_reg_snapshot * regs = (full_reg_snapshot *)top;
-	ncNewline();
-	ncPrint("[EXCEPTION ID]: ");
-	ncPrintDec(id);
-	ncNewline();
-	ncPrint("[DESCRIPTION]: ");
-	ncPrint(desc);
-	ncNewline();
-	ncPrint("[Instruction Pointer address]: ");
-	ncPrintHex(*rip);
-	ncNewline();
-	ncPrint("[Registers]");
-	ncNewline();
-	ncPrint("[RAX] = ");
-	ncPrintHex(regs->rax);
-	ncPrint(" [RBX] = ");
-	ncPrintHex(regs->rbx);
-	ncPrint(" [RCX] = ");
-	ncPrintHex(regs->rcx);
-	ncNewline();
-	ncPrint("[RDX] = ");
-	ncPrintHex(regs->rdx);
-	ncPrint(" [RDI] = ");
-	ncPrintHex(regs->rdi);
-	ncPrint(" [RSI] = ");
-	ncPrintHex(regs->rsi);
-	ncNewline();
-	ncPrint("[R8] = ");
-	ncPrintHex(regs->r8);
-	ncPrint(" [R9] = ");
-	ncPrintHex(regs->r9);
-	ncPrint(" [R10] = ");
-	ncPrintHex(regs->r10);
-	ncPrint(" [R11] = ");
-	ncPrintHex(regs->r11);
-	ncNewline();
-	ncPrint("[R12] = ");
-	ncPrintHex(regs->r12);
-	ncPrint(" [R13] = ");
-	ncPrintHex(regs->r13);
-	ncPrint(" [R14] = ");
-	ncPrintHex(regs->r14);
-	ncPrint(" [R15] = ");
-	ncPrintHex(regs->r15);
-	ncNewline();
+	_set_cursor_state(0);
+	int bg_color_b = _get_bg_color();
+	int text_color_b = _get_text_color();
+	print_char('\n');
+	_set_bg_color(0xFF0000);
+	_set_text_color(0xFFFFFF);
+	_internal_print_string("[EXCEPTION ID]: ");
+	_internal_print_dec(id);
+	print_char('\n');
+	_internal_print_string("[DESCRIPTION]: ");
+	_internal_print_string(desc);
+	print_char('\n');
+	_internal_print_string("[Instruction Pointer address]: ");
+	_internal_print_hex(*rip);
+	print_char('\n');
+	_internal_print_string("[Registers]");
+	print_char('\n');
+	_internal_print_string("[RAX] = ");
+	_internal_print_hex(regs->rax);
+	_internal_print_string(" [RBX] = ");
+	_internal_print_hex(regs->rbx);
+	_internal_print_string(" [RCX] = ");
+	_internal_print_hex(regs->rcx);
+	print_char('\n');
+	_internal_print_string("[RDX] = ");
+	_internal_print_hex(regs->rdx);
+	_internal_print_string(" [RDI] = ");
+	_internal_print_hex(regs->rdi);
+	_internal_print_string(" [RSI] = ");
+	_internal_print_hex(regs->rsi);
+	print_char('\n');
+	_internal_print_string("[R8] = ");
+	_internal_print_hex(regs->r8);
+	_internal_print_string(" [R9] = ");
+	_internal_print_hex(regs->r9);
+	_internal_print_string(" [R10] = ");
+	_internal_print_hex(regs->r10);
+	_internal_print_string(" [R11] = ");
+	_internal_print_hex(regs->r11);
+	print_char('\n');
+	_internal_print_string("[R12] = ");
+	_internal_print_hex(regs->r12);
+	_internal_print_string(" [R13] = ");
+	_internal_print_hex(regs->r13);
+	_internal_print_string(" [R14] = ");
+	_internal_print_hex(regs->r14);
+	_internal_print_string(" [R15] = ");
+	_internal_print_hex(regs->r15);
+	print_char('\n');
+	_set_bg_color(bg_color_b);
+	_set_text_color(text_color_b);
 }
 
 void get_registers(char *data){
-	int i =test();
-	//ncPrintDec(i);
 	save_registers_data(data);
-
 }
 
 

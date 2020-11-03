@@ -3,15 +3,6 @@
 #include "../include/time.h"
 #include "print_mem.h"
 
-#define ESC_ASCII 27
-#define MAX 255
-
-unsigned int consoleNum;
-unsigned int inputReadSize = 0;
-
-char inputRead[MAX] = {0};
-char data[136];
-
 unsigned int getchar(void) {
     char c;
     if(sys_read(_FD_STD_IN, &c, 1) == 0) return EOF;
@@ -41,113 +32,8 @@ unsigned int strlen(char * str){
     return i;
 }
 
-void printString(char * str){
-    /*Preferimos recorrer una vez para calcular la long del string y hacer un solo llamado a la syscall
-    en lugar de hacer un putChar (por ende int80h) hasta encontrar el */
+void print_string(char * str){
     sys_write(_FD_STD_OUT,str,strlen(str));
     return;
 }
 
-
-
-void help() {
-	puts("Ventana de comandos, pulse Ctrl + 1/2 para cambiar de consola\n");
-	puts("Comandos posibles:\n");
-	puts("help - Ver comandos\n");
-	puts("time - Consultar hora del sistema\n");
-	puts("inforeg - Estado de registros. Primero debe capturar con Alt\n");
-	puts("printmem 0xDIR - Volcado de memoria\n");
-	return;
-}
-
-void asignarModulo(char * str) {
-	if(commandEql(str, "help")) {
-		help();
-	}
-	else if(commandEql(str,"time")){
-    print_time();
-  }
-	else if(commandEql(str,"inforeg")){
-        get_inforeg(data);
-		PrintInfoReg(data);
-	}
-	else if(commandEql(str, "printmem")) {
-		if(!info_mem(str))
-			printString("Ingrese una direccion como argumento\n");
-	}
-	else {
-		puts("Ingrese un comando valido.\n");
-	}
-}
-
-unsigned int commandEql(char * str1, char * str2) {
-    while(*str1 == ' ')
-        str1++; //Hago un "trim"
-    int eql = 1, i;
-    for(i = 0; str2[i] != 0; i++) //El de la derecha es el comando a comparar.
-        if(str1[i] != str2[i])
-            eql = 0;
-    if(str1[i] != 0 && str1[i] != ' ')
-        eql = 0;
-    return eql;
-    }
-
-unsigned int consoleFinishHandler() {
-	inputRead[inputReadSize] = 0;//Le agrego 0 final
-	putchar('\n');
-	asignarModulo(inputRead);
-	//Reseteamos el buffer
-	inputReadSize = 0;
-	inputRead[0] = 0;
-	return 1;
-}
-
-unsigned int finishChar(char chr) {
-	return chr == '\n';
-    }
-
-void consoleKeyHandler(char input) {
-	
-     if( input == ESC_ASCII) {
-		//IGNORAR
-
-	} else if(input == '\b'){
-		if(inputReadSize > 0) {
-			//Logicamente solo permite borrar si hay algo escrito.
-			//Asi evitamos que borrer cosas que no le pertenece.
-			inputRead[inputReadSize--] = 0;
-			putchar(input);
-		}
-	} else if(inputReadSize < MAX) {
-		inputRead[inputReadSize++] = input;
-		putchar(input);
-	}
-	//Si el buffer esta lleno no se lee mas.
-}
-
-void PrintInfoReg( char *data){
-	char buffer [17]; //16 + 1 para el cero
-    char registersName [17][6] = {"R15","R14","R13","R12","R11","R10"," R9"," R8","RAX","RBX","RCX","RDX","RDI","RSI","RBP","RIP","RSP"};
-	int i=0;
-	int nByte,idx;
-	unsigned char c;
-	for(i=0;i<17;i++){
-		for ( nByte = i*SIZE_BYTE; nByte <i*SIZE_BYTE+SIZE_BYTE ; nByte++){
-			idx=SIZE_BYTE-1-nByte%SIZE_BYTE;
-			c=data[nByte] & 0xF0;
-			c=c >> 4;
-			buffer[idx*2]=getcharData(c);
-			c=data[nByte] & 0x0F;
-			buffer[idx*2+1]=getcharData(c);
-		}
-		buffer[16]=0;
-		printString(registersName[i]);
-		printString("= 0x");
-		printString(buffer);
-		putchar('\n');
-	}
-}
-
-char getcharData( char hexaNum) {
-    return (hexaNum < 0xA) ? hexaNum + '0' : hexaNum + 'A' - 10;
-}

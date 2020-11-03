@@ -13,14 +13,6 @@ unsigned int getchar(void);
 unsigned int putchar(char c);
 int puts(const char *str);
 unsigned int strlen(char * str);
-void printString(char * str);
-void PrintInfoReg( char *data);
-char getcharData( char hexaNum);
-unsigned int commandEql(char * str1, char * str2);
-void asignarModulo(char * str);
-unsigned int consoleFinishHandler();
-unsigned int finishChar(char chr);
-void consoleKeyHandler(char input);
-void help();
+void print_string(char * str);
 
 #endif

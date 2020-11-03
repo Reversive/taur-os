@@ -76,6 +76,22 @@ void print_char(unsigned char key) {
     
 }
 
+void _internal_print_string(char * str) {
+    int i;
+    for(i = 0; str[i] != '\0'; i++) {
+        print_char(str[i]);
+    }
+}
+
+int _get_bg_color() {
+    return bg_color;
+}
+
+int _get_text_color() {
+    return text_color;
+}
+
+
 void _enable_cursor() {
     timer_append_function(_tick, 10);
 }
@@ -102,4 +118,40 @@ void _set_cursor_state(char state) {
     } else {
         _enable_cursor();
     }
+}
+
+void _to_string(long num, char * buffer, int mode) {
+    int factor = 10;
+    if(mode == 1) factor = 16;
+    if (num==0){
+      buffer[0] = '0';
+      return;
+    }
+    int i=0;
+    int j=0;
+    while(num > 0){
+        buffer[i++] = num % factor + '0';
+        num = num / factor ;
+    }
+    char aux; //j apunta al comienzo del buffer, i al final
+    buffer[i--]=0;
+     while(j<i){
+        aux = buffer[i];
+        buffer[i] = buffer[j];
+        buffer[j]=aux;
+        j++;
+        i--;
+    }
+}
+
+void _internal_print_dec(int i) {
+    char buffer[18];
+    _to_string(i, buffer, 0);
+    _internal_print_string(buffer);
+}
+
+void _internal_print_hex(uint64_t h) {
+    char buffer[18];
+    _to_string(h, buffer, 1);
+    _internal_print_string(buffer);
 }

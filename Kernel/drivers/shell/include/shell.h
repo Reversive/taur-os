@@ -9,7 +9,11 @@ void _set_bg_color(int color);
 void _set_text_color(int color);
 void _set_text_size(int size);
 void _set_cursor_state(char state);
-
+void _internal_print_string(char * str);
+void _internal_print_dec(int i);
+void _internal_print_hex(uint64_t h);
+int _get_bg_color();
+int _get_text_color();
 
 enum common_keys {
     _NEWLINE = '\n',

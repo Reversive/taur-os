@@ -1,9 +1,10 @@
 #ifndef LIB_H
 #define LIB_H
 
-#include <naiveConsole.h>
+#include "../drivers/shell/include/shell.h"
 #include "../cpu/include/defs.h"
 #include "../asm/include/interrupts.h"
+
 
 
 typedef unsigned char bool;
@@ -28,15 +29,6 @@ typedef struct fs_register {
     uint64_t rax;
 } full_reg_snapshot;
 
-typedef struct ss_register {
-    uint64_t rdi;
-    uint64_t rsi;
-    uint64_t rdx;
-    uint64_t rcx;
-    uint64_t r8;
-    uint64_t r9;
-} sys_reg_snapshot;
-
 void * memset(void * destination, int32_t character, uint64_t length);
 void * memcpy(void * destination, const void * source, uint64_t length);
 void dump_reg(int id, const char * desc, uint64_t * rip, uint64_t * rsp, uint64_t * top);
@@ -47,7 +39,6 @@ void halt_system();
 
 void get_registers(char *data);
 
-char getcharData(char hexaNum);
 extern void save_registers_data(char* data);
 void print_reg();
 extern int test();

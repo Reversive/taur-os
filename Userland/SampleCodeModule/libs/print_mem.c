@@ -68,8 +68,8 @@ void print_mem_in_screen(char* startPointer,char* buffer){
 	char startPointer_string[8];
 	for(int i=0;i<4;i++){
 		hex_to_string((long) startPointer,startPointer_string);
-		printString(startPointer_string);
-		printString(": ");
+		print_string(startPointer_string);
+		print_string(": ");
 		for(int j=0;j<8;j++){
 			putchar(buffer[i*8+j*2]);
 			putchar(buffer[i*8+j*2+1]);
@@ -78,4 +78,31 @@ void print_mem_in_screen(char* startPointer,char* buffer){
 		startPointer=startPointer+8;
 		putchar('\n');
 	}
+}
+
+void print_info_reg( char *data){
+	char buffer [17]; 
+    char register_names [17][6] = {"R15","R14","R13","R12","R11","R10"," R9"," R8","RAX","RBX","RCX","RDX","RDI","RSI","RBP","RIP","RSP"};
+	int i=0;
+	int nByte,idx;
+	unsigned char c;
+	for(i=0;i<17;i++){
+		for ( nByte = i*SIZE_BYTE; nByte <i*SIZE_BYTE+SIZE_BYTE ; nByte++){
+			idx=SIZE_BYTE-1-nByte%SIZE_BYTE;
+			c=data[nByte] & 0xF0;
+			c=c >> 4;
+			buffer[idx*2]=get_char_data(c);
+			c=data[nByte] & 0x0F;
+			buffer[idx*2+1]=get_char_data(c);
+		}
+		buffer[16]=0;
+		print_string(register_names[i]);
+		print_string("= 0x");
+		print_string(buffer);
+		putchar('\n');
+	}
+}
+
+char get_char_data(char hex_num) {
+    return (hex_num < 0xA) ? hex_num + '0' : hex_num + 'A' - 10;
 }

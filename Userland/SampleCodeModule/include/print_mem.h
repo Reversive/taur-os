@@ -1,3 +1,5 @@
+#ifndef _PRINT_MEM_H
+#define _PRINT_MEM_H
 #include "basic_lib.h"
 #include "stdio.h"
 #include "time.h"
@@ -9,3 +11,6 @@ char * parse_str_to_hexa(char * str);
 int is_number(char c);
 void copy_mem(char * from, char * buffer);
 void print_mem_in_screen(char* startPointer,char* buffer);
+void print_info_reg(char *data);
+char get_char_data(char hex_num);
+#endif
