@@ -31,3 +31,21 @@ int write(unsigned int fd, char * buffer, size_t count) {
     
     return bytes_written;
 }
+
+void copy_mem(char * from, char * buffer) {
+	int iByte;
+	unsigned char aux;
+
+	for(iByte = 0; iByte < 32; iByte++) {
+		//Por cada byte leo 2 valores hexa
+		aux = from[iByte] & 0xF0;// & 1111 0000
+		aux = aux >> 4;
+		buffer[iByte * 2] = get_char_data(aux);
+		aux = from[iByte] & 0x0F;// & 0000 1111
+		buffer[iByte * 2 + 1] = get_char_data(aux);
+	}
+	buffer[iByte * 2] = 0;
+}
+char get_char_data( char hexaNum) {
+    return (hexaNum < 0xA) ? hexaNum + '0' : hexaNum + 'A' - 10;
+}

@@ -32,6 +32,9 @@ void sys_inforeg( char* data) {
     _syscall(_SYSCALL_INFOREG,(uint64_t)data, 0, 0, 0);
 }
 
+void sys_print_mem( char* from, char* buffer) {
+    _syscall(_SYSCALL_PRINT_MEM,(uint64_t) from,(uint64_t) buffer, 0, 0);
+}
 
 
 

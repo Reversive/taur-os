@@ -8,4 +8,5 @@ unsigned int get_day_hour();
 unsigned int get_day();
 
 void print_time();
+void hex_to_string(long num, char * buffer);
 #endif

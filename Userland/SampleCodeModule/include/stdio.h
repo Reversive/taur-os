@@ -18,9 +18,9 @@ void PrintInfoReg( char *data);
 char getcharData( char hexaNum);
 unsigned int commandEql(char * str1, char * str2);
 void asignarModulo(char * str);
-unsigned int consoleBFinishHandler();
-unsigned int finishCharB(char chr);
-void consoleBKeyHandler(char input);
+unsigned int consoleFinishHandler();
+unsigned int finishChar(char chr);
+void consoleKeyHandler(char input);
 void help();
 
 #endif

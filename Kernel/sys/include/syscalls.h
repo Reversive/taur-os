@@ -21,11 +21,12 @@ enum syscall_numbers {
     _SYSCALL_SET_TEXT_COLOR,
     _SYSCALL_SET_TEXT_SIZE,
     _SYSCALL_SET_CURSOR_STATE,
-    _SYSCALL_INFOREG
+    _SYSCALL_INFOREG,
+    _SYSCALL_PRINT_MEM
 
 };
 
-#define _SYSCALLS_LAST _SYSCALL_INFOREG
+#define _SYSCALLS_LAST _SYSCALL_PRINT_MEM
 #define _SYSCALLS_SIZE (_SYSCALLS_LAST + 1)
 
 syscall syscall_read;
@@ -36,10 +37,13 @@ syscall syscall_set_text_color;
 syscall syscall_set_text_size;
 syscall syscall_set_cursor_state;
 syscall syscall_inforeg;
+syscall syscall_print_mem;
 
 extern syscall * syscalls_table[_SYSCALLS_SIZE];
 
 int read(unsigned int fd, char * buffer, size_t count);
 int write(unsigned int fd, char * buffer, size_t count);
+void copy_mem(char* from,char* buffer);
+char get_char_data( char hexaNum);
 
 #endif

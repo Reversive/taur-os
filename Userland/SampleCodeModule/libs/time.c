@@ -25,7 +25,7 @@ unsigned int get_year() {
     return sys_time(0x9);
 }
 
-void hexToString(long num, char * buffer){
+void hex_to_string(long num, char * buffer){
     if (num==0){
       buffer[0] = '0';
       return;
@@ -50,22 +50,22 @@ void hexToString(long num, char * buffer){
 void print_time() {
   char buffer[3];
   puts("Time: ");
-  hexToString(get_day_hour(), buffer);
+  hex_to_string(get_day_hour(), buffer);
   puts(buffer);
   puts("Hs ");
-  hexToString(get_day_minutes(), buffer);
+  hex_to_string(get_day_minutes(), buffer);
   puts(buffer);
   puts("M ");
-  hexToString(get_day_seconds(), buffer);
+  hex_to_string(get_day_seconds(), buffer);
   puts(buffer);
   puts("S\nDate: ");
-  hexToString(get_day(), buffer);
+  hex_to_string(get_day(), buffer);
   puts(buffer);
   puts("/");
-  hexToString(get_month(), buffer);
+  hex_to_string(get_month(), buffer);
   puts(buffer);
   puts("/");
-  hexToString(get_year(), buffer);
+  hex_to_string(get_year(), buffer);
   puts(buffer);
   puts("\n");
 }

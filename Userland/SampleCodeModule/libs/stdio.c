@@ -1,14 +1,15 @@
 #include "../include/stdio.h"
 #include "../include/inforeg.h"
 #include "../include/time.h"
+#include "print_mem.h"
 
 #define ESC_ASCII 27
 #define MAX 255
 
-unsigned int consoleNumB;
-unsigned int inputReadSizeB = 0;
+unsigned int consoleNum;
+unsigned int inputReadSize = 0;
 
-char inputReadB[MAX] = {0};
+char inputRead[MAX] = {0};
 char data[136];
 
 unsigned int getchar(void) {
@@ -54,7 +55,7 @@ void help() {
 	puts("Comandos posibles:\n");
 	puts("help - Ver comandos\n");
 	puts("time - Consultar hora del sistema\n");
-	puts("inforeg - Estado de\nregistros. Primero debe capturar con Alt\n");
+	puts("inforeg - Estado de registros. Primero debe capturar con Alt\n");
 	puts("printmem 0xDIR - Volcado de memoria\n");
 	return;
 }
@@ -71,8 +72,8 @@ void asignarModulo(char * str) {
 		PrintInfoReg(data);
 	}
 	else if(commandEql(str, "printmem")) {
-		//if(!showMemRead(str))
-		//	printString("Ingrese una direccion como argumento\n");
+		if(!info_mem(str))
+			printString("Ingrese una direccion como argumento\n");
 	}
 	else {
 		puts("Ingrese un comando valido.\n");
@@ -82,7 +83,6 @@ void asignarModulo(char * str) {
 unsigned int commandEql(char * str1, char * str2) {
     while(*str1 == ' ')
         str1++; //Hago un "trim"
-
     int eql = 1, i;
     for(i = 0; str2[i] != 0; i++) //El de la derecha es el comando a comparar.
         if(str1[i] != str2[i])
@@ -92,57 +92,36 @@ unsigned int commandEql(char * str1, char * str2) {
     return eql;
     }
 
-unsigned int consoleBFinishHandler() {
-	inputReadB[inputReadSizeB] = 0;//Le agrego 0 final
+unsigned int consoleFinishHandler() {
+	inputRead[inputReadSize] = 0;//Le agrego 0 final
 	putchar('\n');
-
-	asignarModulo(inputReadB);
-
+	asignarModulo(inputRead);
 	//Reseteamos el buffer
-	inputReadSizeB = 0;
-	inputReadB[0] = 0;
+	inputReadSize = 0;
+	inputRead[0] = 0;
 	return 1;
 }
 
-unsigned int finishCharB(char chr) {
+unsigned int finishChar(char chr) {
 	return chr == '\n';
     }
 
-void consoleBKeyHandler(char input) {
-	//if(input == 2) {
-		/*Existe el caso de que primero comenzo a escribir cosas y luego presiono Alt.
-		En ese caso, para que el texto no quede inmerso en el texto viejo, se lo borra y se lo printea
-		luego de mostrar la leyendo de captura hecha.*/
-
-		//setRegistersFlag(); //Alt hace captura de registros
-
-		//Primero "borro" si es que hay texto impreso antes
-	//	for(int i = 0; i < inputReadSizeB; i++)
-	//		putChar('\b');
-	//	//Imprimo la leyenda
-	//	puts("Captura de registros hecha.");
-//
-	//	//Vuelvo a printear lo que ya estaba, si es que habia
-	//	for(int i = 0; i < inputReadSizeB; i++)
-	//		putchar(inputReadB[i]);
-	//}
+void consoleKeyHandler(char input) {
+	
      if( input == ESC_ASCII) {
 		//IGNORAR
 
 	} else if(input == '\b'){
-
-		if(inputReadSizeB > 0) {
+		if(inputReadSize > 0) {
 			//Logicamente solo permite borrar si hay algo escrito.
 			//Asi evitamos que borrer cosas que no le pertenece.
-			inputReadB[inputReadSizeB--] = 0;
+			inputRead[inputReadSize--] = 0;
 			putchar(input);
 		}
-	} else if(inputReadSizeB < MAX) {
-		inputReadB[inputReadSizeB++] = input;
+	} else if(inputReadSize < MAX) {
+		inputRead[inputReadSize++] = input;
 		putchar(input);
 	}
-
-
 	//Si el buffer esta lleno no se lee mas.
 }
 
@@ -168,6 +147,7 @@ void PrintInfoReg( char *data){
 		putchar('\n');
 	}
 }
+
 char getcharData( char hexaNum) {
     return (hexaNum < 0xA) ? hexaNum + '0' : hexaNum + 'A' - 10;
 }

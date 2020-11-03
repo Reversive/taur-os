@@ -90,17 +90,17 @@ cpuVendor:
 
 
 get_time:
-  push rbp
-  mov rbp,rsp
-  mov rax, 0
-  cli
-  mov rax, rdi
-  out 70h, al
-  in al, 71h
-  sti
-  mov rsp,rbp
-  pop rbp
-  ret
+    push rbp
+ 	mov rbp,rsp
+    mov rax, 0
+    cli
+    mov rax, rdi
+    out 70h, al
+    in al, 71h
+    sti
+    mov rsp,rbp
+    pop rbp
+    ret
 
 test:
 	mov r15,0xaAbB

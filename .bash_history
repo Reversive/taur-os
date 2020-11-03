@@ -12,3 +12,101 @@ clear
 make all
 exit
 exit
+cd root
+cd cd Toolchain && make all && cd .. && make all
+ls
+cd cd Toolchain && make all && cd .. && make all
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+cd Toolchain && make all && cd .. && make all
+cd root
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all
+clear
+cd Toolchain && make all && cd .. && make all

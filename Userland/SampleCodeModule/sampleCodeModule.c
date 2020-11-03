@@ -15,11 +15,11 @@ int main() {
 		sys_set_text_color(LIME);
 		while(c = getchar(), c != '\n') {
 			if(c != EOF) {
-				consoleBKeyHandler(c);
+				consoleKeyHandler(c);
 			}
 		}
-		if (finishCharB(c)){
-			consoleBFinishHandler();
+		if (finishChar(c)){
+			consoleFinishHandler();
 		}
 		putchar('\n');
 	}

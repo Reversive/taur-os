@@ -12,6 +12,7 @@ void sys_set_text_size(unsigned int size);
 void sys_set_text_color(unsigned int color);
 void sys_set_bg_color(unsigned int color);
 void sys_inforeg( char* data);
+void sys_print_mem( char* from, char* buffer);
 
 enum syscall_numbers {
     _SYSCALL_READ = 0,
@@ -21,7 +22,9 @@ enum syscall_numbers {
     _SYSCALL_SET_TEXT_COLOR,
     _SYSCALL_SET_TEXT_SIZE,
     _SYSCALL_SET_CURSOR_STATE,
-    _SYSCALL_INFOREG
+    _SYSCALL_INFOREG,
+    _SYSCALL_PRINT_MEM
+
 };
 
 enum status {
