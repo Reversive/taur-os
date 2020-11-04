@@ -126,5 +126,7 @@ void get_registers(char *data){
 	save_registers_data(data);
 }
 
-
+char get_char_data( char hexa_num) {
+    return (hexa_num < 0xA) ? hexa_num + '0' : hexa_num + 'A' - 10;
+}
 

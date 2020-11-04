@@ -1,5 +1,6 @@
 #include "../include/time.h"
 #include "../include/stdio.h"
+#include "../include/print_mem.h"
 
 unsigned int get_day_seconds() {
     return sys_time(0x0);
@@ -33,7 +34,7 @@ void hex_to_string(long num, char * buffer){
     int i=0;
     int j=0;
     while(num > 0){
-        buffer[i++] = num%16 + '0';
+        buffer[i++] = get_char_data(num%16);
         num = num / 16 ;
     }
     char aux; //j apunta al comienzo del buffer, i al final
@@ -52,13 +53,13 @@ void print_time() {
   puts("Time: ");
   hex_to_string(get_day_hour(), buffer);
   puts(buffer);
-  puts("Hs ");
+  puts("hs ");
   hex_to_string(get_day_minutes(), buffer);
   puts(buffer);
-  puts("M ");
+  puts("m ");
   hex_to_string(get_day_seconds(), buffer);
   puts(buffer);
-  puts("S\nDate: ");
+  puts("s\nDate: ");
   hex_to_string(get_day(), buffer);
   puts(buffer);
   puts("/");

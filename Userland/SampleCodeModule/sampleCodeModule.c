@@ -5,7 +5,6 @@
 #include "include/console.h"
 #include "include/chess_bitmap.h"
 
-
 int main() {
 	for(int i = 0; i < 8; i+=2) {
 		sys_draw_square(i*80, 300, 80, 0x282828);
@@ -29,7 +28,6 @@ int main() {
 	sys_set_cursor_status(_ENABLED);
 	while(1) {
 		char c;
-		putchar('\n');
 		sys_set_text_color(WHITE);
 		puts("TaurOS> ");
 		sys_set_text_color(LIME);
@@ -44,7 +42,6 @@ int main() {
 		putchar('\n');
 	}
 	sys_set_cursor_status(_DISABLED);
-
 
 	return 0x1;
 }

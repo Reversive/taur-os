@@ -1,4 +1,5 @@
 #include "include/syscalls.h"
+#include "../include/lib.h"
 
 
 int read(unsigned int fd, char * buffer, size_t count) {
@@ -45,7 +46,4 @@ void copy_mem(char * from, char * buffer) {
 		buffer[_byte_idx * 2 + 1] = get_char_data(aux);
 	}
 	buffer[_byte_idx * 2] = 0;
-}
-char get_char_data( char hexa_num) {
-    return (hexa_num < 0xA) ? hexa_num + '0' : hexa_num + 'A' - 10;
 }
