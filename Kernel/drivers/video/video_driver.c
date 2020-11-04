@@ -86,3 +86,7 @@ void paint_matrix(int x, int y, int color, int size, char * matrix) {
 
     }
 }
+
+void clear_screen(int color) {
+    paint_rectangle(0, 0, WIDTH, HEIGHT, color);
+}

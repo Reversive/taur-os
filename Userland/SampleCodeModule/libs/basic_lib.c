@@ -44,3 +44,26 @@ void sys_draw_square(int x, int y, int size, int color) {
     _syscall(_SYSCALL_DRAW_SQUARE, x, y, size, color, 0);
 }
 
+void sys_set_cursor_pos(int x, int y) {
+    _syscall(_SYSCALL_SET_CURSOR_POS, x, y, 0, 0, 0);
+}
+
+void sys_get_cursor_pos(int * x, int * y) {
+    _syscall(_SYSCALL_GET_CURSOR_POS, x, y, 0, 0, 0);
+}
+
+void sys_clear_screen() {
+    _syscall(_SYSCALL_CLEAR_SCREEN, 0, 0, 0, 0, 0);
+}
+
+void sys_draw_character(int x, int y, char character, int size, int color) {
+    _syscall(_SYSCALL_DRAW_CHARACTER, x, y, character, size, color);
+}
+
+void sys_set_newline_scroll_state(int state) {
+    _syscall(_SYSCALL_SET_NEWLINE_SCROLL_STATE, state, 0, 0, 0, 0);
+}
+
+void sys_clear_line() {
+    _syscall(_SYSCALL_CLEAR_LINE, 0, 0, 0, 0, 0);
+}

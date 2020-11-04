@@ -52,4 +52,5 @@ void paint_square(int x, int y, int s, int color);
 void paint_character(int x, int y, char character, int size, int color, int bg_color);
 void scroll(int times);
 void paint_matrix(int x, int y, int color, int scale, char * matrix);
+void clear_screen(int color);
 #endif

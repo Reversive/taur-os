@@ -12,13 +12,19 @@ syscall * syscalls_table[_SYSCALLS_SIZE] = {
     [_SYSCALL_INFOREG] = syscall_inforeg,
     [_SYSCALL_PRINT_MEM] = syscall_print_mem,
     [_SYSCALL_DRAW_MATRIX] = syscall_draw_matrix,
-    [_SYSCALL_DRAW_SQUARE] = syscall_draw_square
+    [_SYSCALL_DRAW_SQUARE] = syscall_draw_square,
+    [_SYSCALL_SET_CURSOR_POS] = syscall_set_cursor_pos,
+    [_SYSCALL_GET_CURSOR_POS] = syscall_get_cursor_pos,
+    [_SYSCALL_CLEAR_SCREEN] = syscall_clear_screen,
+    [_SYSCALL_DRAW_CHARACTER] = syscall_draw_character,
+    [_SYSCALL_SET_NEWLINE_SCROLL_STATE] = syscall_set_newline_scroll_state,
+    [_SYSCALL_CLEAR_LINE] = syscall_clear_line
 
 };
 
 
 uint64_t sys80handler(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
-    if( rdi < 0 || rdi > _SYSCALLS_SIZE) return -1;
+    if( rdi < 0 || rdi > _SYSCALLS_SIZE) return ERROR;
     return syscalls_table[rdi](rsi, rdx, rcx, r8, r9);
 }
 
@@ -89,13 +95,54 @@ uint64_t syscall_draw_matrix(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t 
     return SUCCESS;
 }
 
-
-
 uint64_t syscall_draw_square(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
     int x = (int) rsi;
     int y = (int) rdx;
     int size = (int) rcx;
     int color = (int) r8;
     paint_square(x, y, size, color);
+    return SUCCESS;
+}
+
+uint64_t syscall_set_cursor_pos(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+    int x = (int) rsi;
+    int y = (int) rdx;
+    if(x < 0 || x > WIDTH || y < 0 || y > HEIGHT) return ERROR;
+    _set_cursor_pos(x, y);
+    return SUCCESS;
+}
+
+uint64_t syscall_get_cursor_pos(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+    int * x = (int *) rsi;
+    int * y = (int *) rdx;
+    _get_cursor_pos(x, y);
+    return SUCCESS;
+}
+
+uint64_t syscall_clear_screen(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+    clear_screen(_get_bg_color());
+    return SUCCESS;
+}
+
+uint64_t syscall_draw_character(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+    int x = (int) rsi;
+    int y = (int) rdx;
+    if(x < 0 || x > WIDTH || y < 0 || y > HEIGHT) return ERROR;
+    char c = (char) rcx;
+    int size = (int) r8;
+    int color = (int) r9;
+    paint_character(x, y, c, size, color, _get_bg_color());
+    return SUCCESS;
+
+}
+
+uint64_t syscall_set_newline_scroll_state(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+    int state = (int) rsi;
+    _set_newline_scroll_state(state);
+    return SUCCESS;
+}
+
+uint64_t syscall_clear_line(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+    _clear_line();
     return SUCCESS;
 }

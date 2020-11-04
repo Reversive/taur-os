@@ -8,6 +8,7 @@ int _cursor_vertical     = 0;
 int bg_color             = 0x00000000;
 int text_color           = 0x04C0CC;
 int blink                = 0;
+int ignore_newline_scroll= 0;
 
 #define SCALED_CHAR_WIDTH (text_size * CHAR_WIDTH)
 #define SCALED_CHAR_HEIGHT (text_size * CHAR_HEIGHT)
@@ -54,12 +55,16 @@ void _slide_cursor_forward() {
     }
 }
 
+void _clear_line() {
+    paint_rectangle(_cursor_horizontal, _cursor_vertical, WIDTH, SCALED_CHAR_HEIGHT, bg_color);
+}
+
 void print_char(unsigned char key) {
     switch (key)
     {
     case _NEWLINE:
         paint_character(_cursor_horizontal, _cursor_vertical, ' ', text_size, bg_color, bg_color);
-        _slide_cursor_newline();
+        if(ignore_newline_scroll == 0) _slide_cursor_newline();
         break;
     case _BACKSPACE:
         paint_character(_cursor_horizontal, _cursor_vertical, ' ', text_size, bg_color, bg_color);
@@ -80,6 +85,10 @@ void _internal_print_string(const char * str) {
     for(i = 0; str[i] != '\0'; i++) {
         print_char(str[i]);
     }
+}
+
+void _set_newline_scroll_state(int state) {
+    ignore_newline_scroll = state;
 }
 
 int _get_bg_color() {
@@ -157,4 +166,14 @@ void _internal_print_hex(uint64_t h) {
     char buffer[18];
     _to_string(h, buffer, 1);
     _internal_print_string(buffer);
+}
+
+void _set_cursor_pos(int x, int y) {
+    _cursor_horizontal = x;
+    _cursor_vertical = y;
+}
+
+void _get_cursor_pos(int * x, int * y) {
+    *x = _cursor_horizontal;
+    *y = _cursor_vertical;
 }

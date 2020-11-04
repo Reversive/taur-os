@@ -24,11 +24,17 @@ enum syscall_numbers {
     _SYSCALL_INFOREG,
     _SYSCALL_PRINT_MEM,
     _SYSCALL_DRAW_MATRIX,
-    _SYSCALL_DRAW_SQUARE
+    _SYSCALL_DRAW_SQUARE,
+    _SYSCALL_SET_CURSOR_POS,
+    _SYSCALL_GET_CURSOR_POS,
+    _SYSCALL_CLEAR_SCREEN,
+    _SYSCALL_DRAW_CHARACTER,
+    _SYSCALL_SET_NEWLINE_SCROLL_STATE,
+    _SYSCALL_CLEAR_LINE
 
 };
 
-#define _SYSCALLS_LAST _SYSCALL_DRAW_SQUARE
+#define _SYSCALLS_LAST _SYSCALL_CLEAR_LINE
 #define _SYSCALLS_SIZE (_SYSCALLS_LAST + 1)
 
 syscall syscall_read;
@@ -42,6 +48,12 @@ syscall syscall_inforeg;
 syscall syscall_print_mem;
 syscall syscall_draw_matrix;
 syscall syscall_draw_square;
+syscall syscall_set_cursor_pos;
+syscall syscall_get_cursor_pos;
+syscall syscall_clear_screen;
+syscall syscall_draw_character;
+syscall syscall_set_newline_scroll_state;
+syscall syscall_clear_line;
 
 extern syscall * syscalls_table[_SYSCALLS_SIZE];
 
