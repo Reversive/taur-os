@@ -43,6 +43,12 @@ void assign_module(char * str) {
 		//int status = 0;
 		//while(status == JUGANDO) { status = join_chess(); }
 	}
+	else if (command_equal(str,"move")){
+		int x1,x2,y1,y2;
+		parse_move(str,&x1,&y1,&x2,&y2);//A2 A3
+		move_chess_piece(x1,y1,x2,y2);
+	}
+	
 	else {
 		puts("Ingrese un comando valido.\n");
 	}

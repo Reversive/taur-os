@@ -4,27 +4,14 @@
 #include "include/colors.h"
 #include "include/console.h"
 #include "include/chess_bitmap.h"
+#include "include/chess.h"
 
 int main() {
-	for(int i = 0; i < 8; i+=2) {
-		sys_draw_square(i*80, 300, 80, 0x282828);
-	}
-	for(int i = 1; i < 8; i+=2) {
-		sys_draw_square(i*80, 300, 80, 0xD7D7D7);
-	}
-
-	for(int i = 0; i < 8; i++) {
-		draw_pawn(i*80, 300, 0xFFFFFF);
-	}
 	
-	draw_tower(0, 380, 0xFFFFFF);
-	draw_horse(80, 380, 0xFFFFFF);
-	draw_bishop(160, 380, 0xFFFFFF);
-	draw_king(240, 380, 0xFFFFFF);
-	draw_queen(320, 380, 0xFFFFFF);
-	draw_bishop(400, 380, 0xFFFFFF);
-	draw_horse(480, 380, 0xFFFFFF);
-	draw_tower(560, 380, 0xFFFFFF);
+	
+
+	join_chess();
+
 	sys_set_cursor_status(_ENABLED);
 	while(1) {
 		char c;
