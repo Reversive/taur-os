@@ -39,6 +39,10 @@ void assign_module(char * str) {
     else if(command_equal(str, "div0")) {
         int b = 5 / 0;
     }
+	else if(command_equal(str, "chess")) {
+		int status = 0;
+		//while(status == JUGANDO) { status = join_chess(); }
+	}
 	else {
 		puts("Ingrese un comando valido.\n");
 	}

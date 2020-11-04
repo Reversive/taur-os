@@ -62,3 +62,20 @@ void scroll(int times) {
         }
     }
 }
+
+
+void paint_matrix(int x, int y, int color, int size, char * matrix) {
+    struct vbe_mode_info_structure * video_pointer = (struct vbe_mode_info_structure *)0x5C00;
+    char * buffer = video_pointer->framebuffer;
+    int h_slide = x;
+    int v_slide = y;
+    for(int i = 0; i < size; i++) {
+        for(int j = 0; j < size; j++) {
+            if(matrix[i * 16 + j] == '1') paint_square(h_slide + j, v_slide + i, 4, 0x00BFFF);
+            if(matrix[i * 16 + j] == '2') paint_square(h_slide + j, v_slide + i, 4, color);
+            h_slide += 4;
+        }
+        h_slide = x;
+        v_slide += 4;
+    }
+}

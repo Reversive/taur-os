@@ -4,7 +4,7 @@
 #include "../../drivers/keyboard/include/kb_driver.h"
 #include "../../drivers/shell/include/shell.h"
 #define _STDIN 0x1
-typedef uint64_t syscall(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8);
+typedef uint64_t syscall(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
 typedef unsigned int size_t;
 
 enum file_descriptors {
@@ -22,11 +22,13 @@ enum syscall_numbers {
     _SYSCALL_SET_TEXT_SIZE,
     _SYSCALL_SET_CURSOR_STATE,
     _SYSCALL_INFOREG,
-    _SYSCALL_PRINT_MEM
+    _SYSCALL_PRINT_MEM,
+    _SYSCALL_DRAW_MATRIX,
+    _SYSCALL_DRAW_SQUARE
 
 };
 
-#define _SYSCALLS_LAST _SYSCALL_PRINT_MEM
+#define _SYSCALLS_LAST _SYSCALL_DRAW_SQUARE
 #define _SYSCALLS_SIZE (_SYSCALLS_LAST + 1)
 
 syscall syscall_read;
@@ -38,6 +40,8 @@ syscall syscall_set_text_size;
 syscall syscall_set_cursor_state;
 syscall syscall_inforeg;
 syscall syscall_print_mem;
+syscall syscall_draw_matrix;
+syscall syscall_draw_square;
 
 extern syscall * syscalls_table[_SYSCALLS_SIZE];
 
