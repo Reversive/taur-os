@@ -9,7 +9,6 @@ GLOBAL picMasterMask
 GLOBAL picSlaveMask
 GLOBAL _fetch_key
 GLOBAL save_registers_data
-GLOBAL test
 
 section .text
 
@@ -102,22 +101,6 @@ get_time:
     pop rbp
     ret
 
-test:
-	mov r15,0xaAbB
-	mov r14,5757
-	mov r13,3939h
-	mov r12,0xaA
-	mov r11,10
-	mov r10,170
-	mov r9,3939h
-	mov r8,50
-	mov rax,15
-	mov rbx,5757
-	mov rcx,3939h
-	mov rdx,50
-	mov rdi,15
-	mov rsi,5757
-	ret
 
 save_registers_data:
 	push rsp ;{"R15","R14","R13","R12","R11","R10"," R9"," R8","RAX","RBX","RCX","RDX","RDI","RSI","RBP","RIP","RSP"}

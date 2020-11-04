@@ -40,7 +40,7 @@ void assign_module(char * str) {
         int b = 5 / 0;
     }
 	else if(command_equal(str, "chess")) {
-		int status = 0;
+		//int status = 0;
 		//while(status == JUGANDO) { status = join_chess(); }
 	}
 	else {

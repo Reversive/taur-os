@@ -65,8 +65,6 @@ void scroll(int times) {
 
 
 void paint_matrix(int x, int y, int color, int size, char * matrix) {
-    struct vbe_mode_info_structure * video_pointer = (struct vbe_mode_info_structure *)0x5C00;
-    char * buffer = video_pointer->framebuffer;
     int h_slide = x;
     int v_slide = y;
     for(int i = 0; i < size; i++) {

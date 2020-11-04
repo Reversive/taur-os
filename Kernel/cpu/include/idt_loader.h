@@ -4,6 +4,7 @@
 #include "defs.h"
 #include "../../asm/include/interrupts.h"
 #include "../../asm/include/libasm.h"
+#include "../../include/time.h"
 #include <stdint.h>
 
 void load_idt();

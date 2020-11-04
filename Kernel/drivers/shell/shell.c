@@ -49,7 +49,6 @@ void _slide_cursor_forward() {
         _cursor_vertical += SCALED_CHAR_HEIGHT;
         _cursor_horizontal = 0;
     } else {
-        int sc = _cursor_vertical + SCALED_CHAR_HEIGHT - HEIGHT;
         scroll(SCALED_CHAR_HEIGHT);
         _cursor_horizontal = 0;
     }
@@ -76,7 +75,7 @@ void print_char(unsigned char key) {
     
 }
 
-void _internal_print_string(char * str) {
+void _internal_print_string(const char * str) {
     int i;
     for(i = 0; str[i] != '\0'; i++) {
         print_char(str[i]);

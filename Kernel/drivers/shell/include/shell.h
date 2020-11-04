@@ -2,6 +2,7 @@
 #define _SHELL_H
 #include "../../video/include/video_driver.h"
 #include "../../../include/time.h"
+#include "../../../include/lib.h"
 void print_char(unsigned char key);
 void _enable_cursor();
 void _disable_cursor();
@@ -9,7 +10,7 @@ void _set_bg_color(int color);
 void _set_text_color(int color);
 void _set_text_size(int size);
 void _set_cursor_state(char state);
-void _internal_print_string(char * str);
+void _internal_print_string(const char * str);
 void _internal_print_dec(int i);
 void _internal_print_hex(uint64_t h);
 int _get_bg_color();

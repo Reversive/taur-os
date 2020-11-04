@@ -37,9 +37,9 @@ char *cpuVendor(char *result);
 void clear_interrupts();
 void halt_system();
 
-void get_registers(char *data);
+void get_registers(unsigned char *data);
 
-extern void save_registers_data(char* data);
+extern void save_registers_data(unsigned char* data);
 void print_reg();
 extern int test();
 char get_char_data( char hexa_num);

@@ -48,7 +48,7 @@ int main()
 	load_idt();
 
 	_b_rip = sampleCodeModuleAddress;
-	_b_rsp = _rsp() - (sizeof(uint64_t) << 1);
+	_b_rsp = (uint64_t *)(_rsp() - (sizeof(uint64_t) << 1));
 	
 	((EntryPoint)sampleCodeModuleAddress)();
 	//ncNewline();

@@ -17,15 +17,17 @@ void exceptionDispatcher(int ex_id, uint64_t * rip, uint64_t * rsp, uint64_t * t
     uint64_t *_old_rsp = rsp;
     if( ex_id < 0 || ex_id > _EXCEPTIONS_SIZE) return;
     exceptions_table[ex_id](_old_rip, _old_rsp, top);
-    *rsp = _b_rsp;
-    *rip = _b_rip;
-    
+    *rsp = (uint64_t)_b_rsp;
+    *rip = (uint64_t)_b_rip;
+    return;
 }
 
 uint64_t ex_div_by_zero(uint64_t * rip, uint64_t * rsp, uint64_t * top) {
     dump_reg(_EXCEPTION_DIV_BY_ZERO, exception_messages[_EXCEPTION_DIV_BY_ZERO], rip, rsp, top);
+    return DELEGATE_BEHAVIOR;
 }
 
 uint64_t ex_invalid_opcode(uint64_t * rip, uint64_t * rsp, uint64_t * top) {
     dump_reg(_EXCEPTION_INVALID_OPCODE, exception_messages[_EXCEPTION_INVALID_OPCODE], rip, rsp, top);
+    return DELEGATE_BEHAVIOR;
 }

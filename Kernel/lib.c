@@ -122,7 +122,7 @@ void dump_reg(int id, const char * desc, uint64_t * rip, uint64_t * rsp, uint64_
 	_set_text_color(text_color_b);
 }
 
-void get_registers(char *data){
+void get_registers(unsigned char *data){
 	save_registers_data(data);
 }
 

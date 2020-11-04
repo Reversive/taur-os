@@ -3,6 +3,7 @@
 
 #define ZERO_EXCEPTION_ID 0x0
 #define INVALID_OPCODE_EXCEPTION_ID 0x6
+#define DELEGATE_BEHAVIOR 1
 #include <kernel.h>
 typedef uint64_t exception(uint64_t * rip, uint64_t * rsp, uint64_t * top);
 enum exception_numbers {
