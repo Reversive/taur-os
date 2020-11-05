@@ -1,4 +1,17 @@
 #include "include/console.h"
+int player_turn = 0;
+
+int current_player_one_seconds = 300;
+int current_player_two_seconds = 300;
+void player_one_timer() {
+	print_string_by_pos(700, 500, itoa(current_player_one_seconds, 10), 0xFFFFFF, 2);
+	current_player_one_seconds -= 1;
+}
+
+void player_two_timer() {
+	print_string_by_pos(800, 500, itoa(current_player_two_seconds, 10), 0xFF0000, 2);
+	current_player_two_seconds -= 1;
+}
 
 unsigned int console_num;
 unsigned int input_read_size = 0;
@@ -47,6 +60,15 @@ void assign_module(char * str) {
 		int x1,x2,y1,y2;
 		parse_move(str,&x1,&y1,&x2,&y2);//A2 A3
 		move_chess_piece(x1,y1,x2,y2);
+		if(player_turn == 0) {
+			player_turn = 1;
+			sys_unregister_timertick_function(player_one_timer);
+			sys_register_timertick_function(player_two_timer, 18);
+		} else {
+			player_turn = 0;
+			sys_unregister_timertick_function(player_two_timer);
+			sys_register_timertick_function(player_one_timer, 18);
+		}
 	}
 	
 	else {
@@ -91,5 +113,12 @@ void console_key_handler(char input) {
 	} else if(input_read_size < MAX) {
 		input_buffer[input_read_size++] = input;
 		putchar(input);
+	}
+}
+
+
+void print_string_by_pos(int x, int y, char * str, int color, int size) {
+	for(int i = 0; str[i] != 0; i++) {
+		sys_draw_character(x + i * size * 16, y , str[i], size, color);
 	}
 }

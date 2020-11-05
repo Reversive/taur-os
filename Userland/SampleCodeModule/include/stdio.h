@@ -14,5 +14,5 @@ unsigned int putchar(char c);
 int puts(const char *str);
 unsigned int strlen(char * str);
 void print_string(char * str);
-
+char* itoa(int val, int base);
 #endif

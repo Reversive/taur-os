@@ -30,11 +30,13 @@ enum syscall_numbers {
     _SYSCALL_CLEAR_SCREEN,
     _SYSCALL_DRAW_CHARACTER,
     _SYSCALL_SET_NEWLINE_SCROLL_STATE,
-    _SYSCALL_CLEAR_LINE
+    _SYSCALL_CLEAR_LINE,
+    _SYSCALL_REGISTER_TIMERTICK_FUNCTION,
+    _SYSCALL_UNREGISTER_TIMERTICK_FUNCTION
 
 };
 
-#define _SYSCALLS_LAST _SYSCALL_CLEAR_LINE
+#define _SYSCALLS_LAST _SYSCALL_UNREGISTER_TIMERTICK_FUNCTION
 #define _SYSCALLS_SIZE (_SYSCALLS_LAST + 1)
 
 syscall syscall_read;
@@ -54,6 +56,8 @@ syscall syscall_clear_screen;
 syscall syscall_draw_character;
 syscall syscall_set_newline_scroll_state;
 syscall syscall_clear_line;
+syscall syscall_register_timertick_function;
+syscall syscall_unregister_timertick_function;
 
 extern syscall * syscalls_table[_SYSCALLS_SIZE];
 

@@ -67,3 +67,11 @@ void sys_set_newline_scroll_state(int state) {
 void sys_clear_line() {
     _syscall(_SYSCALL_CLEAR_LINE, 0, 0, 0, 0, 0);
 }
+
+void sys_register_timertick_function(function f, unsigned long ticks) {
+    _syscall(_SYSCALL_REGISTER_TIMERTICK_FUNCTION, f, ticks, 0, 0, 0);
+}
+
+void sys_unregister_timertick_function(function f) {
+    _syscall(_SYSCALL_UNREGISTER_TIMERTICK_FUNCTION, f, 0, 0, 0, 0);
+}

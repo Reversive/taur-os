@@ -2,8 +2,6 @@
 
 #define MAX_FUNCTIONS 255
 
-// https://github.com/atharos1/Leah/blob/master/Kernel/drivers/timer.c
-// https://wiki.osdev.org/Programmable_Interval_Timer - "Using the IRQ to Implement sleep"
 typedef struct {
 	function f;
 	unsigned long int ticks;
@@ -56,3 +54,8 @@ int timer_remove_function(function f) {
 	}
 	return -1;
 }
+
+
+// https://github.com/atharos1/Leah/blob/master/Kernel/drivers/timer.c
+
+// https://wiki.osdev.org/Programmable_Interval_Timer - "Using the IRQ to Implement sleep"

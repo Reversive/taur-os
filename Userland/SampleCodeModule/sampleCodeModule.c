@@ -6,8 +6,11 @@
 #include "include/chess_bitmap.h"
 #include "include/chess.h"
 
+
+
+
 int main() {
-	
+	sys_clear_screen();
 	join_chess();
 	sys_set_newline_scroll_state(1);
 	sys_set_cursor_status(_ENABLED);
@@ -28,9 +31,12 @@ int main() {
 	sys_draw_character(420, 650, 'F', 3, 0xFFFFFF);
 	sys_draw_character(500, 650, 'G', 3, 0xFFFFFF);
 	sys_draw_character(580, 650, 'H', 3, 0xFFFFFF);
+	
+	sys_register_timertick_function(player_one_timer, 18);
 	while(1) {
 		char c;
 		sys_set_cursor_pos(0, 720);
+		
 		sys_clear_line();
 		sys_set_text_color(WHITE);
 		puts("TaurOS> ");

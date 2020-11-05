@@ -18,7 +18,9 @@ syscall * syscalls_table[_SYSCALLS_SIZE] = {
     [_SYSCALL_CLEAR_SCREEN] = syscall_clear_screen,
     [_SYSCALL_DRAW_CHARACTER] = syscall_draw_character,
     [_SYSCALL_SET_NEWLINE_SCROLL_STATE] = syscall_set_newline_scroll_state,
-    [_SYSCALL_CLEAR_LINE] = syscall_clear_line
+    [_SYSCALL_CLEAR_LINE] = syscall_clear_line,
+    [_SYSCALL_REGISTER_TIMERTICK_FUNCTION] = syscall_register_timertick_function,
+    [_SYSCALL_UNREGISTER_TIMERTICK_FUNCTION] = syscall_unregister_timertick_function
 
 };
 
@@ -144,5 +146,18 @@ uint64_t syscall_set_newline_scroll_state(uint64_t rsi, uint64_t rdx, uint64_t r
 
 uint64_t syscall_clear_line(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
     _clear_line();
+    return SUCCESS;
+}
+
+uint64_t syscall_register_timertick_function(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+    function f = (function) rsi;
+    unsigned long ticks = (unsigned long) rdx;
+    timer_append_function(f, ticks);
+    return SUCCESS;
+}
+
+uint64_t syscall_unregister_timertick_function(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+    function f = (function) rsi;
+    timer_remove_function(f);
     return SUCCESS;
 }

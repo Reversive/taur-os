@@ -67,18 +67,18 @@ void paint_matrix(int x, int y, int color, int size, char * matrix) {
     int h_slide = x;
     int v_slide = y;
     int outline=0;
+    if (color == 0x000000) {
+        outline=0xFFFFFF;
+    } else if(color==0xFFFFFF){
+        outline=0x000000;
+    }
     for(int i = 0; i < size; i++) {
         for(int j = 0; j < size; j++) {
             if(matrix[i * 16 + j] == '2'){
-                if (color==0x000000)
-                {
-                    outline=0xFFFFFF;
-                } else if(color==0xFFFFFF){
-                    outline=0x000000;
-                }
              paint_square(h_slide , v_slide , 5, color);
-            }    
-            if(matrix[i * 16 + j] == '1') paint_square(h_slide , v_slide , 5, outline);
+            }  else if(matrix[i * 16 + j] == '1') {
+                paint_square(h_slide , v_slide , 5, outline);
+            }
             h_slide += 5;
         }
         h_slide = x;

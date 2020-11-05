@@ -64,12 +64,12 @@ void join_chess(){
 void print_chess_table( chess_piece chess_table[][8]){
     for(int j = 0; j < 8; j+=2){
     		for(int i = 0; i < 8; i+=2) {
-    			sys_draw_square(i*80, j * 80, 80, 0xD7D7D7);
-    			sys_draw_square((i+1)*80, j * 80, 80, 0x555555);
+    			sys_draw_square(i*80, j * 80, 80, 0xb3a076);
+    			sys_draw_square((i+1)*80, j * 80, 80, 0xdfdfd3);
     		}
     		for(int i = 0; i < 8; i+=2) {
-    			sys_draw_square(i*80, (j+1) * 80, 80, 0x555555);
-    			sys_draw_square((i+1)*80, (j+1) * 80, 80, 0xD7D7D7);
+    			sys_draw_square(i*80, (j+1) * 80, 80, 0xdfdfd3);
+    			sys_draw_square((i+1)*80, (j+1) * 80, 80, 0xb3a076);
     		}
     	}
     for (int i = 0; i < 8; i++){
