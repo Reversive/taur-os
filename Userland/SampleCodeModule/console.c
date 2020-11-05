@@ -69,8 +69,13 @@ void assign_module(char * str) {
 			sys_unregister_timertick_function(player_two_timer);
 			sys_register_timertick_function(player_one_timer, 18);
 		}
+		if (check_movement(x1,y1,x2,y2)){
+			move_chess_piece(x1,y1,x2,y2);
+		} else {
+			puts("Error");
+		}
 	}
-	
+
 	else {
 		puts("Ingrese un comando valido.\n");
 	}
@@ -78,9 +83,9 @@ void assign_module(char * str) {
 
 unsigned int command_equal(char * str1, char * str2) {
     while(*str1 == ' ')
-        str1++; 
+        str1++;
     int eql = 1, i;
-    for(i = 0; str2[i] != 0; i++) 
+    for(i = 0; str2[i] != 0; i++)
         if(str1[i] != str2[i])
             eql = 0;
     if(str1[i] != 0 && str1[i] != ' ')
@@ -102,7 +107,7 @@ unsigned int is_newline_char(char chr) {
 }
 
 void console_key_handler(char input) {
-	
+
      if( input == ESC_ASCII) {
 
 	} else if(input == '\b'){

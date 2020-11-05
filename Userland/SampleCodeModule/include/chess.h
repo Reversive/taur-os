@@ -21,10 +21,6 @@ typedef struct {
 void join_chess();
 void print_chess_table( chess_piece chess_table[][8]);
 void parse_move(char* buffer,int* x1,int* y1,int* x2,int* y2);
+int check_movement(int x1,int y1,int x2,int y2);
 
 #endif
-
-
-
-
-

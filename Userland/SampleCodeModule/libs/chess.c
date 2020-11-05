@@ -1,10 +1,9 @@
 #include "../include/chess.h"
 
-
-    chess_piece chess_table[8][8];
+chess_piece chess_table[8][8];
 
 void join_chess(){
-    
+
     struct movement n; n.x=0; n.y=1;
     struct movement s; s.x=0; s.y=-1;
     struct movement w; w.x=-1; w.y=0;
@@ -13,7 +12,7 @@ void join_chess(){
     struct movement nw; nw.x=-1; nw.y=1;
     struct movement se; se.x=1; se.y=-1;
     struct movement sw; sw.x=-1; sw.y=-1;
-    
+
     chess_piece pawn_white={PAWN,0,WHITE,IDLE};
     chess_piece tower_white={TOWER,0,WHITE,IDLE};
     chess_piece horse_white={HORSE,0,WHITE,IDLE};
@@ -40,25 +39,23 @@ void join_chess(){
 
         chess_table[0][0]=tower_black;
         chess_table[7][0]=tower_white;
-        chess_table[0][7]=tower_black;
-        chess_table[7][7]=tower_white;
         chess_table[0][1]=horse_black;
         chess_table[7][1]=horse_white;
-        chess_table[0][2]=bishop_black;        
+        chess_table[0][2]=bishop_black;
         chess_table[7][2]=bishop_white;
         chess_table[0][3]=queen_black;
         chess_table[7][3]=queen_white;
         chess_table[0][4]=king_black;
         chess_table[7][4]=king_white;
-        chess_table[0][5]=horse_black;
-        chess_table[7][5]=horse_white;
-        chess_table[0][6]=bishop_black;        
-        chess_table[7][6]=bishop_white;
-    
-
+        chess_table[0][5]=bishop_black;
+        chess_table[7][5]=bishop_white;
+        chess_table[0][6]=horse_black;
+        chess_table[7][6]=horse_white;
+        chess_table[0][7]=tower_black;
+        chess_table[7][7]=tower_white;
 
     print_chess_table(chess_table);
-    
+
 }
 
 void print_chess_table( chess_piece chess_table[][8]){
@@ -97,9 +94,9 @@ void print_chess_table( chess_piece chess_table[][8]){
                     draw_king(j*80,i*80,color);
                     break;
             }
-            
+
         }
-        
+
     }
 
 }
@@ -122,12 +119,12 @@ void parse_move(char* buffer,int* x1,int* y1,int* x2,int* y2){
         if(c==' '){
             buffer++;
             continue;
-        }    
+        }
         if (c>='A' && c<='H'){
             if(index==0)
                 *x1=c-'A';
             if(index==2)
-                *x2=c-'A';    
+                *x2=c-'A';
         }else if(c>='1' && c<='8'){
             if(index==1)
                 *y1='8'-c;
@@ -137,6 +134,122 @@ void parse_move(char* buffer,int* x1,int* y1,int* x2,int* y2){
         index++;
         buffer++;
     }
-    
-    
+}
+
+int check_movement(int x1,int y1,int x2,int y2){
+  int aux1 = x1-x2;
+  int aux2 = y1-y2;
+  switch (chess_table[y1][x1].piece_name) {
+    case EMPTY:
+      return 0;
+    case PAWN:
+      switch (chess_table[y1][x1].color) {
+        case WHITE:
+          if (x2 == x1 && y2 == y1-1){
+            if (chess_table[y2][x2].piece_name == EMPTY)
+              return 1; // Base movement
+          } else if ((x2 == x1-1 || x2 == x1+1) && y2 == y1-1 && chess_table[y2][x2].piece_name != EMPTY && chess_table[y2][x2].color != WHITE){
+            return 1; // Take enemy piece
+          }
+          else
+            return 0;
+      }
+      return 0;
+    case TOWER:
+      switch (chess_table[y1][x1].color) {
+        case WHITE:
+          if (x1==x2 && y1 != y2){ // Y movement
+            if (y1 - y2 > 0){
+              for (int i = y1-1; i>y2; i--){
+                if (chess_table[i][x2].piece_name != EMPTY)
+                  return 0;
+              }
+              if (chess_table[y2][x2].color != WHITE)
+                return 1; // Base movement -> DOWN
+            } else {
+              for (int i = y1+1; i<y2; i++){
+                if (chess_table[i][x2].piece_name != EMPTY)
+                  return 0;
+              }
+              if (chess_table[y2][x2].color != WHITE)
+                return 1; // Base movement -> UP
+            }
+
+          } else if (y1==y2 && x1 != x2){ // X movement
+            if (x1 - x2 > 0){
+              for (int i = x1-1; i>x2; i--){
+                if (chess_table[y2][i].piece_name != EMPTY)
+                  return 0;
+              }
+              if (chess_table[y2][x2].color != WHITE)
+                return 1; // Base movement -> RIGHT
+
+            } else {
+              for (int i = x1+1; i<x2; i++){
+                if (chess_table[y2][i].piece_name != EMPTY)
+                  return 0;
+              }
+              if (chess_table[y2][x2].color != WHITE)
+                return 1; // Base movement -> LEFT
+            }
+          }
+          else
+            return 0;
+      }
+    case HORSE:
+      return 0;
+    case BISHOP:
+      switch (chess_table[y1][x1].color) {
+        case WHITE:
+          if (aux1 > 0 && aux2 > 0){
+            // TOP-LEFT
+            for (int i = x1-1, j = y1-1; i>x2; i--, j--){
+              if (chess_table[j][i].piece_name != EMPTY)
+                return 0;
+            }
+          } else if (aux1 < 0 && aux2 > 0){
+            // TOP-RIGHT
+            for (int i = x1+1, j = y1-1; j>y2; i++, j--){
+              if (chess_table[j][i].piece_name != EMPTY)
+                return 0;
+            }
+          } else if (aux1 > 0 && aux2 < 0){
+            // BOTTOM-LEFT
+            for (int i = x1-1, j = y1+1; j<y2; i--, j++){
+              if (chess_table[j][i].piece_name != EMPTY)
+                return 0;
+            }
+          } else if (aux1 < 0 && aux2 < 0){
+            // BOTTOM-RIGHT
+            for (int i = x1+1, j = y1+1; i<x2; i++, j++){
+              if (chess_table[j][i].piece_name != EMPTY)
+                return 0;
+            }
+          } else {
+            return 0;
+          }
+          if (chess_table[y2][x2].color != WHITE)
+            return 1;
+        return 0;
+      }
+      return 0;
+    case QUEEN:
+      return 0;
+    case KING:
+      switch (chess_table[y1][x1].color) {
+        case WHITE:
+          if (aux1 < 0)
+            aux1 = aux1 * -1;
+          if (aux2 < 0)
+            aux2 = aux2 * -1;
+          if (aux1 > 1 || aux2 > 1 || (aux1==0 && aux2==0)){
+            return 0; // Piece moved more than 1 square
+          } else {
+            if (chess_table[y2][x2].piece_name == EMPTY || chess_table[y2][x2].color != WHITE)
+              return 1;
+          }
+        return 0;
+      }
+      return 0;
+  }
 }
