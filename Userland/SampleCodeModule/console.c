@@ -59,7 +59,6 @@ void assign_module(char * str) {
 	else if (command_equal(str,"move")){
 		int x1,x2,y1,y2;
 		parse_move(str,&x1,&y1,&x2,&y2);//A2 A3
-		move_chess_piece(x1,y1,x2,y2);
 		if(player_turn == 0) {
 			player_turn = 1;
 			sys_unregister_timertick_function(player_one_timer);
