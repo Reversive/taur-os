@@ -8,11 +8,14 @@
 #include "inforeg.h"
 #include "print_mem.h"
 #include "basic_lib.h"
+#include "chess.h"
+
+extern int in_chess;
 unsigned int command_equal(char * str1, char * str2);
 void assign_module(char * str);
-unsigned int console_finish_handler();
+unsigned int console_finish_handler(char* buffer);
 unsigned int is_newline_char(char chr);
-void console_key_handler(char input);
+void console_key_handler(char input,char* buffer);
 void help();
 void player_one_timer();
 void player_two_timer();
