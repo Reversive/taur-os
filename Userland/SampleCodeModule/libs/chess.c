@@ -1,15 +1,18 @@
 #include "../include/chess.h"
 
 chess_piece chess_table[8][8];
-int player_turn = 1;
+chess_piece printeable_chess_table[8][8];
+int player_turn = 0;
 int backup_x;
 int backup_y;
 
 void join_chess(){
+
   	sys_get_cursor_pos(&backup_x,&backup_y);
     sys_set_cursor_status(_DISABLED);
 		sys_set_cursor_pos(0, 720);
 		in_chess=1;
+    int rotation=0;
     struct movement n; n.x=0; n.y=1;
     struct movement s; s.x=0; s.y=-1;
     struct movement w; w.x=-1; w.y=0;
@@ -61,6 +64,8 @@ void join_chess(){
     chess_table[0][7]=tower_black;
     chess_table[7][7]=tower_white;
 
+    load_printeable_chess_table(chess_table);
+
     sys_clear_screen();
 
     sys_draw_character(650, 20, '8', 3, 0xFFFFFF);
@@ -81,16 +86,36 @@ void join_chess(){
 	  sys_draw_character(580, 650, 'H', 3, 0xFFFFFF);
 
     //sys_register_timertick_function(player_one_timer, 18);
-
-    print_chess_table(chess_table);
+    print_chess_table(printeable_chess_table);
     sys_set_cursor_pos(0, 720);
     sys_set_cursor_status(_ENABLED);
 
 
-
-
 }
 
+void load_printeable_chess_table(chess_piece chess_table[8][8]){
+  int i,j;
+  for (i = 0; i < 8; i++){
+      for (j = 0; j < 8; j++){
+        printeable_chess_table[i][j]=chess_table[i][j];
+      }
+  }
+}
+
+void rotation_chess_table(){
+  int i,j,h;
+  chess_piece aux[8][8];
+  for (i = 0; i < 8; i++){
+    for (j = 0; j < 8; j++){
+      aux[i][j]=printeable_chess_table[7-j][i];
+    }
+  }
+  for (i = 0; i < 8; i++){
+    for (j = 0; j < 8; j++){
+      printeable_chess_table[i][j]=aux[i][j];
+    }
+  }
+}
 
 void print_chess_table( chess_piece chess_table[][8]){
 
@@ -140,7 +165,11 @@ void move_chess_piece(int x1,int y1,int x2,int y2){
     chess_piece empty={EMPTY,0,0,0};
     chess_table[y2][x2]=chess_table[y1][x1];
     chess_table[y1][x1]=empty;
-    print_chess_table(chess_table);
+    load_printeable_chess_table(chess_table);
+    for (int i = 0; i < (rotation%4); i++){
+      rotation_chess_table();
+    }
+    print_chess_table(printeable_chess_table);
 }
 
 void parse_move(char* buffer,int* x1,int* y1,int* x2,int* y2){

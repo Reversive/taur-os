@@ -11,6 +11,8 @@
 #include "chess.h"
 
 extern int in_chess;
+extern int rotation;
+
 unsigned int command_equal(char * str1, char * str2);
 void assign_module(char * str);
 unsigned int console_finish_handler(char* buffer);

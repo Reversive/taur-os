@@ -5,6 +5,7 @@ unsigned int console_num;
 unsigned int input_read_size = 0;
 int in_chess=0;
 int new_game=1;
+int rotation=0;
 
 
 char data[136];
@@ -92,6 +93,12 @@ void console_key_handler(char input,char* input_buffer) {
 		}
 		
 	}
+	else if (input=='r'&& in_chess==1){
+		rotation_chess_table();
+		rotation++;
+		print_chess_table(printeable_chess_table);
+	}
+	
 
     else if( input == ESC_ASCII) {
 
