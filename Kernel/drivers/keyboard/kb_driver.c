@@ -1,6 +1,8 @@
 #include "include/kb_driver.h"
 static state key_state = NONE;
 static ring kb_ring = {0, 0, 0, {0}};
+static ring b_kb_ring = {0, 0, 0, {0}};
+int exists_kb_backup = 0;
 
 // Non-Shifted scan codes to ASCII:
 static unsigned char asciiNonShift[] = {
@@ -72,4 +74,25 @@ key getchar() {
     if(kb_ring.dequeue_pos == KB_BUFFER_SIZE) kb_ring.dequeue_pos = 0;
     kb_ring.pending_read--;
     return pop;
+}
+
+void backup_kb_buffer() {
+    exists_kb_backup = 1;
+    b_kb_ring.dequeue_pos = kb_ring.dequeue_pos;
+    b_kb_ring.pending_read = kb_ring.pending_read;
+    b_kb_ring.queue_pos = kb_ring.queue_pos;
+    for(int i = 0; i < KB_BUFFER_SIZE; i++) {
+        b_kb_ring.kb_buffer[i] = kb_ring.kb_buffer[i];
+    }
+}
+
+int restore_kb_buffer() {
+    if(exists_kb_backup == 0) return -1;
+    kb_ring.dequeue_pos = b_kb_ring.dequeue_pos;
+    kb_ring.pending_read = b_kb_ring.pending_read;
+    kb_ring.queue_pos = b_kb_ring.queue_pos;
+    for(int i = 0; i < KB_BUFFER_SIZE; i++) {
+        kb_ring.kb_buffer[i] = b_kb_ring.kb_buffer[i];
+    }
+    return 1;
 }

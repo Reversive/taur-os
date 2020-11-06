@@ -15,7 +15,7 @@ void sys_set_bg_color(unsigned int color);
 void sys_inforeg( char* data);
 void sys_print_mem( char* from, char* buffer);
 void sys_draw_matrix(int x, int y, int color, char * matrix, int size);
-void sys_draw_square(int x, int y, int size, int color);
+void sys_draw_rect(int x, int y, int w, int h, int color);
 void sys_set_cursor_pos(int x, int y);
 void sys_get_cursor_pos(int * x, int * y);
 void sys_clear_screen();
@@ -24,6 +24,10 @@ void sys_set_newline_scroll_state(int state);
 void sys_clear_line();
 void sys_register_timertick_function(function f, unsigned long ticks);
 void sys_unregister_timertick_function(function f);
+void sys_backup_kb_buffer();
+void sys_backup_screen();
+int sys_restore_kb_buffer();
+int sys_restore_screen();
 
 enum syscall_numbers {
     _SYSCALL_READ = 0,
@@ -36,7 +40,7 @@ enum syscall_numbers {
     _SYSCALL_INFOREG,
     _SYSCALL_PRINT_MEM,
     _SYSCALL_DRAW_MATRIX,
-    _SYSCALL_DRAW_SQUARE,
+    _SYSCALL_DRAW_RECT,
     _SYSCALL_SET_CURSOR_POS,
     _SYSCALL_GET_CURSOR_POS,
     _SYSCALL_CLEAR_SCREEN,
@@ -44,7 +48,11 @@ enum syscall_numbers {
     _SYSCALL_SET_NEWLINE_SCROLL_STATE,
     _SYSCALL_CLEAR_LINE,
     _SYSCALL_REGISTER_TIMERTICK_FUNCTION,
-    _SYSCALL_UNREGISTER_TIMERTICK_FUNCTION
+    _SYSCALL_UNREGISTER_TIMERTICK_FUNCTION,
+    _SYSCALL_BACKUP_KB_BUFFER,
+    _SYSCALL_RESTORE_KB_BUFFER,
+    _SYSCALL_BACKUP_SCREEN,
+    _SYSCALL_RESTORE_SCREEN
 };
 
 enum status {

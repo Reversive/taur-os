@@ -5,7 +5,7 @@
 #define WIDTH 1024
 #define HEIGHT 768
 #define BPP 3
-
+#define VIDEO_SIZE 2359296
 #define CHECK_BIT(var,pos) ((var) & (1<<(pos)))
 
 struct vbe_mode_info_structure {
@@ -53,4 +53,6 @@ void paint_character(int x, int y, char character, int size, int color, int bg_c
 void scroll(int times);
 void paint_matrix(int x, int y, int color, int scale, char * matrix);
 void clear_screen(int color);
+void backup_screen();
+int restore_backup_screen();
 #endif

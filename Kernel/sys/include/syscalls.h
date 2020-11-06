@@ -24,7 +24,7 @@ enum syscall_numbers {
     _SYSCALL_INFOREG,
     _SYSCALL_PRINT_MEM,
     _SYSCALL_DRAW_MATRIX,
-    _SYSCALL_DRAW_SQUARE,
+    _SYSCALL_DRAW_RECT,
     _SYSCALL_SET_CURSOR_POS,
     _SYSCALL_GET_CURSOR_POS,
     _SYSCALL_CLEAR_SCREEN,
@@ -32,11 +32,15 @@ enum syscall_numbers {
     _SYSCALL_SET_NEWLINE_SCROLL_STATE,
     _SYSCALL_CLEAR_LINE,
     _SYSCALL_REGISTER_TIMERTICK_FUNCTION,
-    _SYSCALL_UNREGISTER_TIMERTICK_FUNCTION
+    _SYSCALL_UNREGISTER_TIMERTICK_FUNCTION,
+    _SYSCALL_BACKUP_KB_BUFFER,
+    _SYSCALL_RESTORE_KB_BUFFER,
+    _SYSCALL_BACKUP_SCREEN,
+    _SYSCALL_RESTORE_SCREEN
 
 };
 
-#define _SYSCALLS_LAST _SYSCALL_UNREGISTER_TIMERTICK_FUNCTION
+#define _SYSCALLS_LAST _SYSCALL_RESTORE_SCREEN
 #define _SYSCALLS_SIZE (_SYSCALLS_LAST + 1)
 
 syscall syscall_read;
@@ -49,7 +53,7 @@ syscall syscall_set_cursor_state;
 syscall syscall_inforeg;
 syscall syscall_print_mem;
 syscall syscall_draw_matrix;
-syscall syscall_draw_square;
+syscall syscall_draw_rect;
 syscall syscall_set_cursor_pos;
 syscall syscall_get_cursor_pos;
 syscall syscall_clear_screen;
@@ -58,7 +62,10 @@ syscall syscall_set_newline_scroll_state;
 syscall syscall_clear_line;
 syscall syscall_register_timertick_function;
 syscall syscall_unregister_timertick_function;
-
+syscall syscall_backup_kb_buffer;
+syscall syscall_restore_kb_buffer;
+syscall syscall_backup_screen;
+syscall syscall_restore_screen;
 extern syscall * syscalls_table[_SYSCALLS_SIZE];
 
 int read(unsigned int fd, char * buffer, size_t count);

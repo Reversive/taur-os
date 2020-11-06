@@ -40,8 +40,8 @@ void sys_draw_matrix(int x, int y, int color, char * matrix, int size) {
     _syscall(_SYSCALL_DRAW_MATRIX, x, y, color, (uint64_t) matrix, size);
 }
 
-void sys_draw_square(int x, int y, int size, int color) {
-    _syscall(_SYSCALL_DRAW_SQUARE, x, y, size, color, 0);
+void sys_draw_rect(int x, int y, int w, int h, int color) {
+    _syscall(_SYSCALL_DRAW_RECT, x, y, w, h, color);
 }
 
 void sys_set_cursor_pos(int x, int y) {
@@ -74,4 +74,17 @@ void sys_register_timertick_function(function f, unsigned long ticks) {
 
 void sys_unregister_timertick_function(function f) {
     _syscall(_SYSCALL_UNREGISTER_TIMERTICK_FUNCTION, f, 0, 0, 0, 0);
+}
+
+void sys_backup_kb_buffer() {
+    _syscall(_SYSCALL_BACKUP_KB_BUFFER, 0, 0, 0, 0, 0);
+}
+void sys_backup_screen() {
+    _syscall(_SYSCALL_BACKUP_SCREEN, 0, 0, 0, 0, 0);
+}
+int sys_restore_kb_buffer() {
+    return _syscall(_SYSCALL_RESTORE_KB_BUFFER, 0, 0, 0, 0, 0);
+}
+int sys_restore_screen() {
+    return _syscall(_SYSCALL_RESTORE_SCREEN, 0, 0, 0, 0, 0);
 }

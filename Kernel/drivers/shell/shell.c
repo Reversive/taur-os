@@ -174,6 +174,8 @@ void _set_cursor_pos(int x, int y) {
 }
 
 void _get_cursor_pos(int * x, int * y) {
-    *x = _cursor_horizontal;
-    *y = _cursor_vertical;
+    int c_x = _cursor_horizontal;
+    int c_y = _cursor_vertical;
+    *x = c_x;
+    *y = c_y;
 }

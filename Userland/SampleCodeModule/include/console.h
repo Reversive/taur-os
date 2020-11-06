@@ -10,7 +10,7 @@
 #include "basic_lib.h"
 #include "chess.h"
 
-extern int in_chess;
+extern int chess_state;
 extern int rotation;
 
 unsigned int command_equal(char * str1, char * str2);

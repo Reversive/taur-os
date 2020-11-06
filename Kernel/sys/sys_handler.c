@@ -12,7 +12,7 @@ syscall * syscalls_table[_SYSCALLS_SIZE] = {
     [_SYSCALL_INFOREG] = syscall_inforeg,
     [_SYSCALL_PRINT_MEM] = syscall_print_mem,
     [_SYSCALL_DRAW_MATRIX] = syscall_draw_matrix,
-    [_SYSCALL_DRAW_SQUARE] = syscall_draw_square,
+    [_SYSCALL_DRAW_RECT] = syscall_draw_rect,
     [_SYSCALL_SET_CURSOR_POS] = syscall_set_cursor_pos,
     [_SYSCALL_GET_CURSOR_POS] = syscall_get_cursor_pos,
     [_SYSCALL_CLEAR_SCREEN] = syscall_clear_screen,
@@ -20,7 +20,11 @@ syscall * syscalls_table[_SYSCALLS_SIZE] = {
     [_SYSCALL_SET_NEWLINE_SCROLL_STATE] = syscall_set_newline_scroll_state,
     [_SYSCALL_CLEAR_LINE] = syscall_clear_line,
     [_SYSCALL_REGISTER_TIMERTICK_FUNCTION] = syscall_register_timertick_function,
-    [_SYSCALL_UNREGISTER_TIMERTICK_FUNCTION] = syscall_unregister_timertick_function
+    [_SYSCALL_UNREGISTER_TIMERTICK_FUNCTION] = syscall_unregister_timertick_function,
+    [_SYSCALL_BACKUP_KB_BUFFER] = syscall_backup_kb_buffer,
+    [_SYSCALL_RESTORE_KB_BUFFER] = syscall_restore_kb_buffer,
+    [_SYSCALL_BACKUP_SCREEN] = syscall_backup_screen,
+    [_SYSCALL_RESTORE_SCREEN] = syscall_restore_screen
 
 };
 
@@ -97,12 +101,13 @@ uint64_t syscall_draw_matrix(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t 
     return SUCCESS;
 }
 
-uint64_t syscall_draw_square(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+uint64_t syscall_draw_rect(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
     int x = (int) rsi;
     int y = (int) rdx;
-    int size = (int) rcx;
-    int color = (int) r8;
-    paint_square(x, y, size, color);
+    int w = (int) rcx;
+    int h = (int) r8;
+    int color = (int) r9;
+    paint_rectangle(x, y, w, h, color);
     return SUCCESS;
 }
 
@@ -159,5 +164,27 @@ uint64_t syscall_register_timertick_function(uint64_t rsi, uint64_t rdx, uint64_
 uint64_t syscall_unregister_timertick_function(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
     function f = (function) rsi;
     timer_remove_function(f);
+    return SUCCESS;
+}
+
+uint64_t syscall_backup_kb_buffer(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+    backup_kb_buffer();
+    return SUCCESS;
+}
+
+uint64_t syscall_restore_kb_buffer(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+    int response = restore_kb_buffer();
+    if(response == ERROR) return ERROR;
+    return SUCCESS;
+}
+
+uint64_t syscall_backup_screen(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+    backup_screen();
+    return SUCCESS;
+}
+
+uint64_t syscall_restore_screen(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+    int response = restore_backup_screen();
+    if(response == ERROR) return ERROR;
     return SUCCESS;
 }

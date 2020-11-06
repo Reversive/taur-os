@@ -1,5 +1,7 @@
 #include "include/video_driver.h"
 
+char backup_video[VIDEO_SIZE];
+int exists_backup = 0;
 // https://wiki.osdev.org/Drawing_In_Protected_Mode
 void paint_pixel(int x, int y, int color) {
     struct vbe_mode_info_structure * video_pointer = (struct vbe_mode_info_structure *)0x5C00;
@@ -89,4 +91,25 @@ void paint_matrix(int x, int y, int color, int size, char * matrix) {
 
 void clear_screen(int color) {
     paint_rectangle(0, 0, WIDTH, HEIGHT, color);
+}
+
+void backup_screen() {
+    exists_backup = 1;
+    struct vbe_mode_info_structure * video_pointer = (struct vbe_mode_info_structure *)0x5C00;
+    char * buffer = video_pointer->framebuffer;
+    int i;
+    for(i = 0; i < VIDEO_SIZE; i++) {
+        backup_video[i] = buffer[i];
+    }
+}
+
+int restore_backup_screen() {
+    if(exists_backup == 0) return -1;
+    struct vbe_mode_info_structure * video_pointer = (struct vbe_mode_info_structure *)0x5C00;
+    char * buffer = video_pointer->framebuffer;
+    int i;
+    for(i = 0; i < VIDEO_SIZE; i++) {
+        buffer[i] = backup_video[i];
+    }
+    return 1;
 }

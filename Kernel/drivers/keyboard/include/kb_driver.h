@@ -21,4 +21,6 @@ typedef enum states { NONE, SHIFT, CTRL, ALT} state;
 int is_letter(key current_key);
 void queue(key current_key);
 key getchar();
+void backup_kb_buffer();
+int restore_kb_buffer();
 #endif

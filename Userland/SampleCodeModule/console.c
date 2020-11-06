@@ -3,9 +3,8 @@
 
 unsigned int console_num;
 unsigned int input_read_size = 0;
-int in_chess=0;
-int new_game=1;
-int rotation=0;
+int chess_state = NOT_PLAYING;
+int rotation = 0;
 
 
 char data[136];
@@ -23,32 +22,33 @@ void help() {
 }
 
 void assign_module(char * str) {
-	if(command_equal(str, "help")&&in_chess==0) {
+	if(command_equal(str, "help") && (chess_state == NOT_PLAYING || chess_state == PAUSED)) {
 		help();
 	}
-	else if(command_equal(str,"time")&&in_chess==0){
+	else if(command_equal(str,"time") && (chess_state == NOT_PLAYING || chess_state == PAUSED)){
         print_time();
     }
-	else if(command_equal(str,"inforeg")&&in_chess==0){
+	else if(command_equal(str,"inforeg") && (chess_state == NOT_PLAYING || chess_state == PAUSED)){
         get_inforeg(data);
 		print_info_reg(data);
 	}
-	else if(command_equal(str, "printmem")&&in_chess==0) {
+	else if(command_equal(str, "printmem") && (chess_state == NOT_PLAYING || chess_state == PAUSED)) {
 		if(!info_mem(str))
 			print_string("Ingrese una direccion como argumento\n");
 	}
-    else if(command_equal(str, "opcode")&&in_chess==0) {
+    else if(command_equal(str, "opcode") && (chess_state == NOT_PLAYING || chess_state == PAUSED)) {
         invalid_opcode_test();
     }
-    else if(command_equal(str, "div0")&&in_chess==0) {
+    else if(command_equal(str, "div0") && (chess_state == NOT_PLAYING || chess_state == PAUSED)) {
         int b = 5 / 0;
     }
-	else if (command_equal(str,"move")&&in_chess==1){
+	else if (command_equal(str,"move") && chess_state == PLAYING){
 		move_piece(str);
 	}
-	else if(command_equal(str, "chess")&&in_chess==0) {
-		
+	else if(command_equal(str, "chess") && (chess_state == NOT_PLAYING || chess_state == PAUSED) ) {
 		join_chess();
+	} else if(command_equal(str, "exit") && chess_state == PLAYING) {
+		close_chess(NOT_PLAYING);
 	}
 	else {
 		puts("Ingrese un comando valido.\n");
@@ -81,10 +81,13 @@ unsigned int is_newline_char(char chr) {
 }
 
 void console_key_handler(char input,char* input_buffer) {
-	if(input=='\t'){
-		if (in_chess==1){
-			new_game=0;
-			//close_chess();
+	if(input == '\t'){
+		if (chess_state == PLAYING){
+			close_chess(PAUSED);
+			sys_set_text_color(WHITE);
+			putchar('\n');
+			puts("TaurOS> ");
+			sys_set_text_color(LIME);
 		}
 		else{
 			join_chess();
@@ -94,7 +97,7 @@ void console_key_handler(char input,char* input_buffer) {
 		}
 		
 	}
-	else if (input=='r'&& in_chess==1){
+	else if (input=='r' && chess_state==1) {
 		rotation_chess_table();
 		rotation++;
 		print_chess_table(printeable_chess_table);
