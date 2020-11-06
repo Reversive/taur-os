@@ -76,15 +76,15 @@ void join_chess(){
 	  sys_draw_character(420, 650, 'F', 3, 0xFFFFFF);
 	  sys_draw_character(500, 650, 'G', 3, 0xFFFFFF);
 	  sys_draw_character(580, 650, 'H', 3, 0xFFFFFF);
-	  
+
     //sys_register_timertick_function(player_one_timer, 18);
-    
+
     print_chess_table(chess_table);
     sys_set_cursor_pos(0, 720);
     sys_set_cursor_status(_ENABLED);
 
 
-	
+
 
 }
 
@@ -183,6 +183,7 @@ void player_two_timer() {
 int check_movement(int x1,int y1,int x2,int y2){
   int aux1 = x1-x2;
   int aux2 = y1-y2;
+
   switch (chess_table[y1][x1].piece_name) {
     case EMPTY:
       return 0;
@@ -204,43 +205,42 @@ int check_movement(int x1,int y1,int x2,int y2){
         case WHITE:
           if (x1==x2 && y1 != y2){ // Y movement
             if (y1 - y2 > 0){
-              for (int i = y1-1; i>y2; i--){
+              for (int i = y1-1; i>y2; i--){ // Base movement -> DOWN
                 if (chess_table[i][x2].piece_name != EMPTY)
                   return 0;
               }
-              if (chess_table[y2][x2].color != WHITE)
-                return 1; // Base movement -> DOWN
             } else {
-              for (int i = y1+1; i<y2; i++){
+              for (int i = y1+1; i<y2; i++){ // Base movement -> UP
                 if (chess_table[i][x2].piece_name != EMPTY)
                   return 0;
               }
-              if (chess_table[y2][x2].color != WHITE)
-                return 1; // Base movement -> UP
             }
-
           } else if (y1==y2 && x1 != x2){ // X movement
             if (x1 - x2 > 0){
-              for (int i = x1-1; i>x2; i--){
+              for (int i = x1-1; i>x2; i--){ // Base movement -> RIGHT
                 if (chess_table[y2][i].piece_name != EMPTY)
                   return 0;
               }
-              if (chess_table[y2][x2].color != WHITE)
-                return 1; // Base movement -> RIGHT
-
             } else {
-              for (int i = x1+1; i<x2; i++){
+              for (int i = x1+1; i<x2; i++){ // Base movement -> LEFT
                 if (chess_table[y2][i].piece_name != EMPTY)
                   return 0;
               }
-              if (chess_table[y2][x2].color != WHITE)
-                return 1; // Base movement -> LEFT
             }
           }
-          else
-            return 0;
+          if (chess_table[y2][x2].color != WHITE)
+            return 1; // Base movement -> LEFT
       }
+      return 0;
     case HORSE:
+      switch (chess_table[y1][x1].color) {
+        case WHITE:
+          if ((x2 == x1-2 && (y2 == y1+1 || y2 == y1-1)) || (x2 == x1+2 && (y2 == y1+1 || y2 == y1-1))
+          || (y2 == y1-2 && (x2 == x1+1 || x2 == x1-1)) || (y2 == y1+2 && (x2 == x1+1 || x2 == x1-1))){
+            if (chess_table[y2][x2].color != WHITE)
+              return 1;
+          }
+      }
       return 0;
     case BISHOP:
       switch (chess_table[y1][x1].color) {
@@ -278,6 +278,61 @@ int check_movement(int x1,int y1,int x2,int y2){
       }
       return 0;
     case QUEEN:
+      switch (chess_table[y1][x1].color) {
+        case WHITE:
+          if (x1==x2 && y1 != y2){ // Y movement --> + Movement
+            if (y1 - y2 > 0){
+              for (int i = y1-1; i>y2; i--){
+                if (chess_table[i][x2].piece_name != EMPTY)
+                  return 0;
+              }
+            } else {
+              for (int i = y1+1; i<y2; i++){
+                if (chess_table[i][x2].piece_name != EMPTY)
+                  return 0;
+              }
+            }
+          } else if (y1==y2 && x1 != x2){ // X movement
+            if (x1 - x2 > 0){
+              for (int i = x1-1; i>x2; i--){
+                if (chess_table[y2][i].piece_name != EMPTY)
+                  return 0;
+              }
+            } else {
+              for (int i = x1+1; i<x2; i++){
+                if (chess_table[y2][i].piece_name != EMPTY)
+                  return 0;
+              }
+            }
+          } else if (aux1 > 0 && aux2 > 0){  // --> X movement
+            // TOP-LEFT
+            for (int i = x1-1, j = y1-1; i>x2; i--, j--){
+              if (chess_table[j][i].piece_name != EMPTY)
+                return 0;
+            }
+          } else if (aux1 < 0 && aux2 > 0){
+            // TOP-RIGHT
+            for (int i = x1+1, j = y1-1; j>y2; i++, j--){
+              if (chess_table[j][i].piece_name != EMPTY)
+                return 0;
+            }
+          } else if (aux1 > 0 && aux2 < 0){
+            // BOTTOM-LEFT
+            for (int i = x1-1, j = y1+1; j<y2; i--, j++){
+              if (chess_table[j][i].piece_name != EMPTY)
+                return 0;
+            }
+          } else if (aux1 < 0 && aux2 < 0){
+            // BOTTOM-RIGHT
+            for (int i = x1+1, j = y1+1; i<x2; i++, j++){
+              if (chess_table[j][i].piece_name != EMPTY)
+                return 0;
+            }
+          }
+          if (chess_table[y2][x2].color != WHITE)
+            return 1;
+        return 0;
+      }
       return 0;
     case KING:
       switch (chess_table[y1][x1].color) {
