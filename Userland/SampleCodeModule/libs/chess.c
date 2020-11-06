@@ -8,14 +8,17 @@ int b_cursor_y = 0;
 
 int current_player_one_seconds;
 int current_player_two_seconds;
+int timer_start_move;
 
 void join_chess() {
     if(chess_state != PAUSED) player_turn = 0;
 
     if(chess_state == PAUSED) {
       if(player_turn == 0) {
+        timer_start_move = current_player_one_seconds;
         sys_register_timertick_function(player_one_timer, 18);
       } else {
+        timer_start_move = current_player_two_seconds;
         sys_register_timertick_function(player_two_timer, 18);
       }
     } else {
@@ -23,7 +26,7 @@ void join_chess() {
     }
     
     sys_get_cursor_pos(&b_cursor_x, &b_cursor_y);
-    if(chess_state != PAUSED) current_player_one_seconds = current_player_two_seconds = 300;
+    if(chess_state != PAUSED) current_player_one_seconds = current_player_two_seconds = timer_start_move =  300;
     sys_backup_kb_buffer();
 		sys_backup_screen();
     sys_set_cursor_status(_DISABLED);
@@ -223,6 +226,10 @@ void player_two_timer() {
   sys_draw_character(732, 84, ':', 2, 0xFFFFFF);
   print_string_by_pos(764, 84, f_s, 0xFFFFFF, 2);
   current_player_two_seconds -= 1;
+  if(timer_start_move - current_player_two_seconds == 60) {
+    // PERDISTE PAPU
+    printf("PERDISTE");
+  }
 }
 
 void player_one_timer() {
@@ -237,6 +244,10 @@ void player_one_timer() {
   sys_draw_character(732, 564, ':', 2, 0xFF0000);
   print_string_by_pos(764, 564, f_s, 0xFF0000, 2);
 	current_player_one_seconds -= 1;
+  if(timer_start_move - current_player_one_seconds == 60) {
+    // PERDISTE PAPU
+    printf("PERDISTE");
+  }
 }
 
 
@@ -431,10 +442,12 @@ void move_piece(char* buffer) {
   if (check_movement(x1,y1,x2,y2) == 1) {
     if(player_turn == 0) {
     	player_turn = 1;
+      timer_start_move = current_player_two_seconds;
     	sys_unregister_timertick_function(player_one_timer);
     	sys_register_timertick_function(player_two_timer, 18);
     } else {
     	player_turn = 0;
+      timer_start_move = current_player_one_seconds;
     	sys_unregister_timertick_function(player_two_timer);
     	sys_register_timertick_function(player_one_timer, 18);
     }

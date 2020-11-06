@@ -46,6 +46,7 @@ void assign_module(char * str) {
 		move_piece(str);
 	}
 	else if(command_equal(str, "chess") && (chess_state == NOT_PLAYING || chess_state == PAUSED) ) {
+		if(chess_state == PAUSED) chess_state = PLAYING;
 		join_chess();
 	} else if(command_equal(str, "exit") && chess_state == PLAYING) {
 		close_chess(NOT_PLAYING);
