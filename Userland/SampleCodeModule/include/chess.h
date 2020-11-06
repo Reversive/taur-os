@@ -6,7 +6,7 @@
 #include "../include/console.h"
 enum chess_state {NOT_PLAYING = 0, PLAYING, PAUSED};
 typedef enum {PAWN = 0, TOWER, HORSE, BISHOP, QUEEN, KING, EMPTY} chess_id;
-typedef enum {IDLE = 0, MOVING} state;
+typedef enum {IDLE = 0, MOVING, PASO} state;
 
 struct movement{
     int x;

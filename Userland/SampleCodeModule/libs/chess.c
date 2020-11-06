@@ -24,7 +24,7 @@ void join_chess() {
     } else {
       sys_register_timertick_function(player_one_timer, 18);
     }
-    
+
     sys_get_cursor_pos(&b_cursor_x, &b_cursor_y);
     if(chess_state != PAUSED) current_player_one_seconds = current_player_two_seconds = timer_start_move =  300;
     sys_backup_kb_buffer();
@@ -274,14 +274,25 @@ int check_movement(int x1,int y1,int x2,int y2){
 
   switch (chess_table[y1][x1].piece_name) {
     case PAWN:
-      if ((chess_table[y1][x1].piece_state == IDLE && (x2 == x1 && y2 == y1-(2*factor))) || (x2 == x1 && y2 == y1-(1*factor))){
-        if (chess_table[y2][x2].piece_name == EMPTY)
+      if ((chess_table[y1][x1].piece_state == IDLE && (x2 == x1 && y2 == y1-(2*factor))) // advance forward 2 positions
+      || (x2 == x1 && y2 == y1-(1*factor))){                                             // advance forward 1 positions
+         if (chess_table[y2][x2].piece_name == EMPTY)
           return 1; // Base movement
       } else if ((x2 == x1-1 || x2 == x1+1) && y2 == y1-(1*factor) && chess_table[y2][x2].piece_name != EMPTY && chess_table[y2][x2].color != color_player){
         return 1; // Take enemy piece
+      } else if (x2 == x1-1 && y2 == y1-factor && chess_table[y1][x1-1].piece_name == PAWN && chess_table[y1][x1-1].piece_state == PASO){ // advance forward (captura al paso) LEFT
+        if (chess_table[y1][x1+1].color != color_player){
+          chess_piece empty={EMPTY,0,0,0};
+          chess_table[y1][x1-1] = empty;
+          return 1;
+        }
+      } else if (x2 == x1+1 && y2 == y1-factor && chess_table[y1][x1+1].piece_name == PAWN && chess_table[y1][x1-1].piece_state == PASO){ // advance forward (captura al paso) RIGHT
+        if (chess_table[y1][x1+1].color != color_player){
+          chess_piece empty={EMPTY,0,0,0};
+          chess_table[y1][x1+1] = empty;
+          return 1;
+        }
       }
-      else
-        return 0;
       return 0;
     case TOWER:
       if (x1==x2 && y1 != y2){ // Y movement
@@ -441,17 +452,28 @@ void move_piece(char* buffer) {
   parse_move(buffer,&x1,&y1,&x2,&y2);
   if (check_movement(x1,y1,x2,y2) == 1) {
     if(player_turn == 0) {
+      if (chess_table[y1][x1].piece_name == PAWN && y2 == 0){ // Pawn Promotion / WHITE
+        chess_piece queen_white = {QUEEN, 0, WHITE, IDLE};
+        chess_table[y1][x1] = queen_white;
+      }
     	player_turn = 1;
       timer_start_move = current_player_two_seconds;
     	sys_unregister_timertick_function(player_one_timer);
     	sys_register_timertick_function(player_two_timer, 18);
     } else {
+      if (chess_table[y1][x1].piece_name == PAWN && y2 == 7){ // Pawn Promotion / BLACK
+        chess_piece queen_black = {QUEEN, 0, BLACK, IDLE};
+        chess_table[y1][x1] = queen_black;
+      }
     	player_turn = 0;
       timer_start_move = current_player_one_seconds;
     	sys_unregister_timertick_function(player_two_timer);
     	sys_register_timertick_function(player_one_timer, 18);
     }
-    chess_table[y1][x1].piece_state = MOVING;
+    if (chess_table[y1][x1].piece_name == PAWN && chess_table[y1][x1].piece_state == IDLE && abs(y1-y2) == 2){
+      chess_table[y1][x1].piece_state = PASO; // If the piece is an idle pawn moving 2 positions, its state will now be PASO, otherwise MOVING
+    } else
+      chess_table[y1][x1].piece_state = MOVING;
   	move_chess_piece(x1,y1,x2,y2);
   }
   sys_clear_line();
