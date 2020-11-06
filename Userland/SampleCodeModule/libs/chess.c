@@ -46,8 +46,6 @@ void join_chess(){
         chess_table[6][i]=pawn_white;
     }
     chess_table[0][0]=tower_black;
-    chess_table[1][0]=empty; //DELETE THIS
-    chess_table[6][0]=empty; //DELETE THIS
     chess_table[7][0]=tower_white;
     chess_table[0][1]=horse_black;
     chess_table[7][1]=horse_white;
@@ -212,6 +210,12 @@ void player_two_timer() {
 	current_player_two_seconds -= 1;
 }
 
+int abs(int n){
+  if (n < 0)
+    return n*-1;
+  return n;
+}
+
 int check_movement(int x1,int y1,int x2,int y2){
   int aux1 = x1-x2;
   int aux2 = y1-y2;
@@ -263,9 +267,11 @@ int check_movement(int x1,int y1,int x2,int y2){
               return 0;
           }
         }
+      } else {
+        return 0;
       }
       if (chess_table[y2][x2].piece_name == EMPTY || chess_table[y2][x2].color != color_player)
-        return 1; // Base movement -> LEFT
+        return 1;
       return 0;
     case HORSE:
       if ((x2 == x1-2 && (y2 == y1+1 || y2 == y1-1)) || (x2 == x1+2 && (y2 == y1+1 || y2 == y1-1))
@@ -275,84 +281,100 @@ int check_movement(int x1,int y1,int x2,int y2){
       }
       return 0;
     case BISHOP:
+      if (abs(aux1) != abs(aux2)) // Is a diagonal move?
+        return 0;
       if (aux1 > 0 && aux2 > 0){
         // TOP-LEFT
+        int i = x1, j = y1;
         for (int i = x1-1, j = y1-1; i>x2; i--, j--){
           if (chess_table[j][i].piece_name != EMPTY)
             return 0;
         }
       } else if (aux1 < 0 && aux2 > 0){
         // TOP-RIGHT
-        for (int i = x1+1, j = y1-1; j>y2; i++, j--){
+        int i = x1, j = y1;
+        for (int i = x1-1, j = y1+1; i>x2; i--, j++){
           if (chess_table[j][i].piece_name != EMPTY)
             return 0;
         }
       } else if (aux1 > 0 && aux2 < 0){
         // BOTTOM-LEFT
-        for (int i = x1-1, j = y1+1; j<y2; i--, j++){
+        int i = x1, j = y1;
+        for (int i = x1+1, j = y1-1; i<x2; i++, j--){
           if (chess_table[j][i].piece_name != EMPTY)
             return 0;
         }
       } else if (aux1 < 0 && aux2 < 0){
         // BOTTOM-RIGHT
+        int i = x1, j = y1;
         for (int i = x1+1, j = y1+1; i<x2; i++, j++){
           if (chess_table[j][i].piece_name != EMPTY)
             return 0;
         }
-      } else {
+      } else
         return 0;
-      }
-      if (chess_table[y2][x2].piece_name == EMPTY || chess_table[y2][x2].color != color_player)
-        return 1;
-      return 0;
+      if (chess_table[y2][x2].color == color_player || (aux1 == 0 || aux2 == 0))
+        return 0;
+      return 1;
     case QUEEN:
-      if (x1==x2 && y1 != y2){ // Y movement --> + Movement
-        if (y1 - y2 > 0){
-          for (int i = y1-1; i>y2; i--){
-            if (chess_table[i][x2].piece_name != EMPTY)
+      if (abs(aux1) == abs(aux2)){ // Diagonal movement
+        if (aux1 > 0 && aux2 > 0){
+          // TOP-LEFT
+          int i = x1, j = y1;
+          for (int i = x1-1, j = y1-1; i>x2; i--, j--){
+            if (chess_table[j][i].piece_name != EMPTY)
               return 0;
+          }
+        } else if (aux1 < 0 && aux2 > 0){
+          // TOP-RIGHT
+          int i = x1, j = y1;
+          for (int i = x1-1, j = y1+1; i>x2; i--, j++){
+            if (chess_table[j][i].piece_name != EMPTY)
+              return 0;
+          }
+        } else if (aux1 > 0 && aux2 < 0){
+          // BOTTOM-LEFT
+          int i = x1, j = y1;
+          for (int i = x1+1, j = y1-1; i<x2; i++, j--){
+            if (chess_table[j][i].piece_name != EMPTY)
+              return 0;
+          }
+        } else if (aux1 < 0 && aux2 < 0){
+          // BOTTOM-RIGHT
+          int i = x1, j = y1;
+          for (int i = x1+1, j = y1+1; i<x2; i++, j++){
+            if (chess_table[j][i].piece_name != EMPTY)
+              return 0;
+          }
+        } else
+          return 0;
+      } else {
+        if (x1==x2 && y1 != y2){ // Y movement --> + Movement
+          if (y1 - y2 > 0){
+            for (int i = y1-1; i>y2; i--){
+              if (chess_table[i][x2].piece_name != EMPTY)
+                return 0;
+            }
+          } else {
+            for (int i = y1+1; i<y2; i++){
+              if (chess_table[i][x2].piece_name != EMPTY)
+                return 0;
+            }
+          }
+        } else if (y1==y2 && x1 != x2){ // X movement
+          if (x1 - x2 > 0){
+            for (int i = x1-1; i>x2; i--){
+              if (chess_table[y2][i].piece_name != EMPTY)
+                return 0;
+            }
+          } else {
+            for (int i = x1+1; i<x2; i++){
+              if (chess_table[y2][i].piece_name != EMPTY)
+                return 0;
+            }
           }
         } else {
-          for (int i = y1+1; i<y2; i++){
-            if (chess_table[i][x2].piece_name != EMPTY)
-              return 0;
-          }
-        }
-      } else if (y1==y2 && x1 != x2){ // X movement
-        if (x1 - x2 > 0){
-          for (int i = x1-1; i>x2; i--){
-            if (chess_table[y2][i].piece_name != EMPTY)
-              return 0;
-          }
-        } else {
-          for (int i = x1+1; i<x2; i++){
-            if (chess_table[y2][i].piece_name != EMPTY)
-              return 0;
-          }
-        }
-      } else if (aux1 > 0 && aux2 > 0){  // --> X movement
-        // TOP-LEFT
-        for (int i = x1-1, j = y1-1; i>x2; i--, j--){
-          if (chess_table[j][i].piece_name != EMPTY)
-            return 0;
-        }
-      } else if (aux1 < 0 && aux2 > 0){
-        // TOP-RIGHT
-        for (int i = x1+1, j = y1-1; j>y2; i++, j--){
-          if (chess_table[j][i].piece_name != EMPTY)
-            return 0;
-        }
-      } else if (aux1 > 0 && aux2 < 0){
-        // BOTTOM-LEFT
-        for (int i = x1-1, j = y1+1; j<y2; i--, j++){
-          if (chess_table[j][i].piece_name != EMPTY)
-            return 0;
-        }
-      } else if (aux1 < 0 && aux2 < 0){
-        // BOTTOM-RIGHT
-        for (int i = x1+1, j = y1+1; i<x2; i++, j++){
-          if (chess_table[j][i].piece_name != EMPTY)
-            return 0;
+          return 0;
         }
       }
       if (chess_table[y2][x2].piece_name == EMPTY || chess_table[y2][x2].color != color_player)
