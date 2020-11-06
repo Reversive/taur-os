@@ -47,6 +47,7 @@ void assign_module(char * str) {
 		move_piece(str);
 	}
 	else if(command_equal(str, "chess")&&in_chess==0) {
+		
 		join_chess();
 	}
 	else {

@@ -9,20 +9,20 @@ void print_mem(char* from,char* buffer){
 int info_mem( char * str) {
 	
 	while(*str == ' ')
-		str++; //Hacemos un trim al principio
+		str++; 
 	while(*str != ' ')
-		str++; //Salteamos el printmem
+		str++; 
 	while(*str == ' ' && *str != 0)
-		str++; //Salteo espacios intermedios
+		str++;
 	if(*str == 0)
 		return 0; //No recibio argumento
 	if(*str == '0' && (*(str+1)=='x' || *(str+1)=='X') && is_hexa_digit(*(str+2))) {
-		str++; //Me salteo el 0x inicial
+		str++; 
 		str++;
 		char* startPointer= parse_str_to_hexa(str);
         if(errorFlag)
 			return 0;
-		char buffer[65]; //Se necesitan de N * 2 + 1 siendo N la cantidad de bytes a leer
+		char buffer[65]; 
         print_mem(startPointer, buffer);
 		print_mem_in_screen(startPointer,buffer);
 		putchar('\n');
@@ -44,7 +44,7 @@ char * parse_str_to_hexa(char * str) {
 	while(*str != 0 && *str != ' ' && !errorFlag) {
 		if(!is_hexa_digit(*str))
 			errorFlag = 1;
-		number *= 16; //Multiplico por 16 para correr todo un lugar a la izquierda
+		number *= 16;
 		if(*str >= '0' && *str <= '9')
 			number += (*str - '0');
 		else if(*str >= 'A' && *str <= 'F')

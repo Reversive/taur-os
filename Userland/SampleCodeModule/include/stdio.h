@@ -1,6 +1,11 @@
 #ifndef _STDIO_H
 #define _STDIO_H
 #include "basic_lib.h"
+#include "../include/inforeg.h"
+#include "../include/time.h"
+#include "print_mem.h"
+#include <stdarg.h>
+#include "math.h"
 #define SIZE_BYTE 8
 #define EOF -1
 enum file_descriptors {
@@ -14,5 +19,7 @@ unsigned int putchar(char c);
 int puts(const char *str);
 unsigned int strlen(char * str);
 void print_string(char * str);
-char* itoa(int val, int base);
+char *itoa(uint64_t value, char *buffer, uint32_t base);
+int printf(char * fmt, ...);
+int sscanf(char* source, char* format, ...);
 #endif

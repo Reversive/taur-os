@@ -6,6 +6,9 @@ int player_turn = 0;
 int backup_x;
 int backup_y;
 
+int current_player_one_seconds = 300;
+int current_player_two_seconds = 300;
+
 void join_chess(){
 
   	sys_get_cursor_pos(&backup_x,&backup_y);
@@ -65,7 +68,8 @@ void join_chess(){
     load_printeable_chess_table(chess_table);
 
     sys_clear_screen();
-
+    print_string_by_pos(700, 84, "5:00", 0xFFFFFF, 2);
+		print_string_by_pos(700, 564, "5:00", 0xFF0000, 2);
     sys_draw_character(650, 20, '8', 3, 0xFFFFFF);
 	  sys_draw_character(650, 100, '7', 3, 0xFFFFFF);
 	  sys_draw_character(650, 180, '6', 3, 0xFFFFFF);
@@ -83,8 +87,7 @@ void join_chess(){
 	  sys_draw_character(500, 650, 'G', 3, 0xFFFFFF);
 	  sys_draw_character(580, 650, 'H', 3, 0xFFFFFF);
 
-    //sys_register_timertick_function(player_one_timer, 18);
-    print_chess_table(printeable_chess_table);
+    print_chess_table(chess_table);
     sys_set_cursor_pos(0, 720);
     sys_set_cursor_status(_ENABLED);
 
@@ -198,17 +201,35 @@ void parse_move(char* buffer,int* x1,int* y1,int* x2,int* y2){
     }
 }
 
-int current_player_one_seconds = 300;
-int current_player_two_seconds = 300;
+
 void player_one_timer() {
-	print_string_by_pos(700, 500, itoa(current_player_one_seconds, 10), 0xFFFFFF, 2);
-	current_player_one_seconds -= 1;
+  sys_draw_character(799, 500, ' ', 2, 0x000000);
+  unsigned int seconds = current_player_one_seconds % 60;
+  unsigned int minutes = current_player_one_seconds / 60;
+  char mins[4];
+  char secs[4];
+  char * f_m = itoa(minutes, mins, 10);
+  char * f_s = itoa(seconds, secs, 10);
+	print_string_by_pos(725, 500, f_m, 0xFFFFFF, 2);
+  sys_draw_character(745, 500, ':', 2, 0xFFFFFF);
+  print_string_by_pos(765, 500, f_s, 0xFFFFFF, 2);
+  current_player_one_seconds -= 1;
 }
 
 void player_two_timer() {
-	print_string_by_pos(800, 500, itoa(current_player_two_seconds, 10), 0xFF0000, 2);
+  sys_draw_character(874, 500, ' ', 2, 0x000000);
+  unsigned int seconds = current_player_two_seconds % 60;
+  unsigned int minutes = current_player_two_seconds / 60;
+  char mins[4];
+  char secs[4];
+  char * f_m = itoa(minutes, mins, 10);
+  char * f_s = itoa(seconds, secs, 10);
+	print_string_by_pos(800, 500, f_m, 0xFF0000, 2);
+  sys_draw_character(820, 500, ':', 2, 0xFF0000);
+  print_string_by_pos(840, 500, f_s, 0xFF0000, 2);
 	current_player_two_seconds -= 1;
 }
+
 
 int abs(int n){
   if (n < 0)
