@@ -48,7 +48,7 @@ char *itoa(uint64_t value, char *buffer, uint32_t base) {
 
    
     *p = 0;
-
+    // Invertimo' 
     p1 = buffer;
     p2 = p - 1;
     while (p1 < p2) {
@@ -61,7 +61,6 @@ char *itoa(uint64_t value, char *buffer, uint32_t base) {
 
     return buffer;
 }
-
 
 int printf(char * fmt, ...) {
 
@@ -94,7 +93,7 @@ int printf(char * fmt, ...) {
 		switch(*format) {
 			case 'd':
 			case 'X':
-				tmp = itoa(va_arg(pa, int), buffer, (*format=='d') ? 10:16);
+				tmp = itoa(va_arg(pa, int), buffer, (*format=='d') ? 10 : 16);
 				zeroes -= strlen(tmp);
 				while (zeroes > 0) {
 					putchar('0');
@@ -118,39 +117,39 @@ int printf(char * fmt, ...) {
     return 0;
 }
 
-int isDigit(char c) {
+int is_digit(char c) {
     return (c >= '0' && c <= '9');
 }
 
-int charToDigit(char c) {
+int char_to_dec(char c) {
 	return c - '0';
 }
 
-static int scanNumber(char* source, int* dest, int* cantArgs) {
+static int scan_number(char* source, int* dest, int* arg_count) {
 	int aux = 0;
 	int counter1 = 0;
     int counter2 = 0;
 
-	if(!isDigit(*source)) {
-		while(!isDigit(*(source + counter1))) {
+	if(!is_digit(*source)) {
+		while(!is_digit(*(source + counter1))) {
             counter1++;
         }
 	}
-	if(isDigit(*(source + counter1))) {
-		(*cantArgs)++;
-		while(isDigit(*(source + counter1))) {
+	if(is_digit(*(source + counter1))) {
+		(*arg_count)++;
+		while(is_digit(*(source + counter1))) {
             counter2++;
             counter1++;
 		}
         for(int i = 0; i < counter2; i++) {
-            aux = aux + (pow(10, i))*charToDigit(*(source + counter1 - i - 1));
+            aux = aux + (pow(10, i))*char_to_dec(*(source + counter1 - i - 1));
         }
 		*dest = aux;
 	}
 	return counter1;
 }
 
-static int scanString(char* source, char*dest, int* cantArgs) {
+static int scan_str(char* source, char*dest, int* arg_count) {
 	int counter = 0;
 	if((*source) == ' ' || (*source) == '\n') {
 		while((*source++) == ' ' || (*source) == '\n') {
@@ -158,7 +157,7 @@ static int scanString(char* source, char*dest, int* cantArgs) {
         }
 	}
 	if((*source) != '\0') {
-		(*cantArgs)++;
+		(*arg_count)++;
 	}
 	while((*source) != ' ' && (*source) != '\0' && (*source) != '\n') {
 		*dest = *source;
@@ -170,7 +169,7 @@ static int scanString(char* source, char*dest, int* cantArgs) {
 	return counter;
 }
 
-static int scanChar(char* source, char* dest, int* cantArgs) {
+static int scan_char(char* source, char* dest, int* arg_count) {
 	if((*source) == ' ' || (*source) == '\n') {
 		while((*source++) == ' ' || (*source) == '\n');
 	}
@@ -178,7 +177,7 @@ static int scanChar(char* source, char* dest, int* cantArgs) {
 		return 0;
 	}
 	*dest = *source;
-	(*cantArgs)++;
+	(*arg_count)++;
 	return 1;
 }
 
@@ -193,15 +192,15 @@ int vscanf(char *source, char *format, va_list pa) {
                 format++;
                 break;
             case 'd':
-                source += scanNumber(source, va_arg(pa, int *), &arg_count);
+                source += scan_number(source, va_arg(pa, int *), &arg_count);
                 format++;
                 break;
             case 'c':
-                source += scanChar(source, va_arg(pa, char *), &arg_count);
+                source += scan_char(source, va_arg(pa, char *), &arg_count);
                 format++;
                 break;
             case 's':
-                source += scanString(source, va_arg(pa, char *), &arg_count);
+                source += scan_str(source, va_arg(pa, char *), &arg_count);
                 format++;
                 break;
         }
@@ -209,10 +208,32 @@ int vscanf(char *source, char *format, va_list pa) {
     return arg_count;
 }
 
-int sscanf(char *source, char *format, ...) {
+int scanf(char *source, char *format, ...) {
     va_list pa;
     va_start(pa, format);
     int aux = vscanf(source, format, pa);
     va_end(pa);
     return aux;
+}
+
+void hex_to_string(long num, char * buffer){
+    if (num==0){
+      buffer[0] = '0';
+      return;
+    }
+    int i=0;
+    int j=0;
+    while(num > 0){
+        buffer[i++] = get_char_data(num%16);
+        num = num / 16 ;
+    }
+    char aux; 
+    buffer[i--]=0;
+     while(j<i){
+        aux = buffer[i];
+        buffer[i] = buffer[j];
+        buffer[j]=aux;
+        j++;
+        i--;
+    }
 }

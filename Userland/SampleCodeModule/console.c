@@ -10,11 +10,10 @@ int rotation = 0;
 char data[136];
 void invalid_opcode_test(void);
 void help() {
-	puts("Ventana de comandos, pulse Ctrl + 1/2 para cambiar de consola\n");
 	puts("Comandos posibles:\n");
 	puts("help - Ver comandos\n");
 	puts("time - Consultar hora del sistema\n");
-	puts("inforeg - Estado de registros. Primero debe capturar con Alt\n");
+	puts("inforeg - Estado de registros.\n");
 	puts("printmem 0xDIR - Volcado de memoria\n");
     puts("opcode - Generar excepcion de codigo de operacion invalido\n");
     puts("div0 - Generar excepcion de division por cero\n");

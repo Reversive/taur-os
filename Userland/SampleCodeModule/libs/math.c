@@ -12,3 +12,10 @@ long long int pow(int base, int exp) {
     return num;
 
 }
+
+
+unsigned int abs(int n) {
+  if (n < 0)
+    return n*-1;
+  return n;
+}

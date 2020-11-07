@@ -3,7 +3,10 @@
 #include <stdint.h>
 #include "../../drivers/keyboard/include/kb_driver.h"
 #include "../../drivers/shell/include/shell.h"
+#include "../include/lib.h"
 #define _STDIN 0x1
+#define SUCCESS 1
+#define ERROR -1
 typedef uint64_t syscall(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
 typedef unsigned int size_t;
 
@@ -67,7 +70,7 @@ syscall syscall_restore_kb_buffer;
 syscall syscall_backup_screen;
 syscall syscall_restore_screen;
 extern syscall * syscalls_table[_SYSCALLS_SIZE];
-
+extern unsigned int get_time(char t);
 int read(unsigned int fd, char * buffer, size_t count);
 int write(unsigned int fd, char * buffer, size_t count);
 void copy_mem(char* from,char* buffer);

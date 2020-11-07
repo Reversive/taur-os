@@ -21,5 +21,6 @@ unsigned int strlen(char * str);
 void print_string(char * str);
 char *itoa(uint64_t value, char *buffer, uint32_t base);
 int printf(char * fmt, ...);
-int sscanf(char* source, char* format, ...);
+int scanf(char* source, char* format, ...);
+void hex_to_string(long num, char * buffer);
 #endif

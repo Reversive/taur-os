@@ -55,7 +55,7 @@ int timer_remove_function(function f) {
 	return -1;
 }
 
+// https://wiki.osdev.org/Programmable_Interval_Timer - "Using the IRQ to Implement sleep"
 
 // https://github.com/atharos1/Leah/blob/master/Kernel/drivers/timer.c
 
-// https://wiki.osdev.org/Programmable_Interval_Timer - "Using the IRQ to Implement sleep"

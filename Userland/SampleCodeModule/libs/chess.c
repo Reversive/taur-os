@@ -309,13 +309,9 @@ void player_one_timer() {
 }
 
 
-int abs(int n){
-  if (n < 0)
-    return n*-1;
-  return n;
-}
 
-int check_movement(int x1,int y1,int x2,int y2){
+
+int check_movement(int x1,int y1,int x2,int y2) {
   int aux1 = x1-x2;
   int aux2 = y1-y2;
 
