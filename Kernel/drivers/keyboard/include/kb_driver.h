@@ -17,7 +17,7 @@ typedef struct {
 
 
 void kb_trigger(void);
-typedef enum states { NONE, SHIFT, CTRL, ALT} state;
+typedef enum states { NONE, SHIFT, CTRL, ALT, CAPS} state;
 int is_letter(key current_key);
 void queue(key current_key);
 key getchar();

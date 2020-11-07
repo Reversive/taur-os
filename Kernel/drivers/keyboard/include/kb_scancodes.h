@@ -68,6 +68,8 @@
 #define    KRRIGHT_SHIFT_RELEASE    0x36
 
 #define    KRCAPS_LOCK          0x3A
+#define    KRCAPS_LOCK_RELEASE  0xBA
+
 #define    KRSCROLL_LOCK        0x46
 #define    KRNUM_LOCK           0x45
 #define    KRDEL                0x53

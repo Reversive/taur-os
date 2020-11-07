@@ -3,7 +3,7 @@ static state key_state = NONE;
 static ring kb_ring = {0, 0, 0, {0}};
 static ring b_kb_ring = {0, 0, 0, {0}};
 int exists_kb_backup = 0;
-
+int caps = 0;
 // Non-Shifted scan codes to ASCII:
 static unsigned char asciiNonShift[] = {
 NULL, ESC, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', BACKSPACE,
@@ -28,6 +28,7 @@ void kb_trigger() {
     switch (current)
     {
     // https://www.henkessoft.de/OS_Dev/OS_Dev1.htm#mozTocId185043
+    // Also got some from https://wiki.osdev.org/PS/2_Keyboard on Scan Code Set 1
     case KRLEFT_SHIFT:
         key_state = SHIFT;
         return;
@@ -42,6 +43,15 @@ void kb_trigger() {
         key_state = NONE;
         return;
         break;
+
+    case KRCAPS_LOCK:
+        if(caps == 0) {
+            caps = 1;
+        } else {
+            caps = 0;
+        }
+        return;
+        break;
     
     default:
         break;
@@ -52,8 +62,13 @@ void kb_trigger() {
 
     key ascii = asciiNonShift[current];
     if(key_state == SHIFT) {
-        ascii = asciiShift[current];
-    } 
+        if(caps == 0) {
+            ascii = asciiShift[current];
+        }
+        
+    } else {
+        if(caps == 1) ascii = asciiShift[current];
+    }
 
     queue(ascii);
 
