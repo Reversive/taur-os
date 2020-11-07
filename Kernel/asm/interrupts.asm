@@ -101,7 +101,6 @@ SECTION .text
 %endmacro
 
 
-; rdi = num_exc, rsi = ret addr, rdx = stack_ptr
 %macro exceptionHandler 1 
 	pushState
 	mov rsi, rsp

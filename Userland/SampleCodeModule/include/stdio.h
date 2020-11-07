@@ -23,4 +23,5 @@ char *itoa(uint64_t value, char *buffer, uint32_t base);
 int printf(char * fmt, ...);
 int scanf(char* source, char* format, ...);
 void hex_to_string(long num, char * buffer);
+char * strcpy(char* destination, const char* source);
 #endif

@@ -22,5 +22,4 @@ void _exception0Handler(void);
 void _exception6Handler(void);
 
 
-
 #endif /* INTERRUPS_H_ */

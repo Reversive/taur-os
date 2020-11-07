@@ -1,5 +1,9 @@
 #include "../include/chess.h"
-
+int last_added_move = 0;
+int number_of_moves = 0;
+int last_printable_index = 0;
+int first_printable_index = 0;
+chess_move moves[100];
 chess_piece chess_table[8][8];
 chess_piece printeable_chess_table[8][8];
 int player_turn = 0;
@@ -12,8 +16,10 @@ int current_player_two_seconds;
 int timer_start_move;
 
 void join_chess() {
-    if(chess_state != PAUSED) player_turn = 0;
-
+    if(chess_state != PAUSED)  {
+      player_turn = 0;
+    }
+   
     if(chess_state == PAUSED) {
       if(player_turn == 0) {
         timer_start_move = current_player_one_seconds;
@@ -22,6 +28,7 @@ void join_chess() {
         timer_start_move = current_player_two_seconds;
         sys_register_timertick_function(player_two_timer, 18);
       }
+      
     } else {
       sys_register_timertick_function(player_one_timer, 18);
     }
@@ -89,9 +96,12 @@ void join_chess() {
 
     load_printeable_chess_table(chess_table);
     sys_clear_screen();
+    print_string_by_pos(700, 10, "Negras  ", 0xFF0000, 1);
+		print_string_by_pos(700, 26, "Blancas ", 0xFFFFFF, 1);
+    print_string_by_pos(720, 68, "Jugadas", 0xFFFFFF, 2);
     if(chess_state != PAUSED) {
-      print_string_by_pos(700, 84, "5:00", 0xFFFFFF, 2);
-		  print_string_by_pos(700, 564, "5:00", 0xFF0000, 2);
+      print_string_by_pos(828, 10, "5:00", 0xFF0000, 1);
+		  print_string_by_pos(828, 26, "5:00", 0xFFFFFF, 1);
     } else {
       player_two_timer();
       player_one_timer();
@@ -99,6 +109,7 @@ void join_chess() {
     print_chess_table(chess_table);
     sys_set_cursor_pos(0, 720);
     sys_set_cursor_status(_ENABLED);
+    if(chess_state == PAUSED)  print_plays();
     chess_state = 1;
 
 
@@ -173,7 +184,7 @@ void load_printeable_chess_table(chess_piece chess_table[8][8]){
       }
     }
   }
-  player_win=win_codition(black_king,white_king);
+  player_win = win_codition(black_king,white_king);
 }
 
 void rotation_chess_table(){
@@ -286,16 +297,16 @@ void parse_move(char* buffer,int* x1,int* y1,int* x2,int* y2){
 }
 
 void player_two_timer() {
-  sys_draw_character(796, 84, ' ', 2, 0x000000);
+  sys_draw_character(876, 10, ' ', 1, 0x000000);
   unsigned int seconds = current_player_two_seconds % 60;
   unsigned int minutes = current_player_two_seconds / 60;
   char mins[4];
   char secs[4];
   char * f_m = itoa(minutes, mins, 10);
   char * f_s = itoa(seconds, secs, 10);
-	print_string_by_pos(700, 84, f_m, 0xFFFFFF, 2);
-  sys_draw_character(732, 84, ':', 2, 0xFFFFFF);
-  print_string_by_pos(764, 84, f_s, 0xFFFFFF, 2);
+	print_string_by_pos(828, 10, f_m, 0xFF0000, 1);
+  sys_draw_character(844, 10, ':', 1, 0xFF0000);
+  print_string_by_pos(860, 10, f_s, 0xFF0000, 1);
   current_player_two_seconds -= 1;
   if(current_player_one_seconds - current_player_two_seconds == 61) {
     player_win=2;
@@ -304,16 +315,16 @@ void player_two_timer() {
 }
 
 void player_one_timer() {
-  sys_draw_character(796, 564, ' ', 2, 0x000000);
+  sys_draw_character(876, 26, ' ', 1, 0x000000);
   unsigned int seconds = current_player_one_seconds % 60;
   unsigned int minutes = current_player_one_seconds / 60;
   char mins[4];
   char secs[4];
   char * f_m = itoa(minutes, mins, 10);
   char * f_s = itoa(seconds, secs, 10);
-	print_string_by_pos(700, 564, f_m, 0xFF0000, 2);
-  sys_draw_character(732, 564, ':', 2, 0xFF0000);
-  print_string_by_pos(764, 564, f_s, 0xFF0000, 2);
+	print_string_by_pos(828, 26, f_m, 0xFFFFFF, 1);
+  sys_draw_character(844, 26, ':', 1, 0xFFFFFF);
+  print_string_by_pos(860, 26, f_s, 0xFFFFFF, 1);
 	current_player_one_seconds -= 1;
   if(current_player_two_seconds - current_player_one_seconds == 61) {
     player_win=1;
@@ -534,6 +545,11 @@ void move_piece(char* buffer) {
   int x1,x2,y1,y2;
   parse_move(buffer,&x1,&y1,&x2,&y2);
   if (check_movement(x1,y1,x2,y2) == 1) {
+    if(last_printable_index - first_printable_index == MAX_PRINTABLE_MOVES) first_printable_index++;
+    moves[number_of_moves].author = player_turn;
+    strcpy(moves[number_of_moves].text, buffer+5);
+    number_of_moves++;
+    last_printable_index++;
     if(player_turn == 0) {
       if (chess_table[y1][x1].piece_name == PAWN && y2 == 0){ // Pawn Promotion / WHITE
         chess_piece queen_white = {QUEEN, 0, WHITE, IDLE};
@@ -585,9 +601,31 @@ void move_piece(char* buffer) {
       chess_table[y1][x1].piece_state = PASO; // If the piece is an idle pawn moving 2 positions, its state will now be PASO, otherwise MOVING
     } else
       chess_table[y1][x1].piece_state = MOVING;
-  	move_chess_piece(x1,y1,x2,y2);
+  	  move_chess_piece(x1,y1,x2,y2);
   }
   sys_clear_line();
+  print_plays();
+  
+}
+
+void print_plays() {
+  for(int i = 0; i < MAX_PRINTABLE_MOVES; i++) {
+    if(i >= last_printable_index) continue;
+    char move_buffer[4];
+    char * move_number = itoa(i + 1 + first_printable_index, move_buffer, 10);
+    int color = WHITE;
+    if(moves[first_printable_index + i].author == 1) color = RED;
+    print_string_by_pos(710, 105 + i * 16, move_number, color, 1);
+    sys_draw_character(740, 105 + i * 16, '-', 1, color);
+    print_string_by_pos(758, 105 + i * 16, moves[first_printable_index + i].text, color, 1);
+    if(moves[first_printable_index + i].author == 0) {
+      sys_draw_character(838, 105 + i * 16, '-', 1, color);
+      print_string_by_pos(854, 105 + i * 16, "Blancas", color, 1);
+    } else {
+      sys_draw_character(838, 105 + i * 16, '-', 1, color);
+      print_string_by_pos(854, 105 + i * 16, "Negras ", color, 1);
+    }
+  }
 }
 
 
@@ -602,4 +640,9 @@ void close_chess(int status) {
   sys_set_newline_scroll_state(0);
   sys_set_cursor_pos(b_cursor_x,b_cursor_y);
   sys_set_cursor_status(_ENABLED);
+}
+
+
+void reset_moves_idx() {
+  first_printable_index = last_printable_index = number_of_moves = 0;
 }

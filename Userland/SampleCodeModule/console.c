@@ -17,6 +17,7 @@ void help() {
 	puts("printmem 0xDIR - Volcado de memoria\n");
     puts("opcode - Generar excepcion de codigo de operacion invalido\n");
     puts("div0 - Generar excepcion de division por cero\n");
+	puts("chess - Genera un nuevo juego de ajedrez\n");
 	return;
 }
 
@@ -48,6 +49,7 @@ void assign_module(char * str) {
 		if(chess_state == PAUSED) chess_state = PLAYING;
 		join_chess();
 	} else if(command_equal(str, "exit") && (chess_state == PLAYING || chess_state == ENDED )) {
+		reset_moves_idx();
 		close_chess(NOT_PLAYING);
 	}
 	else {
@@ -84,10 +86,12 @@ unsigned int is_newline_char(char chr) {
 
 void console_key_handler(char input,char* input_buffer) {
 	if(input == '\t'){
+		if(chess_state == ENDED) return;
 		if (chess_state == PLAYING){
 			close_chess(PAUSED);
 			sys_set_text_color(WHITE);
-			
+			putchar('\n');
+			puts("TaurOS> ");
 			sys_set_text_color(LIME);
 		}
 		else{
@@ -97,16 +101,24 @@ void console_key_handler(char input,char* input_buffer) {
 			sys_set_text_color(LIME);
 		}
 		
-	}
-	else if (input=='r' && chess_state==1) {
+	} else if ((input=='r' || input =='R') && chess_state == PLAYING) {
 		rotation_chess_table();
 		rotation++;
 		rotation=rotation%4;
 		print_chess_table(printeable_chess_table);
-	}
-	
-    else if( input == ESC_ASCII) {
-
+	} else if( input == ESC_ASCII) {
+	} else if((input == 'o' || input == 'O') && chess_state == ENDED) {
+		if(first_printable_index > 0)  {
+			first_printable_index--;
+			last_printable_index--;
+			print_plays();
+		}
+	} else if((input == 'l' || input == 'L') && chess_state == ENDED) {
+		if(last_printable_index < number_of_moves)  {
+			first_printable_index++;
+			last_printable_index++;
+			print_plays();
+		}
 	} else if(input == '\b'){
 		if(input_read_size > 0) {
 			input_buffer[input_read_size--] = 0;

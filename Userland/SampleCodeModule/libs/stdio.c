@@ -21,6 +21,24 @@ int puts(const char *str) {
     return 1;
 }
 
+char * strcpy(char* destination, const char* source) {
+    if (destination == 0)
+        return 0;
+
+    char *ptr = destination;
+ 
+    while (*source != '\0')
+    {
+        *destination = *source;
+        destination++;
+        source++;
+    }
+
+    *destination = '\0';
+ 
+    return ptr;
+}
+
 unsigned int strlen(char * str){
     int i=0;
     while (str[i]!=0)

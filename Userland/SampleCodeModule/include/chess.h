@@ -5,6 +5,7 @@
 #include "colors.h"
 #include "../include/console.h"
 #include "math.h"
+#define MAX_PRINTABLE_MOVES 33
 
 enum chess_state {NOT_PLAYING = 0, PLAYING, PAUSED,ENDED};
 typedef enum {PAWN = 0, TOWER, HORSE, BISHOP, QUEEN, KING, EMPTY} chess_id;
@@ -23,6 +24,14 @@ typedef struct {
     state piece_state;
 } chess_piece;
 
+typedef struct {
+    int author;
+    char text[5];
+} chess_move;
+
+extern int last_printable_index;
+extern int first_printable_index;
+extern int number_of_moves;
 extern int b_cursor_x;
 extern int b_cursor_y;
 extern chess_piece printeable_chess_table[8][8];
@@ -38,5 +47,6 @@ void load_printeable_chess_table(chess_piece chess_table[8][8]);
 void close_chess();
 int win_codition(int black_king,int white_king);
 void print_winner(int player_win);
+void print_plays();
 
 #endif
