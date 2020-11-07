@@ -412,67 +412,59 @@ int check_movement(int x1,int y1,int x2,int y2) {
       }
       return 0;
     case BISHOP:
-      if (abs(aux1) != abs(aux2)) // Is a diagonal move?
-        return 0;
+    if (abs(aux1) == abs(aux2)){ // Diagonal movement
       if (aux1 > 0 && aux2 > 0){
         // TOP-LEFT
-        int i = x1, j = y1;
         for (int i = x1-1, j = y1-1; i>x2; i--, j--){
           if (chess_table[j][i].piece_name != EMPTY)
             return 0;
         }
       } else if (aux1 < 0 && aux2 > 0){
         // TOP-RIGHT
-        int i = x1, j = y1;
         for (int i = x1-1, j = y1+1; i>x2; i--, j++){
           if (chess_table[j][i].piece_name != EMPTY)
             return 0;
         }
       } else if (aux1 > 0 && aux2 < 0){
         // BOTTOM-LEFT
-        int i = x1, j = y1;
         for (int i = x1+1, j = y1-1; i<x2; i++, j--){
           if (chess_table[j][i].piece_name != EMPTY)
             return 0;
         }
       } else if (aux1 < 0 && aux2 < 0){
         // BOTTOM-RIGHT
-        int i = x1, j = y1;
         for (int i = x1+1, j = y1+1; i<x2; i++, j++){
           if (chess_table[j][i].piece_name != EMPTY)
             return 0;
         }
       } else
         return 0;
-      if (chess_table[y2][x2].color == color_player || (aux1 == 0 || aux2 == 0))
-        return 0;
+    }
+    if (chess_table[y2][x2].piece_name == EMPTY || chess_table[y2][x2].color != color_player)
       return 1;
+    return 0;
     case QUEEN:
       if (abs(aux1) == abs(aux2)){ // Diagonal movement
         if (aux1 > 0 && aux2 > 0){
           // TOP-LEFT
-          int i = x1, j = y1;
           for (int i = x1-1, j = y1-1; i>x2; i--, j--){
             if (chess_table[j][i].piece_name != EMPTY)
               return 0;
           }
         } else if (aux1 < 0 && aux2 > 0){
           // TOP-RIGHT
-          int i = x1, j = y1;
           for (int i = x1-1, j = y1+1; i>x2; i--, j++){
             if (chess_table[j][i].piece_name != EMPTY)
               return 0;
           }
         } else if (aux1 > 0 && aux2 < 0){
           // BOTTOM-LEFT
-          int i = x1, j = y1;
           for (int i = x1+1, j = y1-1; i<x2; i++, j--){
             if (chess_table[j][i].piece_name != EMPTY)
               return 0;
           }
         } else if (aux1 < 0 && aux2 < 0){
           // BOTTOM-RIGHT
-          int i = x1, j = y1;
           for (int i = x1+1, j = y1+1; i<x2; i++, j++){
             if (chess_table[j][i].piece_name != EMPTY)
               return 0;
