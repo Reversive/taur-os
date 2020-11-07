@@ -24,8 +24,8 @@ syscall * syscalls_table[_SYSCALLS_SIZE] = {
     [_SYSCALL_BACKUP_KB_BUFFER] = syscall_backup_kb_buffer,
     [_SYSCALL_RESTORE_KB_BUFFER] = syscall_restore_kb_buffer,
     [_SYSCALL_BACKUP_SCREEN] = syscall_backup_screen,
-    [_SYSCALL_RESTORE_SCREEN] = syscall_restore_screen
-
+    [_SYSCALL_RESTORE_SCREEN] = syscall_restore_screen,
+    [_SYSCALL_CLEAN_KB_BUFFER] = syscall_clean_kb_buffer
 };
 
 

@@ -88,3 +88,7 @@ int sys_restore_kb_buffer() {
 int sys_restore_screen() {
     return _syscall(_SYSCALL_RESTORE_SCREEN, 0, 0, 0, 0, 0);
 }
+
+void sys_clean_kb_buffer() {
+    return _syscall(_SYSCALL_CLEAN_KB_BUFFER, 0, 0, 0, 0, 0);
+}

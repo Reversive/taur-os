@@ -1,7 +1,7 @@
 #ifndef _SYSCALLS_H
 #define _SYSCALLS_H
 #include <stdint.h>
-#include "../../drivers/keyboard/include/kb_driver.h"
+#include "../../drivers/keyboard/include/keyboard.h"
 #include "../../drivers/shell/include/shell.h"
 #include "../include/lib.h"
 #define _STDIN 0x1
@@ -39,11 +39,12 @@ enum syscall_numbers {
     _SYSCALL_BACKUP_KB_BUFFER,
     _SYSCALL_RESTORE_KB_BUFFER,
     _SYSCALL_BACKUP_SCREEN,
-    _SYSCALL_RESTORE_SCREEN
+    _SYSCALL_RESTORE_SCREEN,
+    _SYSCALL_CLEAN_KB_BUFFER
 
 };
 
-#define _SYSCALLS_LAST _SYSCALL_RESTORE_SCREEN
+#define _SYSCALLS_LAST _SYSCALL_CLEAN_KB_BUFFER
 #define _SYSCALLS_SIZE (_SYSCALLS_LAST + 1)
 
 syscall syscall_read;
@@ -69,6 +70,7 @@ syscall syscall_backup_kb_buffer;
 syscall syscall_restore_kb_buffer;
 syscall syscall_backup_screen;
 syscall syscall_restore_screen;
+syscall syscall_clean_kb_buffer;
 extern syscall * syscalls_table[_SYSCALLS_SIZE];
 extern unsigned int get_time(char t);
 int read(unsigned int fd, char * buffer, size_t count);

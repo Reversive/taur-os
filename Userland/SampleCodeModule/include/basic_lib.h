@@ -28,6 +28,7 @@ void sys_backup_kb_buffer();
 void sys_backup_screen();
 int sys_restore_kb_buffer();
 int sys_restore_screen();
+void sys_clean_kb_buffer();
 
 enum syscall_numbers {
     _SYSCALL_READ = 0,
@@ -52,7 +53,8 @@ enum syscall_numbers {
     _SYSCALL_BACKUP_KB_BUFFER,
     _SYSCALL_RESTORE_KB_BUFFER,
     _SYSCALL_BACKUP_SCREEN,
-    _SYSCALL_RESTORE_SCREEN
+    _SYSCALL_RESTORE_SCREEN,
+    _SYSCALL_CLEAN_KB_BUFFER
 };
 
 enum status {

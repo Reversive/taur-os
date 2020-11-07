@@ -157,9 +157,14 @@ uint64_t syscall_restore_screen(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64
     return SUCCESS;
 }
 
+uint64_t syscall_clean_kb_buffer(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+    clean_kb_buffer();
+    return SUCCESS;
+}
+
 int read(unsigned int fd, char * buffer, size_t count) {
     unsigned int bytes_read = 0;
-     char popped_key;
+    char popped_key;
     switch (fd)
     {
         case _FD_STD_IN:
