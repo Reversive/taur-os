@@ -72,6 +72,19 @@ void join_chess() {
         chess_table[7][6]=horse_white;
         chess_table[0][7]=tower_black;
         chess_table[7][7]=tower_white;
+
+        /* Descomentar para escenario de enroque
+        chess_table[0][1]=empty;
+        chess_table[7][1]=empty;
+        chess_table[0][2]=empty;
+        chess_table[7][2]=empty;
+        chess_table[0][3]=empty;
+        chess_table[7][3]=empty;
+        chess_table[0][5]=empty;
+        chess_table[7][5]=empty;
+        chess_table[0][6]=empty;
+        chess_table[7][6]=empty;
+        */
     }
 
     load_printeable_chess_table(chess_table);
@@ -96,7 +109,7 @@ print_winner(int player_win){
   int j=0;
   int r,g,b;
   if (player_win!=0){
-    
+
     for ( j = 0; j < 6; j++){
         draw_square(165+(j*39),245,120,0);
     }
@@ -116,7 +129,7 @@ print_winner(int player_win){
     if (player_win==2){
       puts("Las Blancas");
     }
- 
+
     for (j = 0; j < 320; j+=2){
       draw_square(j+160,240,5,0xff0000);
       draw_square(480-j,360,5,0xff0000);
@@ -157,7 +170,7 @@ void load_printeable_chess_table(chess_piece chess_table[8][8]){
         if(chess_table[i][j].color==BLACK){
           black_king=1;
         }
-      }  
+      }
     }
   }
   player_win=win_codition(black_king,white_king);
@@ -350,7 +363,7 @@ int check_movement(int x1,int y1,int x2,int y2) {
       return 0;
     case TOWER:
       if (x1==x2 && y1 != y2){ // Y movement
-        if (y1 - y2 > 0){
+        if (aux2 > 0){
           for (int i = y1-1; i>y2; i--){ // Base movement -> UP
             if (chess_table[i][x2].piece_name != EMPTY)
               return 0;
@@ -362,7 +375,7 @@ int check_movement(int x1,int y1,int x2,int y2) {
           }
         }
       } else if (y1==y2 && x1 != x2){ // X movement
-        if (x1 - x2 > 0){
+        if (aux1 > 0){
           for (int i = x1-1; i>x2; i--){ // Base movement -> RIGHT
             if (chess_table[y2][i].piece_name != EMPTY)
               return 0;
@@ -376,7 +389,8 @@ int check_movement(int x1,int y1,int x2,int y2) {
       } else {
         return 0;
       }
-      if (chess_table[y2][x2].piece_name == EMPTY || chess_table[y2][x2].color != color_player)
+      if ((chess_table[y2][x2].piece_name == EMPTY || chess_table[y2][x2].color != color_player)
+      || (chess_table[y2][x2].piece_name == KING && chess_table[y2][x2].color == color_player && chess_table[y1][x1].piece_state == IDLE && chess_table[y2][x2].piece_state == IDLE))
         return 1;
       return 0;
     case HORSE:
@@ -487,11 +501,26 @@ int check_movement(int x1,int y1,int x2,int y2) {
         return 1;
       return 0;
     case KING:
-      if (aux1 < 0)
-        aux1 = aux1 * -1;
-      if (aux2 < 0)
-        aux2 = aux2 * -1;
-      if (aux1 > 1 || aux2 > 1 || (aux1==0 && aux2==0)){
+      aux1 = abs(aux1);
+      aux2 = abs(aux2);
+      if (chess_table[y2][x2].piece_name == TOWER && chess_table[y2][x2].color == color_player && chess_table[y1][x1].piece_state == IDLE && chess_table[y2][x2].piece_state == IDLE){
+        //Validacion solo para enroque
+        if (y1==y2 && x1 != x2){
+          if (aux1 > 0){
+            for (int i = x1-1; i>x2; i--){
+              if (chess_table[y2][i].piece_name != EMPTY)
+                return 0;
+            }
+          } else {
+            for (int i = x1+1; i<x2; i++){
+              if (chess_table[y2][i].piece_name != EMPTY)
+                return 0;
+            }
+          }
+        } else
+          return 0;
+        return 1;
+      } else if (aux1 > 1 || aux2 > 1 || (aux1==0 && aux2==0)){
         return 0; // Piece moved more than 1 square
       } else {
         if (chess_table[y2][x2].piece_name == EMPTY || chess_table[y2][x2].color != color_player)
@@ -509,6 +538,20 @@ void move_piece(char* buffer) {
       if (chess_table[y1][x1].piece_name == PAWN && y2 == 0){ // Pawn Promotion / WHITE
         chess_piece queen_white = {QUEEN, 0, WHITE, IDLE};
         chess_table[y1][x1] = queen_white;
+      } else if (chess_table[y2][x2].piece_name == KING || chess_table[y2][x2].piece_name == TOWER){
+        chess_piece king_white = {KING, 0, WHITE, MOVING};
+        chess_piece tower_white = {TOWER, 0, WHITE, MOVING};
+        chess_piece empty = {EMPTY, 0, 0, 0};
+        if (abs(x1-x2) == 3){
+          chess_table[y2][7] = empty;
+          chess_table[y2][6] = king_white;
+          chess_table[y2][5] = tower_white;
+        } else {
+          chess_table[y2][0] = empty;
+          chess_table[y2][2] = king_white;
+          chess_table[y2][3] = tower_white;
+        }
+        chess_table[y2][4] = empty;
       }
     	player_turn = 1;
       timer_start_move = current_player_two_seconds;
@@ -518,6 +561,20 @@ void move_piece(char* buffer) {
       if (chess_table[y1][x1].piece_name == PAWN && y2 == 7){ // Pawn Promotion / BLACK
         chess_piece queen_black = {QUEEN, 0, BLACK, IDLE};
         chess_table[y1][x1] = queen_black;
+      } else if (chess_table[y2][x2].piece_name == KING || chess_table[y2][x2].piece_name == TOWER){
+        chess_piece king_black = {KING, 0, BLACK, MOVING};
+        chess_piece tower_black = {TOWER, 0, BLACK, MOVING};
+        chess_piece empty = {EMPTY, 0, 0, 0};
+        if (abs(x1-x2) == 3){
+          chess_table[y2][7] = empty;
+          chess_table[y2][6] = king_black;
+          chess_table[y2][5] = tower_black;
+        } else {
+          chess_table[y2][0] = empty;
+          chess_table[y2][2] = king_black;
+          chess_table[y2][3] = tower_black;
+        }
+        chess_table[y2][4] = empty;
       }
     	player_turn = 0;
       timer_start_move = current_player_one_seconds;
