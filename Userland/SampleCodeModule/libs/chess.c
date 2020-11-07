@@ -19,7 +19,7 @@ void join_chess() {
     if(chess_state != PAUSED)  {
       player_turn = 0;
     }
-   
+
     if(chess_state == PAUSED) {
       if(player_turn == 0) {
         timer_start_move = current_player_one_seconds;
@@ -28,7 +28,7 @@ void join_chess() {
         timer_start_move = current_player_two_seconds;
         sys_register_timertick_function(player_two_timer, 18);
       }
-      
+
     } else {
       sys_register_timertick_function(player_one_timer, 18);
     }
@@ -91,6 +91,11 @@ void join_chess() {
         chess_table[7][5]=empty;
         chess_table[0][6]=empty;
         chess_table[7][6]=empty;
+        */
+
+        /* Descomentar para escenario de captura al paso
+        chess_table[4][2]=pawn_black;
+        chess_table[3][5]=pawn_white;
         */
     }
 
@@ -359,12 +364,12 @@ int check_movement(int x1,int y1,int x2,int y2) {
       } else if ((x2 == x1-1 || x2 == x1+1) && y2 == y1-(1*factor) && chess_table[y2][x2].piece_name != EMPTY && chess_table[y2][x2].color != color_player){
         return 1; // Take enemy piece
       } else if (x2 == x1-1 && y2 == y1-factor && chess_table[y1][x1-1].piece_name == PAWN && chess_table[y1][x1-1].piece_state == PASO){ // advance forward (captura al paso) LEFT
-        if (chess_table[y1][x1+1].color != color_player){
+        if (chess_table[y1][x1-1].color != color_player){
           chess_piece empty={EMPTY,0,0,0};
           chess_table[y1][x1-1] = empty;
           return 1;
         }
-      } else if (x2 == x1+1 && y2 == y1-factor && chess_table[y1][x1+1].piece_name == PAWN && chess_table[y1][x1-1].piece_state == PASO){ // advance forward (captura al paso) RIGHT
+      } else if (x2 == x1+1 && y2 == y1-factor && chess_table[y1][x1+1].piece_name == PAWN && chess_table[y1][x1+1].piece_state == PASO){ // advance forward (captura al paso) RIGHT
         if (chess_table[y1][x1+1].color != color_player){
           chess_piece empty={EMPTY,0,0,0};
           chess_table[y1][x1+1] = empty;
@@ -597,7 +602,7 @@ void move_piece(char* buffer) {
   }
   sys_clear_line();
   print_plays();
-  
+
 }
 
 void print_plays() {
