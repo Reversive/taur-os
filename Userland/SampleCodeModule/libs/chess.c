@@ -5,6 +5,7 @@ chess_piece printeable_chess_table[8][8];
 int player_turn = 0;
 int b_cursor_x = 0;
 int b_cursor_y = 0;
+int player_win=0;
 
 int current_player_one_seconds;
 int current_player_two_seconds;
@@ -82,23 +83,6 @@ void join_chess() {
       player_two_timer();
       player_one_timer();
     }
-    sys_draw_character(650, 20, '8', 3, 0xFFFFFF);
-	  sys_draw_character(650, 100, '7', 3, 0xFFFFFF);
-	  sys_draw_character(650, 180, '6', 3, 0xFFFFFF);
-	  sys_draw_character(650, 260, '5', 3, 0xFFFFFF);
-	  sys_draw_character(650, 340, '4', 3, 0xFFFFFF);
-	  sys_draw_character(650, 420, '3', 3, 0xFFFFFF);
-	  sys_draw_character(650, 500, '2', 3, 0xFFFFFF);
-	  sys_draw_character(650, 580, '1', 3, 0xFFFFFF);
-	  sys_draw_character(20, 650, 'A', 3, 0xFFFFFF);
-	  sys_draw_character(100, 650, 'B', 3, 0xFFFFFF);
-	  sys_draw_character(180, 650, 'C', 3, 0xFFFFFF);
-	  sys_draw_character(260, 650, 'D', 3, 0xFFFFFF);
-	  sys_draw_character(340, 650, 'E', 3, 0xFFFFFF);
-	  sys_draw_character(420, 650, 'F', 3, 0xFFFFFF);
-	  sys_draw_character(500, 650, 'G', 3, 0xFFFFFF);
-	  sys_draw_character(580, 650, 'H', 3, 0xFFFFFF);
-
     print_chess_table(chess_table);
     sys_set_cursor_pos(0, 720);
     sys_set_cursor_status(_ENABLED);
@@ -107,13 +91,76 @@ void join_chess() {
 
 }
 
+print_winner(int player_win){
+  unsigned int i=0xff0000;
+  int j=0;
+  int r,g,b;
+  if (player_win!=0){
+    
+    for ( j = 0; j < 6; j++){
+        draw_square(165+(j*39),245,120,0);
+    }
+    sys_set_cursor_pos(280,320);
+    sys_draw_character(259, 280, 'G', 2, 0xFFFFFF);
+	  sys_draw_character(274, 280, 'A', 2, 0xFFFFFF);
+	  sys_draw_character(289, 280, 'N', 2, 0xFFFFFF);
+	  sys_draw_character(304, 280, 'A', 2, 0xFFFFFF);
+	  sys_draw_character(319, 280, 'D', 2, 0xFFFFFF);
+	  sys_draw_character(334, 280, 'O', 2, 0xFFFFFF);
+	  sys_draw_character(349, 280, 'R', 2, 0xFFFFFF);
+	  sys_draw_character(364, 280, '!', 2, 0xFFFFFF);
+
+    if ((player_win)==1){
+      puts("Las Negras");
+    }
+    if (player_win==2){
+      puts("Las Blancas");
+    }
+ 
+    for (j = 0; j < 320; j+=2){
+      draw_square(j+160,240,5,0xff0000);
+      draw_square(480-j,360,5,0xff0000);
+    }
+    for (j = 0; j < 120; j+=2){
+      draw_square(160,360-j,5,0xff0000);
+      draw_square(480,240+j,5,0xff0000);
+    }
+    sys_unregister_timertick_function(player_one_timer);
+    sys_unregister_timertick_function(player_two_timer);
+    chess_state=ENDED;
+    sys_set_newline_scroll_state(1);
+    sys_set_cursor_pos(64,720);
+  }
+}
+
+int win_codition(int black_king,int white_king){
+  if(black_king==white_king){
+    return 0;
+  }else if (black_king==1){
+    return 1;
+  }else{
+    return 2;
+  }
+}
+
 void load_printeable_chess_table(chess_piece chess_table[8][8]){
   int i,j;
+  int white_king=0;
+  int black_king=0;
   for (i = 0; i < 8; i++){
-      for (j = 0; j < 8; j++){
-        printeable_chess_table[i][j]=chess_table[i][j];
-      }
+    for (j = 0; j < 8; j++){
+      printeable_chess_table[i][j]=chess_table[i][j];
+      if (chess_table[i][j].piece_name==KING){
+        if(chess_table[i][j].color==WHITE){
+          white_king=1;
+        }
+        if(chess_table[i][j].color==BLACK){
+          black_king=1;
+        }
+      }  
+    }
   }
+  player_win=win_codition(black_king,white_king);
 }
 
 void rotation_chess_table(){
@@ -132,6 +179,16 @@ void rotation_chess_table(){
 }
 
 void print_chess_table( chess_piece chess_table[][8]){
+
+    for (int i = 0; i < 8; i++){
+      if (rotation %2==0){
+        sys_draw_character(650, 20+(80*i), (rotation==0) ? ('8'-i) : ('1'+i) , 2, 0xFFFFFF);
+	      sys_draw_character(20+(80*i), 650, (rotation==0) ? ('A'+i) : ('H'-i), 2, 0xFFFFFF);
+      }else{
+        sys_draw_character(650, 20+(80*i), (rotation==1) ? ('A'+i) : ('H'-i) , 2, 0xFFFFFF);
+	      sys_draw_character(20+(80*i), 650, (rotation==1) ? ('1'+i) : ('8'-i), 2, 0xFFFFFF);
+      }
+    }
 
     for(int j = 0; j < 8; j+=2){
     		for(int i = 0; i < 8; i+=2) {
@@ -184,6 +241,7 @@ void move_chess_piece(int x1,int y1,int x2,int y2){
       rotation_chess_table();
     }
     print_chess_table(printeable_chess_table);
+    print_winner(player_win);
 }
 
 void parse_move(char* buffer,int* x1,int* y1,int* x2,int* y2){
@@ -226,9 +284,9 @@ void player_two_timer() {
   sys_draw_character(732, 84, ':', 2, 0xFFFFFF);
   print_string_by_pos(764, 84, f_s, 0xFFFFFF, 2);
   current_player_two_seconds -= 1;
-  if(timer_start_move - current_player_two_seconds == 60) {
-    // PERDISTE PAPU
-    printf("PERDISTE");
+  if(current_player_one_seconds - current_player_two_seconds == 61) {
+    player_win=2;
+    print_winner(player_win);
   }
 }
 
@@ -244,9 +302,9 @@ void player_one_timer() {
   sys_draw_character(732, 564, ':', 2, 0xFF0000);
   print_string_by_pos(764, 564, f_s, 0xFF0000, 2);
 	current_player_one_seconds -= 1;
-  if(timer_start_move - current_player_one_seconds == 60) {
-    // PERDISTE PAPU
-    printf("PERDISTE");
+  if(current_player_two_seconds - current_player_one_seconds == 61) {
+    player_win=1;
+    print_winner(player_win);
   }
 }
 

@@ -48,10 +48,12 @@ void assign_module(char * str) {
 	else if(command_equal(str, "chess") && (chess_state == NOT_PLAYING || chess_state == PAUSED) ) {
 		if(chess_state == PAUSED) chess_state = PLAYING;
 		join_chess();
-	} else if(command_equal(str, "exit") && chess_state == PLAYING) {
+	} else if(command_equal(str, "exit") && (chess_state == PLAYING || chess_state == ENDED )) {
 		close_chess(NOT_PLAYING);
 	}
 	else {
+		if (chess_state==ENDED)
+			return;
 		puts("Ingrese un comando valido.\n");
 	}
 }
@@ -86,8 +88,7 @@ void console_key_handler(char input,char* input_buffer) {
 		if (chess_state == PLAYING){
 			close_chess(PAUSED);
 			sys_set_text_color(WHITE);
-			putchar('\n');
-			puts("TaurOS> ");
+			
 			sys_set_text_color(LIME);
 		}
 		else{
@@ -101,10 +102,10 @@ void console_key_handler(char input,char* input_buffer) {
 	else if (input=='r' && chess_state==1) {
 		rotation_chess_table();
 		rotation++;
+		rotation=rotation%4;
 		print_chess_table(printeable_chess_table);
 	}
 	
-
     else if( input == ESC_ASCII) {
 
 	} else if(input == '\b'){

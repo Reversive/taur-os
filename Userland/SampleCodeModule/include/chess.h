@@ -4,7 +4,7 @@
 #include "stdio.h"
 #include "colors.h"
 #include "../include/console.h"
-enum chess_state {NOT_PLAYING = 0, PLAYING, PAUSED};
+enum chess_state {NOT_PLAYING = 0, PLAYING, PAUSED,ENDED};
 typedef enum {PAWN = 0, TOWER, HORSE, BISHOP, QUEEN, KING, EMPTY} chess_id;
 typedef enum {IDLE = 0, MOVING, PASO} state;
 
@@ -34,4 +34,7 @@ void move_piece(char* buffer);
 void rotation_chess_table();
 void load_printeable_chess_table(chess_piece chess_table[8][8]);
 void close_chess();
+int win_codition(int black_king,int white_king);
+void print_winner(int player_win);
+
 #endif

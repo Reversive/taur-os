@@ -13,7 +13,7 @@ int main() {
 	sys_set_cursor_status(_ENABLED);
 	while(1) {
 		char c;
-		if(chess_state==1){
+		if(chess_state==PLAYING || chess_state==ENDED){
 			sys_set_newline_scroll_state(1);
 			sys_set_cursor_pos(0, 720);
 			sys_clear_line();
