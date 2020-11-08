@@ -38,7 +38,7 @@ void join_chess() {
     sys_backup_kb_buffer();
 		sys_backup_screen();
     sys_set_cursor_status(_DISABLED);
-    int rotation = 0;
+    
 
     chess_piece pawn_white =  {PAWN,  0, WHITE, IDLE};
     chess_piece king_white =  {KING,  0, WHITE, IDLE};
@@ -120,10 +120,8 @@ void join_chess() {
 
 }
 
-print_winner(int player_win){
-  unsigned int i=0xff0000;
+void print_winner(int player_win){
   int j=0;
-  int r,g,b;
   if (player_win!=0){
 
     for ( j = 0; j < 6; j++){
@@ -193,7 +191,7 @@ void load_printeable_chess_table(chess_piece chess_table[8][8]){
 }
 
 void rotation_chess_table(){
-  int i,j,h;
+  int i,j;
   chess_piece aux[8][8];
   for (i = 0; i < 8; i++){
     for (j = 0; j < 8; j++){
