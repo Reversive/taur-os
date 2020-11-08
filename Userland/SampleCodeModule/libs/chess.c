@@ -340,12 +340,13 @@ void player_one_timer() {
   if(current_player_two_seconds - current_player_one_seconds == 61) {
     player_win=1;
     print_winner(player_win);
+    sys_clean_kb_buffer();
     sys_clear_line();
     sys_set_cursor_pos(0, 720);
     sys_set_text_color(WHITE);
     puts("TaurOS> ");
     sys_set_text_color(LIME);
-    sys_clean_kb_buffer();
+    
   }
 }
 

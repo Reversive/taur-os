@@ -25,7 +25,7 @@ enum syscall_numbers {
     _SYSCALL_SET_TEXT_SIZE,
     _SYSCALL_SET_CURSOR_STATE,
     _SYSCALL_INFOREG,
-    _SYSCALL_PRINT_MEM,
+    _SYSCALL_COPY_MEM,
     _SYSCALL_DRAW_MATRIX,
     _SYSCALL_DRAW_RECT,
     _SYSCALL_SET_CURSOR_POS,
@@ -55,7 +55,7 @@ syscall syscall_set_text_color;
 syscall syscall_set_text_size;
 syscall syscall_set_cursor_state;
 syscall syscall_inforeg;
-syscall syscall_print_mem;
+syscall syscall_copy_mem;
 syscall syscall_draw_matrix;
 syscall syscall_draw_rect;
 syscall syscall_set_cursor_pos;

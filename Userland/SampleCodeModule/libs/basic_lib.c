@@ -32,8 +32,8 @@ void sys_inforeg( char* data) {
     _syscall(_SYSCALL_INFOREG,(uint64_t)data, 0, 0, 0, 0);
 }
 
-void sys_print_mem( char* from, char* buffer) {
-    _syscall(_SYSCALL_PRINT_MEM,(uint64_t) from,(uint64_t) buffer, 0, 0, 0);
+void sys_copy_mem( char* from, char* buffer) {
+    _syscall(_SYSCALL_COPY_MEM,(uint64_t) from,(uint64_t) buffer, 0, 0, 0);
 }
 
 void sys_draw_matrix(int x, int y, int color, char * matrix, int size) {
@@ -90,5 +90,5 @@ int sys_restore_screen() {
 }
 
 void sys_clean_kb_buffer() {
-    return _syscall(_SYSCALL_CLEAN_KB_BUFFER, 0, 0, 0, 0, 0);
+    _syscall(_SYSCALL_CLEAN_KB_BUFFER, 0, 0, 0, 0, 0);
 }

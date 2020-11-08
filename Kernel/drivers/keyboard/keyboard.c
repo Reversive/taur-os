@@ -123,7 +123,7 @@ int restore_kb_buffer() {
 
 void clean_kb_buffer() {
     kb_ring.dequeue_pos = 0;
-    for(int i = 0; i < 255; i++) {
+    for(int i = 0; i < KB_BUFFER_SIZE; i++) {
         kb_ring.kb_buffer[i] = 0;
     }
     kb_ring.pending_read = 0;

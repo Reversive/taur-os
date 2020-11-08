@@ -13,7 +13,7 @@ void sys_set_text_size(unsigned int size);
 void sys_set_text_color(unsigned int color);
 void sys_set_bg_color(unsigned int color);
 void sys_inforeg( char* data);
-void sys_print_mem( char* from, char* buffer);
+void sys_copy_mem(char* from, char* buffer);
 void sys_draw_matrix(int x, int y, int color, char * matrix, int size);
 void sys_draw_rect(int x, int y, int w, int h, int color);
 void sys_set_cursor_pos(int x, int y);
@@ -39,7 +39,7 @@ enum syscall_numbers {
     _SYSCALL_SET_TEXT_SIZE,
     _SYSCALL_SET_CURSOR_STATE,
     _SYSCALL_INFOREG,
-    _SYSCALL_PRINT_MEM,
+    _SYSCALL_COPY_MEM,
     _SYSCALL_DRAW_MATRIX,
     _SYSCALL_DRAW_RECT,
     _SYSCALL_SET_CURSOR_POS,

@@ -51,7 +51,7 @@ uint64_t syscall_inforeg(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, 
     return SUCCESS;
 }
 
-uint64_t syscall_print_mem(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+uint64_t syscall_copy_mem(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
     char* from = (char*) rsi;
     char* buffer = (char*) rdx;
     copy_mem(from,buffer);

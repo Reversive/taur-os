@@ -5,9 +5,10 @@
 #include "kb_scancodes.h"
 typedef unsigned char key;
 typedef unsigned char bool;
-#define KB_BUFFER_SIZE 255
+
 #define KB_BUFFER_OVERFLOW 256
 
+#define KB_BUFFER_SIZE 255
 typedef struct {
     int queue_pos;
     int dequeue_pos;

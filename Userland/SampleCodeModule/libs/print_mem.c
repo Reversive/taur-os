@@ -2,8 +2,8 @@
 
 unsigned int errorFlag;
 
-void print_mem(char* from,char* buffer){
-    sys_print_mem(from,buffer);
+void copy_mem(char* from,char* buffer){
+    sys_copy_mem(from,buffer);
 }
 
 int info_mem( char * str) {
@@ -23,7 +23,7 @@ int info_mem( char * str) {
         if(errorFlag)
 			return 0;
 		char buffer[65]; 
-        print_mem(startPointer, buffer);
+        copy_mem(startPointer, buffer);
 		print_mem_in_screen(startPointer,buffer);
 		putchar('\n');
 		return 1;
