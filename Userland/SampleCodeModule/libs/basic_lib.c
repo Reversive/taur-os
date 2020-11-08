@@ -49,7 +49,7 @@ void sys_set_cursor_pos(int x, int y) {
 }
 
 void sys_get_cursor_pos(int * x, int * y) {
-    _syscall(_SYSCALL_GET_CURSOR_POS, x, y, 0, 0, 0);
+    _syscall(_SYSCALL_GET_CURSOR_POS, (uint64_t)x, (uint64_t)y, 0, 0, 0);
 }
 
 void sys_clear_screen() {
@@ -69,11 +69,11 @@ void sys_clear_line() {
 }
 
 void sys_register_timertick_function(function f, unsigned long ticks) {
-    _syscall(_SYSCALL_REGISTER_TIMERTICK_FUNCTION, f, ticks, 0, 0, 0);
+    _syscall(_SYSCALL_REGISTER_TIMERTICK_FUNCTION, (uint64_t)f, ticks, 0, 0, 0);
 }
 
 void sys_unregister_timertick_function(function f) {
-    _syscall(_SYSCALL_UNREGISTER_TIMERTICK_FUNCTION, f, 0, 0, 0, 0);
+    _syscall(_SYSCALL_UNREGISTER_TIMERTICK_FUNCTION, (uint64_t)f, 0, 0, 0, 0);
 }
 
 void sys_backup_kb_buffer() {

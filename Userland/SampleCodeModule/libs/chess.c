@@ -367,6 +367,8 @@ int check_movement(int x1,int y1,int x2,int y2) {
     return 0;
 
   switch (chess_table[y1][x1].piece_name) {
+    case EMPTY:
+      return 0;
     case PAWN:
       if ((chess_table[y1][x1].piece_state == IDLE && (x2 == x1 && y2 == y1-(2*factor))) // advance forward 2 positions
       || (x2 == x1 && y2 == y1-(1*factor))){                                             // advance forward 1 positions
@@ -547,6 +549,7 @@ int check_movement(int x1,int y1,int x2,int y2) {
       }
       return 0;
   }
+  return 0;
 }
 
 void move_piece(char* buffer) {
@@ -650,7 +653,3 @@ void close_chess(int status) {
   sys_set_cursor_status(_ENABLED);
 }
 
-
-void reset_moves_idx() {
-  first_printable_index = last_printable_index = number_of_moves = 0;
-}

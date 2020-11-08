@@ -5,6 +5,7 @@
 #include "colors.h"
 #include "../include/console.h"
 #include "math.h"
+#include "paint.h"
 #define MAX_PRINTABLE_MOVES 33
 
 enum chess_state {NOT_PLAYING = 0, PLAYING, PAUSED,ENDED};

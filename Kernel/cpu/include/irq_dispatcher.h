@@ -1,7 +1,7 @@
 #ifndef _IRQ_DISPATCHER_H
 #define _IRQ_DISPATCHER_H
 
-#include <time.h>
+#include "../../drivers/timer/include/time.h"
 #include <stdint.h>
 #include "../../drivers/keyboard/include/keyboard.h"
 #include "../../include/naiveConsole.h"

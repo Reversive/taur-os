@@ -49,7 +49,7 @@ void assign_module(char * str) {
 		if(chess_state == PAUSED) chess_state = PLAYING;
 		join_chess();
 	} else if(command_equal(str, "exit") && (chess_state == PLAYING || chess_state == ENDED )) {
-		reset_moves_idx();
+		first_printable_index = last_printable_index = number_of_moves = 0;
 		close_chess(NOT_PLAYING);
 	}
 	else {
