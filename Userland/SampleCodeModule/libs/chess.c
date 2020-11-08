@@ -430,7 +430,7 @@ int check_movement(int x1,int y1,int x2,int y2) {
       }
       return 0;
     case BISHOP:
-    if (abs(aux1) == abs(aux2)){ // Diagonal movement
+    if (abs(aux1) == abs(aux2)) { // Diagonal movement
       if (aux1 > 0 && aux2 > 0){
         // TOP-LEFT
         for (int i = x1-1, j = y1-1; i>x2; i--, j--){
@@ -565,7 +565,7 @@ void move_piece(char* buffer) {
       if (chess_table[y1][x1].piece_name == PAWN && y2 == 0){ // Pawn Promotion / WHITE
         chess_piece queen_white = {QUEEN, 0, WHITE, IDLE};
         chess_table[y1][x1] = queen_white;
-      } else if (chess_table[y2][x2].piece_name == KING || chess_table[y2][x2].piece_name == TOWER){
+      } else if (chess_table[y2][x2].color == WHITE && (chess_table[y2][x2].piece_name == KING || chess_table[y2][x2].piece_name == TOWER)){
         chess_piece king_white = {KING, 0, WHITE, MOVING};
         chess_piece tower_white = {TOWER, 0, WHITE, MOVING};
         chess_piece empty = {EMPTY, 0, 0, 0};
@@ -588,7 +588,7 @@ void move_piece(char* buffer) {
       if (chess_table[y1][x1].piece_name == PAWN && y2 == 7){ // Pawn Promotion / BLACK
         chess_piece queen_black = {QUEEN, 0, BLACK, IDLE};
         chess_table[y1][x1] = queen_black;
-      } else if (chess_table[y2][x2].piece_name == KING || chess_table[y2][x2].piece_name == TOWER){
+      } else if (chess_table[y2][x2].color == BLACK && (chess_table[y2][x2].piece_name == KING || chess_table[y2][x2].piece_name == TOWER)){
         chess_piece king_black = {KING, 0, BLACK, MOVING};
         chess_piece tower_black = {TOWER, 0, BLACK, MOVING};
         chess_piece empty = {EMPTY, 0, 0, 0};

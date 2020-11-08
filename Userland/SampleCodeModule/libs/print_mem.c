@@ -82,7 +82,7 @@ void print_mem_in_screen(char* startPointer,char* buffer){
 
 void print_info_reg( char *data){
 	char buffer [17]; 
-    char register_names [17][6] = {"R15","R14","R13","R12","R11","R10"," R9"," R8","RAX","RBX","RCX","RDX","RDI","RSI","RBP","RIP","RSP"};
+    char register_names [17][6] = {"R15","R14","R13","R12","R11","R10"," R9"," R8","RBX","RCX","RDX","RDI","RBP","RIP","RSI","RAX","RSP"};
 	int i=0;
 	int nByte,idx;
 	unsigned char c;

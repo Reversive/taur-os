@@ -104,14 +104,17 @@ get_time:
 
 save_registers_data:
 	push rsp ;{"R15","R14","R13","R12","R11","R10"," R9"," R8","RAX","RBX","RCX","RDX","RDI","RSI","RBP","RIP","RSP"}
-	push rax ;rip
-	push rbp
+	push rax
 	push rsi
+	mov rax, rsp
+	add rax, 32 ; apuntamos a la dir de retorno de la func
+	mov rsi, [rax]
+	push rsi ;rip
+	push rbp
 	push rdi
 	push rdx
 	push rcx
 	push rbx
-	push rax
 	push r8
 	push r9
 	push r10
@@ -141,13 +144,14 @@ ciclo:
 	pop r10
 	pop r9
 	pop r8
-	pop rax
 	pop rbx
 	pop rcx
 	pop rdx
 	pop rdi
-	pop rsi
+	
 	pop rbp
+	pop rsi
+	pop rsi
 	pop rax
 	pop rsp
 	ret
