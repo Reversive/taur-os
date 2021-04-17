@@ -1,6 +1,7 @@
 #ifndef EXCEPTIONS_H
 #define EXCEPTIONS_H
 
+#define NULL ((void *)0)
 #define ZERO_EXCEPTION_ID 0x0
 #define INVALID_OPCODE_EXCEPTION_ID 0x6
 #define DELEGATE_BEHAVIOR 1

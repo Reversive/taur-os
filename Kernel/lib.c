@@ -1,4 +1,4 @@
-#include <lib.h>
+#include "include/lib.h"
 
 void * memset(void * destination, int32_t c, uint64_t length)
 {
@@ -9,6 +9,22 @@ void * memset(void * destination, int32_t c, uint64_t length)
 		dst[length] = chr;
 
 	return destination;
+}
+
+int strlen(char * str) {
+    int i = 0;
+    while(str[i] != 0)
+        i++;
+
+    return i;
+}
+
+void strcpy(char * dest, char * origin) {
+    int i;
+    for(i = 0; origin[i] != 0; i++)
+        dest[i] = origin[i];
+
+    dest[i] = 0;
 }
 
 void clear_interrupts() {

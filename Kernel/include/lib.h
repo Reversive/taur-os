@@ -38,7 +38,8 @@ void clear_interrupts();
 void halt_system();
 
 void get_registers(unsigned char *data);
-
+int strlen(char * str);
+void strcpy(char * dest, char * origin);
 extern void save_registers_data(unsigned char* data);
 void print_reg();
 extern int test();

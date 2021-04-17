@@ -1,8 +1,6 @@
 #ifndef _KERNEL_H
 #define _KERNEL_H
 
-#include <stdint.h>
-#include <string.h>
 #include <lib.h>
 #include <moduleLoader.h>
 #include <naiveConsole.h>
