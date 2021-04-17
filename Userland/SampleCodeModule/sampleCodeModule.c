@@ -3,8 +3,6 @@
 #include "include/time.h"
 #include "include/colors.h"
 #include "include/console.h"
-#include "include/chess_bitmap.h"
-#include "include/chess.h"
 
 char console_buffer[MAX] = {0};
 
@@ -18,11 +16,6 @@ int main() {
 	
 	while(1) {
 		char c;
-		if(chess_state==PLAYING || chess_state==ENDED) {
-			sys_set_newline_scroll_state(1);
-			sys_set_cursor_pos(0, 720);
-			sys_clear_line();
-		}
 		sys_set_text_color(WHITE);
 		puts("TaurOS> ");
 		sys_set_text_color(LIME);

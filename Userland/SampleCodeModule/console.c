@@ -3,11 +3,10 @@
 
 unsigned int console_num;
 unsigned int input_read_size = 0;
-int chess_state = NOT_PLAYING;
 int rotation = 0;
 
 
-char data[136];
+char data[MAX_DATA_BUFFER];
 void invalid_opcode_test(void);
 void help() {
 	puts("Comandos posibles:\n");
@@ -17,44 +16,31 @@ void help() {
 	puts("printmem 0xDIR - Volcado de memoria\n");
     puts("opcode - Generar excepcion de codigo de operacion invalido\n");
     puts("div0 - Generar excepcion de division por cero\n");
-	puts("chess - Genera un nuevo juego de ajedrez\n");
 	return;
 }
 
 void assign_module(char * str) {
-	if(command_equal(str, "help") && (chess_state == NOT_PLAYING || chess_state == PAUSED)) {
+	if(command_equal(str, "help")) {
 		help();
 	}
-	else if(command_equal(str,"time") && (chess_state == NOT_PLAYING || chess_state == PAUSED)){
+	else if(command_equal(str,"time")){
         print_time();
     }
-	else if(command_equal(str,"inforeg") && (chess_state == NOT_PLAYING || chess_state == PAUSED)){
+	else if(command_equal(str,"inforeg")){
         get_inforeg(data);
 		print_info_reg(data);
 	}
-	else if(command_equal(str, "printmem") && (chess_state == NOT_PLAYING || chess_state == PAUSED)) {
+	else if(command_equal(str, "printmem")) {
 		if(!info_mem(str))
 			print_string("Ingrese una direccion como argumento\n");
 	}
-    else if(command_equal(str, "opcode") && (chess_state == NOT_PLAYING || chess_state == PAUSED)) {
+    else if(command_equal(str, "opcode")) {
         invalid_opcode_test();
     }
-    else if(command_equal(str, "div0") && (chess_state == NOT_PLAYING || chess_state == PAUSED)) {
+    else if(command_equal(str, "div0")) {
         int b = 5 / 0;
     }
-	else if (command_equal(str,"move") && chess_state == PLAYING){
-		move_piece(str);
-	}
-	else if(command_equal(str, "chess") && (chess_state == NOT_PLAYING || chess_state == PAUSED) ) {
-		if(chess_state == PAUSED) chess_state = PLAYING;
-		join_chess();
-	} else if(command_equal(str, "exit") && (chess_state == PLAYING || chess_state == ENDED )) {
-		first_printable_index = last_printable_index = number_of_moves = 0;
-		close_chess(NOT_PLAYING);
-	}
 	else {
-		if (chess_state==ENDED)
-			return;
 		puts("Ingrese un comando valido.\n");
 	}
 }
@@ -85,40 +71,7 @@ unsigned int is_newline_char(char chr) {
 }
 
 void console_key_handler(char input,char* input_buffer) {
-	if(input == '\t'){
-		if(chess_state == ENDED) return;
-		if (chess_state == PLAYING){
-			close_chess(PAUSED);
-			sys_set_text_color(WHITE);
-			putchar('\n');
-			puts("TaurOS> ");
-			sys_set_text_color(LIME);
-		}
-		else{
-			join_chess();
-			sys_set_text_color(WHITE);
-			puts("TaurOS> ");
-			sys_set_text_color(LIME);
-		}
-		
-	} else if ((input=='r' || input =='R') && chess_state == PLAYING) {
-		rotation_chess_table();
-		rotation++;
-		rotation=rotation%4;
-		print_chess_table(printeable_chess_table);
-	} else if( input == ESC_ASCII) {
-	} else if((input == 'o' || input == 'O') && chess_state == ENDED) {
-		if(first_printable_index > 0)  {
-			first_printable_index--;
-			last_printable_index--;
-			print_plays();
-		}
-	} else if((input == 'l' || input == 'L') && chess_state == ENDED) {
-		if(last_printable_index < number_of_moves)  {
-			first_printable_index++;
-			last_printable_index++;
-			print_plays();
-		}
+	if( input == ESC_ASCII) {
 	} else if(input == '\b'){
 		if(input_read_size > 0) {
 			input_buffer[input_read_size--] = 0;
