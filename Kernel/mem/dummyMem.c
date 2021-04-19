@@ -1,4 +1,4 @@
-#include "dummyMem.h"
+#include "include/dummyMem.h"
 #define TOTAL_MEM 1024      // 1024 es toda la memoria que va a administrar mi memory manager
 #define BLOCK_SIZE 64
 
