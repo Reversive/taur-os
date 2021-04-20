@@ -4,11 +4,13 @@
 #include "../../drivers/keyboard/include/keyboard.h"
 #include "../../drivers/shell/include/shell.h"
 #include "../include/lib.h"
+#include "../../mem/include/mm.h"
+
 #define _STDIN 0x1
 #define SUCCESS 1
 #define ERROR -1
 typedef uint64_t syscall(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
-typedef unsigned int size_t;
+// typedef unsigned int size_t;
 
 enum file_descriptors {
     _FD_STD_OUT = 0,
@@ -40,11 +42,12 @@ enum syscall_numbers {
     _SYSCALL_RESTORE_KB_BUFFER,
     _SYSCALL_BACKUP_SCREEN,
     _SYSCALL_RESTORE_SCREEN,
-    _SYSCALL_CLEAN_KB_BUFFER
-
+    _SYSCALL_CLEAN_KB_BUFFER,
+    _SYSCALL_MALLOC,
+    _SYSCALL_FREE
 };
 
-#define _SYSCALLS_LAST _SYSCALL_CLEAN_KB_BUFFER
+#define _SYSCALLS_LAST _SYSCALL_FREE
 #define _SYSCALLS_SIZE (_SYSCALLS_LAST + 1)
 
 syscall syscall_read;
@@ -71,10 +74,14 @@ syscall syscall_restore_kb_buffer;
 syscall syscall_backup_screen;
 syscall syscall_restore_screen;
 syscall syscall_clean_kb_buffer;
+syscall syscall_malloc;
+syscall syscall_free;
+
 extern syscall * syscalls_table[_SYSCALLS_SIZE];
 extern unsigned int get_time(char t);
 int read(unsigned int fd, char * buffer, size_t count);
 int write(unsigned int fd, char * buffer, size_t count);
 void copy_mem(char* from,char* buffer);
+
 
 #endif

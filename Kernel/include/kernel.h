@@ -9,6 +9,9 @@
 #include "../cpu/include/idt_loader.h"
 #include "../drivers/video/include/video_driver.h"
 #include "../drivers/shell/include/shell.h"
+#include "../mem/include/mm.h"
+#include <test_mm.h>
+
 extern uint8_t text;
 extern uint8_t rodata;
 extern uint8_t data;

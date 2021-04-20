@@ -162,6 +162,20 @@ uint64_t syscall_clean_kb_buffer(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint6
     return SUCCESS;
 }
 
+
+uint64_t syscall_malloc(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+    size_t size = (size_t) rsi;
+    void *response = myMalloc(size);
+    if(response ==  NULL) return ERROR;
+    return (uint64_t)response;
+}
+
+uint64_t syscall_free(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+    void * address = (void*) rsi;
+    myFree(address);
+    return SUCCESS;
+}
+
 int read(unsigned int fd, char * buffer, size_t count) {
     unsigned int bytes_read = 0;
     char popped_key;

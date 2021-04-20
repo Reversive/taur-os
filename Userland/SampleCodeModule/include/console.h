@@ -9,6 +9,7 @@
 #include "print_mem.h"
 #include "basic_lib.h"
 #include "chess.h"
+#include "test_mm.h"
 
 extern int chess_state;
 extern int rotation;

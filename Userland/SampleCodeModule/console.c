@@ -18,6 +18,7 @@ void help() {
     puts("opcode - Generar excepcion de codigo de operacion invalido\n");
     puts("div0 - Generar excepcion de division por cero\n");
 	puts("chess - Genera un nuevo juego de ajedrez\n");
+	puts("mm_test - Corre el test del Memory Manager\n");
 	return;
 }
 
@@ -40,7 +41,9 @@ void assign_module(char * str) {
         invalid_opcode_test();
     }
     else if(command_equal(str, "div0") && (chess_state == NOT_PLAYING || chess_state == PAUSED)) {
-        int b = 5 / 0;
+        int a = 0;
+		int b = 5;
+		b /= a;
     }
 	else if (command_equal(str,"move") && chess_state == PLAYING){
 		move_piece(str);
@@ -51,8 +54,9 @@ void assign_module(char * str) {
 	} else if(command_equal(str, "exit") && (chess_state == PLAYING || chess_state == ENDED )) {
 		first_printable_index = last_printable_index = number_of_moves = 0;
 		close_chess(NOT_PLAYING);
-	}
-	else {
+	} else if(command_equal(str, "mm_test")) {
+		test_mm();
+	} else {
 		if (chess_state==ENDED)
 			return;
 		puts("Ingrese un comando valido.\n");

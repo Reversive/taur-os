@@ -10,6 +10,9 @@ OBJECTS_SYS=$(SOURCES_SYS:.c=.o)
 SOURCES_CPU=$(wildcard cpu/*.c)
 OBJECTS_CPU=$(SOURCES_CPU:.c=.o)
 
+SOURCES_MEM=$(wildcard mem/*.c)
+OBJECTS_MEM=$(SOURCES_MEM:.c=.o)
+
 SOURCES_DRIVERS=$(wildcard drivers/keyboard/*.c drivers/video/*.c drivers/shell/*.c drivers/timer/*.c)
 OBJECTS_DRIVERS=$(SOURCES_DRIVERS:.c=.o)
 
@@ -22,8 +25,8 @@ STATICLIBS=
 
 all: $(KERNEL)
 
-$(KERNEL): $(LOADEROBJECT) $(OBJECTS) $(STATICLIBS) $(OBJECTS_ASM) $(OBJECTS_SYS) $(OBJECTS_DRIVERS) $(OBJECTS_CPU)
-	$(LD) $(LDFLAGS) -T kernel.ld -o $(KERNEL) $(LOADEROBJECT) $(OBJECTS) $(OBJECTS_ASM) $(OBJECTS_SYS) $(OBJECTS_DRIVERS) $(OBJECTS_CPU) $(STATICLIBS)
+$(KERNEL): $(LOADEROBJECT) $(OBJECTS) $(STATICLIBS) $(OBJECTS_ASM) $(OBJECTS_SYS) $(OBJECTS_MEM) $(OBJECTS_DRIVERS) $(OBJECTS_CPU)
+	$(LD) $(LDFLAGS) -T kernel.ld -o $(KERNEL) $(LOADEROBJECT) $(OBJECTS) $(OBJECTS_ASM) $(OBJECTS_SYS) $(OBJECTS_MEM) $(OBJECTS_DRIVERS) $(OBJECTS_CPU) $(STATICLIBS)
 
 %.o: %.c
 	$(GCC) $(GCCFLAGS) -I./include -c $< -o $@
@@ -34,9 +37,12 @@ $(KERNEL): $(LOADEROBJECT) $(OBJECTS) $(STATICLIBS) $(OBJECTS_ASM) $(OBJECTS_SYS
 $(LOADEROBJECT):
 	$(ASM) $(ASMFLAGS) $(LOADERSRC) -o $(LOADEROBJECT)
 
+mem:
+	cd mem; make all;
 clean:
 	rm -rf asm/*.o *.o *.bin
 	rm -rf sys/*.o *.o *.bin
+	rm -rf mem/*.o *.o *.bin
 	rm -rf drivers/keyboard/*.o drivers/video/*.o drivers/shell/*.o drivers/timer/*.o *.o *.bin
 	rm -rf cpu/*.o *.o *.bin
 .PHONY: all clean
