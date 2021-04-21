@@ -88,14 +88,15 @@ int sys_restore_kb_buffer() {
 int sys_restore_screen() {
     return _syscall(_SYSCALL_RESTORE_SCREEN, 0, 0, 0, 0, 0);
 }
-
 void sys_clean_kb_buffer() {
     _syscall(_SYSCALL_CLEAN_KB_BUFFER, 0, 0, 0, 0, 0);
 }
-
 void * sys_malloc(size_t size) {
     return (void *)_syscall(_SYSCALL_MALLOC, size, 0, 0, 0, 0);
 }
 void sys_free(void * address) {
     _syscall(_SYSCALL_FREE, (uint64_t) address, 0, 0, 0, 0);
+}
+pid_t sys_create_process(char *name, function f, char **argv) {
+    return _syscall(_SYSCALL_CREATE_PROCESS, (uint64_t)name, (uint64_t)f, (uint64_t)argv, 0, 0);
 }

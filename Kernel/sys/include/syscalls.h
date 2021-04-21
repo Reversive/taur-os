@@ -4,7 +4,7 @@
 #include "../../drivers/keyboard/include/keyboard.h"
 #include "../../drivers/shell/include/shell.h"
 #include "../include/lib.h"
-#include "../../mem/include/mm.h"
+#include "../../task/include/process.h"
 
 #define _STDIN 0x1
 #define SUCCESS 1
@@ -44,10 +44,11 @@ enum syscall_numbers {
     _SYSCALL_RESTORE_SCREEN,
     _SYSCALL_CLEAN_KB_BUFFER,
     _SYSCALL_MALLOC,
-    _SYSCALL_FREE
+    _SYSCALL_FREE,
+    _SYSCALL_CREATE_PROCESS
 };
 
-#define _SYSCALLS_LAST _SYSCALL_FREE
+#define _SYSCALLS_LAST _SYSCALL_CREATE_PROCESS
 #define _SYSCALLS_SIZE (_SYSCALLS_LAST + 1)
 
 syscall syscall_read;
@@ -76,6 +77,7 @@ syscall syscall_restore_screen;
 syscall syscall_clean_kb_buffer;
 syscall syscall_malloc;
 syscall syscall_free;
+syscall syscall_create_process;
 
 extern syscall * syscalls_table[_SYSCALLS_SIZE];
 extern unsigned int get_time(char t);

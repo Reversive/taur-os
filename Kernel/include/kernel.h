@@ -2,7 +2,6 @@
 #define _KERNEL_H
 
 #include <stdint.h>
-#include <string.h>
 #include <lib.h>
 #include <moduleLoader.h>
 #include <naiveConsole.h>
@@ -10,7 +9,6 @@
 #include "../drivers/video/include/video_driver.h"
 #include "../drivers/shell/include/shell.h"
 #include "../mem/include/mm.h"
-#include <test_mm.h>
 
 extern uint8_t text;
 extern uint8_t rodata;

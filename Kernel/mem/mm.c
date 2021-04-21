@@ -11,25 +11,25 @@ typedef struct Header {
 
 /* Inserts a block of memory to the list of free mem blocks.
  * Merges adjacent free zones into one. */
-static void addBlockToFreeList(header * block);
+static void add_block_to_free_list(header * block);
 
 /* Sets up the required heap on the first call to malloc */
-static void initHeap();
+static void init_heap();
 
 /* The size of the structure placed at the beginning of each allocated
  *  memory block must be correctly byte aligned. */
-static const size_t heapStructSize = (sizeof(header) + ((size_t) (BYTE_ALIGNMENT - 1))) & ~((size_t) BYTE_ALIGNMENT_MASK);
+static const size_t heap_construct_size = (sizeof(header) + ((size_t) (BYTE_ALIGNMENT - 1))) & ~((size_t) BYTE_ALIGNMENT_MASK);
 
 /* Block sizes must not get too small. */
-#define heapMINIMUM_BLOCK_SIZE ((size_t) (heapStructSize << 1 ))
+#define heapMINIMUM_BLOCK_SIZE ((size_t) (heap_construct_size << 1 ))
 
 /* Links to the free list*/
 static header start, * pEnd = NULL;
 
-static size_t freeBytesRemaining = 0;
+static size_t free_bytes_remaining = 0;
 
 /* Total memory heap*/
-static uint8_t totalMemory[TOTAL_HEAP_SIZE];
+static uint8_t total_memory[TOTAL_HEAP_SIZE];
 
 /* Gets set to the top bit of an size_t type.  When this bit in the size
  * member of an header structure is set then the block belongs to the
@@ -39,12 +39,12 @@ static size_t xBlockAllocatedBit = 0;
 
 
 
-void * myMalloc(size_t requestedSize) {
+void * malloc(size_t requestedSize) {
     header * currp, * prevp, *insertp;
     void * returnp = NULL;
 
     if(pEnd == NULL){
-        initHeap();
+        init_heap();
     }
 
     /* Checks that the requested block doesn't set the top bit
@@ -52,9 +52,9 @@ void * myMalloc(size_t requestedSize) {
     if((requestedSize & xBlockAllocatedBit) == 0) {
         /* The wanted size is smaller than our block size.
          * We proceed to make it larger */
-        if((requestedSize > 0) && ((requestedSize + heapStructSize) >  requestedSize)) {
+        if((requestedSize > 0) && ((requestedSize + heap_construct_size) >  requestedSize)) {
             
-            requestedSize += heapStructSize;
+            requestedSize += heap_construct_size;
         
             /* Ensure that blocks are always aligned. */
             if((requestedSize & BYTE_ALIGNMENT_MASK) != 0x00) {
@@ -68,7 +68,7 @@ void * myMalloc(size_t requestedSize) {
         }
 
         /* We have free space for the requested size */
-        if((requestedSize > 0) && ( requestedSize <= freeBytesRemaining)) {
+        if((requestedSize > 0) && ( requestedSize <= free_bytes_remaining)) {
             /* Traverse the list from the start	(lowest address) block until
             * one of adequate size is found. */
             prevp = &start;
@@ -84,7 +84,7 @@ void * myMalloc(size_t requestedSize) {
             if(currp != pEnd) {
                 /* Return the memory space pointed to - jumping over the
                  * header structure at its start. */
-                returnp = (void *) (((uint8_t *) prevp->next) + heapStructSize);
+                returnp = (void *) (((uint8_t *) prevp->next) + heap_construct_size);
 
                 /* This block is being returned for use so must be taken out
                  * of the list of free blocks. */
@@ -102,10 +102,10 @@ void * myMalloc(size_t requestedSize) {
                     currp->size = requestedSize;
 
                     /* Insert the new block into the list of free blocks. */
-                    addBlockToFreeList(insertp);
+                    add_block_to_free_list(insertp);
                 }
 
-                freeBytesRemaining -= currp->size;
+                free_bytes_remaining -= currp->size;
 
                 /* The block is being returned - it is allocated and owned
                  * by the application and has no "next" block. */
@@ -119,7 +119,7 @@ void * myMalloc(size_t requestedSize) {
 
 
 
-static void initHeap() {
+static void init_heap() {
     
     header * pFirstFreeBlock;
     uint8_t * pAlignedHeap;
@@ -127,13 +127,13 @@ static void initHeap() {
     size_t totalHeapSize = TOTAL_HEAP_SIZE;
 
     /* Ensure the heap starts on a correctly aligned boundary. */
-    totalMemPointer = (size_t) totalMemory;
+    totalMemPointer = (size_t) total_memory;
     
     // It checks the last bits and if they are not aligned then we align them
     if( ( totalMemPointer & BYTE_ALIGNMENT_MASK ) != 0 ) {
         totalMemPointer += ( BYTE_ALIGNMENT - 1 );
         totalMemPointer &= ~((size_t) BYTE_ALIGNMENT_MASK);
-        totalHeapSize -= totalMemPointer - (size_t) totalMemory;
+        totalHeapSize -= totalMemPointer - (size_t) total_memory;
     }
 
     pAlignedHeap = (uint8_t *) totalMemPointer;
@@ -146,7 +146,7 @@ static void initHeap() {
     /* pEnd is used to mark the end of the list of free blocks and is inserted
      * at the end of the heap space. */
     totalMemPointer = ((size_t) pAlignedHeap) + totalHeapSize;
-    totalMemPointer -= heapStructSize;
+    totalMemPointer -= heap_construct_size;
     totalMemPointer &= ~((size_t) BYTE_ALIGNMENT_MASK);
     pEnd = (void *) totalMemPointer;
     pEnd->size = 0;
@@ -159,7 +159,7 @@ static void initHeap() {
     pFirstFreeBlock->next = pEnd;
 
     /* Only one block exists - and it covers the entire usable heap space. */
-    freeBytesRemaining = pFirstFreeBlock->size;
+    free_bytes_remaining = pFirstFreeBlock->size;
 
     /* Work out the position of the top bit in a size_t variable. */
     xBlockAllocatedBit = ((size_t) 1) << ((sizeof(size_t) * heapBITS_PER_BYTE) - 1);
@@ -167,14 +167,14 @@ static void initHeap() {
 
 
 
-void myFree(void *ptr){
+void free(void *ptr){
 
     uint8_t * currp = (uint8_t *) ptr;
     header * insertp;
 
     if(ptr != NULL) {
         /* The memory being freed will have a header structure immediately before it. */
-        currp -= heapStructSize;
+        currp -= heap_construct_size;
 
         /* This casting is to keep the compiler from issuing warnings. */
         insertp = (void *) currp;
@@ -185,9 +185,9 @@ void myFree(void *ptr){
                 insertp->size &= ~xBlockAllocatedBit;
                 
                 /* Add this block to the list of free blocks. */
-                freeBytesRemaining += insertp->size;
+                free_bytes_remaining += insertp->size;
                 // traceFREE( ptr, insertp->size );
-                addBlockToFreeList(((header *) insertp));
+                add_block_to_free_list(((header *) insertp));
             }
         }
     }
@@ -195,7 +195,7 @@ void myFree(void *ptr){
 
 
 
-static void addBlockToFreeList(header * blockToInsert) {
+static void add_block_to_free_list(header * blockToInsert) {
     
     header * iteratorp;
     uint8_t * currp;

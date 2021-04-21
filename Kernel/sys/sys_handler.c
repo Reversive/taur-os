@@ -28,6 +28,7 @@ syscall * syscalls_table[_SYSCALLS_SIZE] = {
     [_SYSCALL_CLEAN_KB_BUFFER] = syscall_clean_kb_buffer,
     [_SYSCALL_MALLOC] = syscall_malloc,
     [_SYSCALL_FREE] = syscall_free,
+    [_SYSCALL_CREATE_PROCESS] = syscall_create_process,
 };
 
 

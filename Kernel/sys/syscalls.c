@@ -165,15 +165,22 @@ uint64_t syscall_clean_kb_buffer(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint6
 
 uint64_t syscall_malloc(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
     size_t size = (size_t) rsi;
-    void *response = myMalloc(size);
+    void *response = malloc(size);
     if(response ==  NULL) return ERROR;
     return (uint64_t)response;
 }
 
 uint64_t syscall_free(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
     void * address = (void*) rsi;
-    myFree(address);
+    free(address);
     return SUCCESS;
+}
+
+uint64_t syscall_create_process(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+    char *name = (char *)rsi;
+    void *code = (void *)rdx;
+    char **argv = (char**)rcx;
+    return create_process(name, code, argv, MIN_PAGE_AMOUNT * PAGE_SIZE, MIN_PAGE_AMOUNT * PAGE_SIZE);
 }
 
 int read(unsigned int fd, char * buffer, size_t count) {

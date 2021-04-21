@@ -8,7 +8,7 @@ typedef struct {
 	unsigned long int remainingTicks;
 } timerFunction;
 
-static timerFunction timerFunctions[MAX_FUNCTIONS] = {0};
+static timerFunction timerFunctions[MAX_FUNCTIONS] = {{0}};
 
 void timer_restart() {
 	for(int i = 0; i < MAX_FUNCTIONS; i++)

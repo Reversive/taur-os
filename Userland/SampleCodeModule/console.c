@@ -3,7 +3,6 @@
 
 unsigned int console_num;
 unsigned int input_read_size = 0;
-int chess_state = NOT_PLAYING;
 int rotation = 0;
 
 
@@ -17,49 +16,52 @@ void help() {
 	puts("printmem 0xDIR - Volcado de memoria\n");
     puts("opcode - Generar excepcion de codigo de operacion invalido\n");
     puts("div0 - Generar excepcion de division por cero\n");
-	puts("chess - Genera un nuevo juego de ajedrez\n");
 	puts("mm_test - Corre el test del Memory Manager\n");
+	puts("create_proc - Imprime el PID del proceso creado (max cantidad de procesos a actual es 5 para testear)\n");
 	return;
 }
 
+void new_process_test_function() {
+	printf("Esto todavia no lo deberia ver...\n");
+}
+
 void assign_module(char * str) {
-	if(command_equal(str, "help") && (chess_state == NOT_PLAYING || chess_state == PAUSED)) {
+	if(command_equal(str, "help") ) {
 		help();
 	}
-	else if(command_equal(str,"time") && (chess_state == NOT_PLAYING || chess_state == PAUSED)){
+	else if(command_equal(str,"time") ){
         print_time();
     }
-	else if(command_equal(str,"inforeg") && (chess_state == NOT_PLAYING || chess_state == PAUSED)){
+	else if(command_equal(str,"inforeg") ){
         get_inforeg(data);
 		print_info_reg(data);
 	}
-	else if(command_equal(str, "printmem") && (chess_state == NOT_PLAYING || chess_state == PAUSED)) {
+	else if(command_equal(str, "printmem") ) {
 		if(!info_mem(str))
-			print_string("Ingrese una direccion como argumento\n");
+			printf("Ingrese una direccion como argumento\n");
 	}
-    else if(command_equal(str, "opcode") && (chess_state == NOT_PLAYING || chess_state == PAUSED)) {
+    else if(command_equal(str, "opcode") ) {
         invalid_opcode_test();
     }
-    else if(command_equal(str, "div0") && (chess_state == NOT_PLAYING || chess_state == PAUSED)) {
+    else if(command_equal(str, "div0") ) {
         int a = 0;
 		int b = 5;
 		b /= a;
     }
-	else if (command_equal(str,"move") && chess_state == PLAYING){
-		move_piece(str);
-	}
-	else if(command_equal(str, "chess") && (chess_state == NOT_PLAYING || chess_state == PAUSED) ) {
-		if(chess_state == PAUSED) chess_state = PLAYING;
-		join_chess();
-	} else if(command_equal(str, "exit") && (chess_state == PLAYING || chess_state == ENDED )) {
-		first_printable_index = last_printable_index = number_of_moves = 0;
-		close_chess(NOT_PLAYING);
-	} else if(command_equal(str, "mm_test")) {
+	else if(command_equal(str, "create_proc")) {
+		char **argv = {0};
+		pid_t resultado = execv("Probando", new_process_test_function, argv);
+		if(resultado != -1)
+		{
+			printf("Se creo el proceso con pid %d\n", resultado);
+		} else {
+			printf("No se puede crear mas procesos!!\n");
+		}
+	} 
+	else if(command_equal(str, "mm_test")) {
 		test_mm();
 	} else {
-		if (chess_state==ENDED)
-			return;
-		puts("Ingrese un comando valido.\n");
+		printf("Ingrese un comando valido.\n");
 	}
 }
 
@@ -89,40 +91,7 @@ unsigned int is_newline_char(char chr) {
 }
 
 void console_key_handler(char input,char* input_buffer) {
-	if(input == '\t'){
-		if(chess_state == ENDED) return;
-		if (chess_state == PLAYING){
-			close_chess(PAUSED);
-			sys_set_text_color(WHITE);
-			putchar('\n');
-			puts("TaurOS> ");
-			sys_set_text_color(LIME);
-		}
-		else{
-			join_chess();
-			sys_set_text_color(WHITE);
-			puts("TaurOS> ");
-			sys_set_text_color(LIME);
-		}
-		
-	} else if ((input=='r' || input =='R') && chess_state == PLAYING) {
-		rotation_chess_table();
-		rotation++;
-		rotation=rotation%4;
-		print_chess_table(printeable_chess_table);
-	} else if( input == ESC_ASCII) {
-	} else if((input == 'o' || input == 'O') && chess_state == ENDED) {
-		if(first_printable_index > 0)  {
-			first_printable_index--;
-			last_printable_index--;
-			print_plays();
-		}
-	} else if((input == 'l' || input == 'L') && chess_state == ENDED) {
-		if(last_printable_index < number_of_moves)  {
-			first_printable_index++;
-			last_printable_index++;
-			print_plays();
-		}
+	if( input == ESC_ASCII) {
 	} else if(input == '\b'){
 		if(input_read_size > 0) {
 			input_buffer[input_read_size--] = 0;
@@ -133,7 +102,6 @@ void console_key_handler(char input,char* input_buffer) {
 		putchar(input);
 	}
 }
-
 
 void print_string_by_pos(int x, int y, char * str, int color, int size) {
 	for(int i = 0; str[i] != 0; i++) {

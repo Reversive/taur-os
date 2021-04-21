@@ -1,8 +1,14 @@
 #ifndef _BASIC_LIB_H
 #define _BASIC_LIB_H
 #include <stdint.h>
+#define NULL ((void *)0)
+
 typedef unsigned int size_t;
+typedef int pid_t;
 #define STDIN 0x1
+#define NO_STOP 1
+#define UINT_MAX 0xffffffff
+
 uint64_t _syscall(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
 typedef void (*function)(void);
 unsigned int sys_time(char setting);
@@ -31,6 +37,7 @@ int sys_restore_screen();
 void sys_clean_kb_buffer();
 void * sys_malloc(size_t size);
 void sys_free(void * address);
+pid_t sys_create_process(char *name, function f, char **argv);
 
 
 enum syscall_numbers {
@@ -59,7 +66,8 @@ enum syscall_numbers {
     _SYSCALL_RESTORE_SCREEN,
     _SYSCALL_CLEAN_KB_BUFFER,
     _SYSCALL_MALLOC,
-    _SYSCALL_FREE
+    _SYSCALL_FREE,
+    _SYSCALL_CREATE_PROCESS
 };
 
 enum status {

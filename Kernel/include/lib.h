@@ -36,7 +36,8 @@ void kernel_panic(uint64_t * rip, uint64_t * rsp, uint64_t * top, int id, const 
 char *cpuVendor(char *result);
 void clear_interrupts();
 void halt_system();
-
+int strnlen(char * str);
+void my_strcpy(char * dest, char * origin);
 void get_registers(unsigned char *data);
 
 extern void save_registers_data(unsigned char* data);

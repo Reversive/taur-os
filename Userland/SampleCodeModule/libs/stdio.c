@@ -66,7 +66,6 @@ char *itoa(uint64_t value, char *buffer, uint32_t base) {
 
    
     *p = 0;
-    // Invertimo' 
     p1 = buffer;
     p2 = p - 1;
     while (p1 < p2) {
