@@ -16,6 +16,6 @@ void picMasterMask(uint8_t mask);
 void picSlaveMask(uint8_t mask);
 char _fetch_key(void);
 
-void *_stack_builder(void *_start, void *_main, void *stack, void *argv, int argc);
+void *_stack_builder(void *_start, void *_main, void *stack, int argc, void *argv);
 void _force_scheduler();
 #endif

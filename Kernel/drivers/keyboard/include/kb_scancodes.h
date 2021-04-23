@@ -3,7 +3,9 @@
 
 
 #define OUT_OF_RANGE 0x80
+#ifndef NULL
 #define NULL 0
+#endif
 #define ESC    27
 #define BACKSPACE '\b'
 #define TAB       '\t'

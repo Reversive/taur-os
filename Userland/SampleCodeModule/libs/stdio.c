@@ -79,58 +79,89 @@ char *itoa(uint64_t value, char *buffer, uint32_t base) {
     return buffer;
 }
 
-int printf(char * fmt, ...) {
-
-  va_list pa; 
-  va_start(pa, fmt);
-  char * format = fmt;
-
-  char buffer[255];
-	char* tmp;
-	int zeroes = 0;
-
-	while( *format != '\0' ) {
-
-		if( *format != '%' ) {
-
-			putchar(*format);
-
-			format++;
-			continue;
-		}
-
-		format++;
-
-		zeroes = 0;
-		while ('0' <= *format && *format <= '9') {
-			zeroes = zeroes * 10 + (*format - '0');
-			format++;
-		}
-
-		switch(*format) {
-			case 'd':
-			case 'X':
-				tmp = itoa(va_arg(pa, int), buffer, (*format=='d') ? 10 : 16);
-				zeroes -= strlen(tmp);
-				while (zeroes > 0) {
-					putchar('0');
-					zeroes--;
-				}
-				puts(tmp);
-				break;
-			case 'c':
-				putchar( va_arg(pa, int) );
-				break;
-			case 's':
-				puts( va_arg(pa, char*) );
-				break;
-		}
-
-		format++;
-
+void align_string(char * str, char * buffer, int length) {
+	int dif;
+	int i, j = 0;
+	for(i = 0; (i < length || length == 0) && str[i] != 0; i++) {
+		buffer[i] = str[i];
 	}
 
-	va_end(pa);
+	if(i < length) {
+		dif = (length - i);
+		for(j = 0; j < dif; j++)
+			buffer[i + j] = ' ';
+	}
+
+	buffer[i + j] = '\0';
+}
+
+int printf(char *fmt, ...) {
+    va_list pa;
+    va_start(pa, fmt);
+    char *format = fmt;
+
+    char buffer[255];
+
+    char string[255]; 
+    int cur_char = 0;
+
+    char *tmp;
+    int zeroes = 0;
+
+    while (*format != '\0') {
+        if (*format != '%') {
+
+            string[cur_char] = *format;
+            cur_char++;
+            format++;
+            continue;
+        }
+
+        format++;
+
+        zeroes = 0;
+        while ('0' <= *format && *format <= '9') {
+            zeroes = zeroes * 10 + (*format - '0');
+            format++;
+        }
+
+        switch (*format) {
+            case 'd':
+            case 'X':
+                tmp = itoa(va_arg(pa, int), buffer, (*format == 'd') ? 10 : 16);
+                zeroes -= strlen(tmp);
+                while (zeroes > 0) {
+                    string[cur_char] = '0';
+                    cur_char++;
+                    zeroes--;
+                }
+
+                strcpy(&string[cur_char], tmp);
+                cur_char += strlen(tmp);
+                break;
+            case 'c':
+                string[cur_char] = va_arg(pa, int);
+                cur_char++;
+                break;
+            case 's':
+                cur_char += 0;
+                tmp = va_arg(pa, char *);
+
+                align_string(tmp, buffer, zeroes);
+
+                strcpy(&string[cur_char], buffer);
+                cur_char += strlen(buffer);
+
+                break;
+        }
+
+        format++;
+    }
+
+    string[cur_char] = 0;
+    puts(string);
+
+    va_end(pa);
     return 0;
 }
 

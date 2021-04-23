@@ -4,6 +4,7 @@
 
 typedef struct {
 	function f;
+	int pid;
 	unsigned long int ticks;
 	unsigned long int remainingTicks;
 } timerFunction;
@@ -16,8 +17,9 @@ void timer_restart() {
 }
 
 void timer_handler() {
-
+	thread_st *t = get_current_thread();
 	for(int i = 0; i < MAX_FUNCTIONS && timerFunctions[i].f != 0; i++) {
+		if(timerFunctions[i].pid != t->pid) continue;
 		timerFunctions[i].remainingTicks--;
 		if( timerFunctions[i].remainingTicks == 0 ) {
 			timerFunctions[i].remainingTicks = timerFunctions[i].ticks;
@@ -26,11 +28,12 @@ void timer_handler() {
 	}			
 }
 
-int timer_append_function(function f, unsigned long int ticks) {
+int timer_append_function(function f, unsigned long int ticks, int pid) {
 	for(int i = 0; i < MAX_FUNCTIONS; i++) {
 		if( timerFunctions[i].f == 0 ) {
 			timerFunctions[i].f = f;
 			timerFunctions[i].ticks = timerFunctions[i].remainingTicks = ticks;
+			timerFunctions[i].pid = pid;
 			return 0;
 		}
 
@@ -44,10 +47,12 @@ int timer_remove_function(function f) {
 		if( timerFunctions[i].f == f ) {
 			timerFunctions[i].f = 0;
 			timerFunctions[i].ticks = 0;
+			timerFunctions[i].pid = 0;
 			for(j = i + 1; j < MAX_FUNCTIONS; j++) {
 				timerFunctions[j - 1].f = timerFunctions[j].f;
 				timerFunctions[j - 1].remainingTicks = timerFunctions[j].remainingTicks;
 				timerFunctions[j - 1].ticks = timerFunctions[j].ticks;
+				timerFunctions[j - 1].pid = timerFunctions[j].pid;
 			}
 			return 0;
 		}

@@ -9,6 +9,7 @@
 #define _STDIN 0x1
 #define SUCCESS 1
 #define ERROR -1
+#define KILL -1
 typedef uint64_t syscall(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
 
 enum file_descriptors {
@@ -45,10 +46,12 @@ enum syscall_numbers {
     _SYSCALL_MALLOC,
     _SYSCALL_FREE,
     _SYSCALL_CREATE_PROCESS,
-    _SYSCALL_GET_PID
+    _SYSCALL_GET_PID,
+    _SYSCALL_PS,
+    _SYSCALL_KILL_PROCESS
 };
 
-#define _SYSCALLS_LAST _SYSCALL_GET_PID
+#define _SYSCALLS_LAST _SYSCALL_KILL_PROCESS
 #define _SYSCALLS_SIZE (_SYSCALLS_LAST + 1)
 
 syscall syscall_read;
@@ -79,6 +82,8 @@ syscall syscall_malloc;
 syscall syscall_free;
 syscall syscall_create_process;
 syscall syscall_get_pid;
+syscall syscall_ps;
+syscall syscall_kill_process;
 
 extern syscall * syscalls_table[_SYSCALLS_SIZE];
 extern unsigned int get_time(char t);

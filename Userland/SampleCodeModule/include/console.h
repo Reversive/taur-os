@@ -3,14 +3,16 @@
 
 #define ESC_ASCII 27
 #define MAX 255
-
+#define MAX_ARGS 10
 #include "time.h"
 #include "inforeg.h"
 #include "print_mem.h"
 #include "basic_lib.h"
 #include "test_mm.h"
 #include "unistd.h"
-
+#include "../apps/include/loop.h"
+#define PROGRAM_COUNT 2
+typedef char *parameters[MAX_ARGS];
 
 unsigned int command_equal(char * str1, char * str2);
 void assign_module(char * str);

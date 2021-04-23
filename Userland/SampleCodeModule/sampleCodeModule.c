@@ -10,6 +10,7 @@ char console_buffer[MAX] = {0};
 int main(int argc, char ** argv) {
 	sys_set_text_color(WHITE);
 	printf("\nBienvenidos a TaurOS!\n\n");
+	sys_set_text_color(LIME);
 	help();
 	putchar('\n');
 	sys_set_cursor_status(_ENABLED);

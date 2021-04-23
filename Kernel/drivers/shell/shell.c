@@ -60,6 +60,7 @@ void _clear_line() {
 }
 
 void print_char(unsigned char key) {
+    int space_count = 0;
     switch (key)
     {
     case _NEWLINE:
@@ -69,6 +70,11 @@ void print_char(unsigned char key) {
     case _BACKSPACE:
         paint_character(_cursor_horizontal, _cursor_vertical, ' ', text_size, bg_color, bg_color);
         _slide_cursor_backwards();
+        break;
+    case _TAB:
+        space_count = _cursor_horizontal % 4;
+        if(space_count == 0) space_count = 4;
+        for(int i = 0; i < space_count; i++) print_char(' ');
         break;
     default:
         if(key < 0x20 || key > 0x80)
@@ -101,7 +107,7 @@ int _get_text_color() {
 
 
 void _enable_cursor() {
-    timer_append_function(_tick, 10);
+    timer_append_function(_tick, 10, 0);
 }
 
 void _disable_cursor() {

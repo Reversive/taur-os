@@ -22,7 +22,8 @@ void _set_newline_scroll_state(int state);
 void _clear_line();
 enum common_keys {
     _NEWLINE = '\n',
-    _BACKSPACE = '\b'
+    _BACKSPACE = '\b',
+    _TAB = '\t'
 };
 
 #endif

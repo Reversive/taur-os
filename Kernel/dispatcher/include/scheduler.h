@@ -1,23 +1,28 @@
 #ifndef SCHEDULER_H
 #define SCHEDULER_H
-#include "../../task/include/thread.h"
-#include "../heuristics/include/circular_linked_list.h"
-#include "../../drivers/shell/include/shell.h"
-typedef void* heuristic;
+#include "circular_linked_list.h"
+#include "../../task/include/process.h"
+
+#define YES 1
 #define START 0
-typedef struct thread_t thread_st;
+#define BURST_TIME 3
+
+typedef struct {
+    node_st *tail;
+} rrnp_ts;
+
+typedef void* heuristic;
 typedef struct scheduler_s{
     size_t quantum;
-    void (*add)(struct scheduler_s *scheduler, thread_st *thread);
-    thread_st *(*remove)(struct scheduler_s *scheduler, thread_st *thread);
-    thread_st *(*poll)(struct scheduler_s *scheduler);
     heuristic queue;
 } scheduler_ts;
 
-#include "../heuristics/include/round_robin_no_prio.h"
 
 void queue_thread(thread_st *t);
+scheduler_ts *init_no_prio_round_robin(size_t quantum);
 void *schedule_handler(void *_rsp);
 int get_current_pid();
 void initialize_scheduler();
+thread_st *get_current_thread();
+
 #endif

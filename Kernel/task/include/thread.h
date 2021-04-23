@@ -3,10 +3,7 @@
 #include "../../mem/include/mm.h"
 #include "../../asm/include/libasm.h"
 #include "../../drivers/shell/include/shell.h"
-#include "../../dispatcher/include/scheduler.h"
-#include "utils.h"
-
-
+#include "data_structures.h"
 
 #ifndef EMPTY
 #define EMPTY 0
@@ -25,18 +22,6 @@
 #endif
 
 
-typedef enum { SUSPENDED = 0, RUNNING } thread_status_et;
-
-typedef struct thread_t {
-    tid_t tid;
-    pid_t pid;
-    thread_status_et status;
-    memory_block_st stack;
-} thread_st;
-
-#include "process.h"
-
-typedef int (*function_t)(size_t argc, char **argv);
 
 thread_st *create_thread(address_t code, char **argv, size_t stack, thread_st **thread_list, pid_t pid);
 size_t calculate_stack_size(size_t size);

@@ -191,8 +191,8 @@ _stack_builder:
 	push rdi ; push _start
 	push 0x0
 	mov rdi, rsi ; main
-	mov rsi, r8 ; argc
-	mov rdx, rcx ; argv
+	mov rsi, rcx ; argc
+	mov rdx, r8 ; argv
 	push_state_no_rax
 	mov rax, rsp ; return current stack address
 	mov rsp, r9 ; restore rsp

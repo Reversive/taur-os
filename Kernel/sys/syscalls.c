@@ -125,7 +125,8 @@ uint64_t syscall_clear_line(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r
 uint64_t syscall_register_timertick_function(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
     function f = (function) rsi;
     unsigned long ticks = (unsigned long) rdx;
-    timer_append_function(f, ticks);
+    pid_t pid = (pid_t)rcx;
+    timer_append_function(f, ticks, pid);
     return SUCCESS;
 }
 
@@ -185,6 +186,19 @@ uint64_t syscall_create_process(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64
 
 uint64_t syscall_get_pid(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
     return get_current_pid();
+}
+
+uint64_t syscall_ps(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+    ps_ts *process_buffer = (ps_ts *)rsi;
+    int *p_count = (int *)rdx;
+    ps(process_buffer, p_count);
+    return SUCCESS;
+}
+
+uint64_t syscall_kill_process(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+    pid_t pid = (pid_t)rsi;
+    kill_process(pid, KILL);
+    return SUCCESS;
 }
 
 int read(unsigned int fd, char * buffer, size_t count) {

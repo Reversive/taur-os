@@ -68,8 +68,8 @@ void sys_clear_line() {
     _syscall(_SYSCALL_CLEAR_LINE, 0, 0, 0, 0, 0);
 }
 
-void sys_register_timertick_function(function f, unsigned long ticks) {
-    _syscall(_SYSCALL_REGISTER_TIMERTICK_FUNCTION, (uint64_t)f, ticks, 0, 0, 0);
+void sys_register_timertick_function(function f, unsigned long ticks, int pid) {
+    _syscall(_SYSCALL_REGISTER_TIMERTICK_FUNCTION, (uint64_t)f, ticks, pid, 0, 0);
 }
 
 void sys_unregister_timertick_function(function f) {
@@ -100,6 +100,12 @@ void sys_free(void * address) {
 pid_t sys_create_process(char *name, main_function f, char **argv) {
     return _syscall(_SYSCALL_CREATE_PROCESS, (uint64_t)name, (uint64_t)f, (uint64_t)argv, 0, 0);
 }
-pid_t get_pid() {
+pid_t sys_getpid() {
     return _syscall(_SYSCALL_GET_PID, 0, 0, 0, 0, 0);
+}
+void get_ps(ps_ts *process_list, int *process_count) {
+    _syscall(_SYSCALL_PS, (uint64_t)process_list, (uint64_t)process_count, 0, 0, 0);
+}
+void sys_kill_process(pid_t pid) {
+    _syscall(_SYSCALL_KILL_PROCESS, (uint64_t)pid, 0, 0, 0, 0);
 }

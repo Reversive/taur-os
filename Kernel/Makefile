@@ -16,7 +16,7 @@ OBJECTS_MEM=$(SOURCES_MEM:.c=.o)
 SOURCES_TASK=$(wildcard task/*.c)
 OBJECTS_TASK=$(SOURCES_TASK:.c=.o)
 
-SOURCES_DISPATCHER=$(wildcard dispatcher/*.c dispatcher/heuristics/*.c)
+SOURCES_DISPATCHER=$(wildcard dispatcher/*.c)
 OBJECTS_DISPATCHER=$(SOURCES_DISPATCHER:.c=.o)
 
 SOURCES_DRIVERS=$(wildcard drivers/keyboard/*.c drivers/video/*.c drivers/shell/*.c drivers/timer/*.c)
@@ -50,7 +50,7 @@ mem:
 clean:
 	rm -rf asm/*.o
 	rm -rf task/*.o
-	rm -rf dispatcher/*.o dispatcher/heuristics/*.o
+	rm -rf dispatcher/*.o
 	rm -rf sys/*.o 
 	rm -rf mem/*.o 
 	rm -rf drivers/keyboard/*.o drivers/video/*.o drivers/shell/*.o drivers/timer/*.o 

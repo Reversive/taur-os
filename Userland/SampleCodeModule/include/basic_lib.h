@@ -29,7 +29,7 @@ void sys_clear_screen();
 void sys_draw_character(int x, int y, char character, int size, int color);
 void sys_set_newline_scroll_state(int state);
 void sys_clear_line();
-void sys_register_timertick_function(function f, unsigned long ticks);
+void sys_register_timertick_function(function f, unsigned long ticks, int pid);
 void sys_unregister_timertick_function(function f);
 void sys_backup_kb_buffer();
 void sys_backup_screen();
@@ -39,8 +39,11 @@ void sys_clean_kb_buffer();
 void * sys_malloc(size_t size);
 void sys_free(void * address);
 pid_t sys_create_process(char *name, main_function f, char **argv);
-pid_t get_pid();
+pid_t sys_getpid();
+void sys_kill_process(pid_t pid);
 
+
+typedef enum { READY = 0, BLOCKED, KILLED } process_status_et;
 
 enum syscall_numbers {
     _SYSCALL_READ = 0,
@@ -70,12 +73,24 @@ enum syscall_numbers {
     _SYSCALL_MALLOC,
     _SYSCALL_FREE,
     _SYSCALL_CREATE_PROCESS,
-    _SYSCALL_GET_PID
+    _SYSCALL_GET_PID,
+    _SYSCALL_PS,
+    _SYSCALL_KILL_PROCESS
 };
 
 enum status {
     _DISABLED = 0,
     _ENABLED
 };
+
+typedef struct {
+    pid_t pid;
+    char *process_name;
+    void *cs;
+    void *bp;
+    process_status_et status;
+} ps_ts;
+
+void get_ps(ps_ts *process_list, int *process_count);
 
 #endif
