@@ -13,7 +13,7 @@ GLOBAL _exception6Handler
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
 EXTERN sys80handler
-
+EXTERN schedule_handler 
 SECTION .text
 
 %macro pushState 0
@@ -128,7 +128,17 @@ _sys80handler:
 
 ;8254 Timer (Timer Tick)
 _irq00Handler:
-	irqHandlerMaster 0
+	pushState
+	mov rdi, 0
+	call irqDispatcher
+	mov rdi, rsp
+	call schedule_handler
+	mov rsp, rax
+	mov al, 20h
+	out 20h, al
+	popState
+	iretq
+
 
 ;Keyboard
 _irq01Handler:

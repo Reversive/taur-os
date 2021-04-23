@@ -7,7 +7,7 @@
 char console_buffer[MAX] = {0};
 
 
-int main() {
+int main(int argc, char ** argv) {
 	sys_set_text_color(WHITE);
 	printf("\nBienvenidos a TaurOS!\n\n");
 	help();

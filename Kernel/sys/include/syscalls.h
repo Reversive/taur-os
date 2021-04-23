@@ -10,7 +10,6 @@
 #define SUCCESS 1
 #define ERROR -1
 typedef uint64_t syscall(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
-// typedef unsigned int size_t;
 
 enum file_descriptors {
     _FD_STD_OUT = 0,
@@ -45,10 +44,11 @@ enum syscall_numbers {
     _SYSCALL_CLEAN_KB_BUFFER,
     _SYSCALL_MALLOC,
     _SYSCALL_FREE,
-    _SYSCALL_CREATE_PROCESS
+    _SYSCALL_CREATE_PROCESS,
+    _SYSCALL_GET_PID
 };
 
-#define _SYSCALLS_LAST _SYSCALL_CREATE_PROCESS
+#define _SYSCALLS_LAST _SYSCALL_GET_PID
 #define _SYSCALLS_SIZE (_SYSCALLS_LAST + 1)
 
 syscall syscall_read;
@@ -78,6 +78,7 @@ syscall syscall_clean_kb_buffer;
 syscall syscall_malloc;
 syscall syscall_free;
 syscall syscall_create_process;
+syscall syscall_get_pid;
 
 extern syscall * syscalls_table[_SYSCALLS_SIZE];
 extern unsigned int get_time(char t);

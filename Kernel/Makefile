@@ -16,11 +16,13 @@ OBJECTS_MEM=$(SOURCES_MEM:.c=.o)
 SOURCES_TASK=$(wildcard task/*.c)
 OBJECTS_TASK=$(SOURCES_TASK:.c=.o)
 
-SOURCES_DISPATCHER=$(wildcard dispatcher/*.c)
+SOURCES_DISPATCHER=$(wildcard dispatcher/*.c dispatcher/heuristics/*.c)
 OBJECTS_DISPATCHER=$(SOURCES_DISPATCHER:.c=.o)
 
 SOURCES_DRIVERS=$(wildcard drivers/keyboard/*.c drivers/video/*.c drivers/shell/*.c drivers/timer/*.c)
 OBJECTS_DRIVERS=$(SOURCES_DRIVERS:.c=.o)
+
+
 
 SOURCES_ASM=$(wildcard asm/*.asm)
 OBJECTS_ASM=$(SOURCES_ASM:.asm=.o)
@@ -31,8 +33,8 @@ STATICLIBS=
 
 all: $(KERNEL)
 
-$(KERNEL): $(LOADEROBJECT) $(OBJECTS) $(STATICLIBS) $(OBJECTS_ASM) $(OBJECTS_SYS) $(OBJECTS_MEM) $(OBJECTS_DRIVERS) $(OBJECTS_CPU) $(OBJECTS_TASK) $(OBJECTS_DISPATCHER)
-	$(LD) $(LDFLAGS) -T kernel.ld -o $(KERNEL) $(LOADEROBJECT) $(OBJECTS) $(OBJECTS_ASM) $(OBJECTS_SYS) $(OBJECTS_MEM) $(OBJECTS_DRIVERS) $(OBJECTS_CPU) $(OBJECTS_TASK) $(OBJECTS_DISPATCHER) $(STATICLIBS)
+$(KERNEL): $(LOADEROBJECT) $(OBJECTS) $(STATICLIBS) $(OBJECTS_ASM) $(OBJECTS_SYS) $(OBJECTS_MEM) $(OBJECTS_DRIVERS) $(OBJECTS_CPU) $(OBJECTS_DISPATCHER) $(OBJECTS_TASK) 
+	$(LD) $(LDFLAGS) -T kernel.ld -o $(KERNEL) $(LOADEROBJECT) $(OBJECTS) $(OBJECTS_ASM) $(OBJECTS_SYS) $(OBJECTS_MEM) $(OBJECTS_DRIVERS) $(OBJECTS_CPU) $(OBJECTS_DISPATCHER) $(OBJECTS_TASK)  $(STATICLIBS)
 
 %.o: %.c
 	$(GCC) $(GCCFLAGS) -I./include -c $< -o $@
@@ -48,7 +50,7 @@ mem:
 clean:
 	rm -rf asm/*.o
 	rm -rf task/*.o
-	rm -rf dispatcher/*.o 
+	rm -rf dispatcher/*.o dispatcher/heuristics/*.o
 	rm -rf sys/*.o 
 	rm -rf mem/*.o 
 	rm -rf drivers/keyboard/*.o drivers/video/*.o drivers/shell/*.o drivers/timer/*.o 

@@ -183,6 +183,10 @@ uint64_t syscall_create_process(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64
     return create_process(name, code, argv, MIN_PAGE_AMOUNT * PAGE_SIZE, MIN_PAGE_AMOUNT * PAGE_SIZE);
 }
 
+uint64_t syscall_get_pid(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+    return get_current_pid();
+}
+
 int read(unsigned int fd, char * buffer, size_t count) {
     unsigned int bytes_read = 0;
     char popped_key;

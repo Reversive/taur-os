@@ -9,6 +9,8 @@
 #include "../drivers/video/include/video_driver.h"
 #include "../drivers/shell/include/shell.h"
 #include "../mem/include/mm.h"
+#include "../task/include/process.h"
+#include "../dispatcher/include/scheduler.h"
 
 extern uint8_t text;
 extern uint8_t rodata;

@@ -1,6 +1,6 @@
 #include "../include/unistd.h"
 
 
-pid_t execv(char *name, function f, char **argv) {
+pid_t execv(char *name, main_function f, char **argv) {
     return sys_create_process(name, f, argv);
 }

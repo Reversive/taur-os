@@ -9,8 +9,16 @@ GLOBAL picMasterMask
 GLOBAL picSlaveMask
 GLOBAL _fetch_key
 GLOBAL save_registers_data
+GLOBAL _stack_builder
+GLOBAL _force_scheduler
+GLOBAL _idle
 
 section .text
+
+
+_force_scheduler:
+	int 20h
+	ret
 
 _fetch_key:
 	in al, 64h
@@ -156,3 +164,44 @@ ciclo:
 	pop rsp
 	ret
 
+%macro push_state_no_rax 0
+	push rbx
+	push rcx
+	push rdx
+	push rbp
+	push rdi
+	push rsi
+	push r8
+	push r9
+	push r10
+	push r11
+	push r12
+	push r13
+	push r14
+	push r15
+%endmacro
+
+_stack_builder:
+	mov r9, rsp ; save rsp
+	mov rsp, rdx ; set stack
+	push 0x0 ; push SS
+	push rdx ; push BP
+	push 0x202 ; push RFLAGS
+	push 0x08 ; push CS
+	push rdi ; push _start
+	push 0x0
+	mov rdi, rsi ; main
+	mov rsi, r8 ; argc
+	mov rdx, rcx ; argv
+	push_state_no_rax
+	mov rax, rsp ; return current stack address
+	mov rsp, r9 ; restore rsp
+	ret
+
+
+_idle:
+	push rax
+	call _sti
+	pop rax
+	hlt
+	ret

@@ -11,6 +11,7 @@ typedef int pid_t;
 
 uint64_t _syscall(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
 typedef void (*function)(void);
+typedef int (*main_function)(int argc, char **argv);
 unsigned int sys_time(char setting);
 size_t sys_read(unsigned int fd, char * buffer, size_t length);
 size_t sys_write(unsigned int fd, char * buffer, size_t length);
@@ -37,7 +38,8 @@ int sys_restore_screen();
 void sys_clean_kb_buffer();
 void * sys_malloc(size_t size);
 void sys_free(void * address);
-pid_t sys_create_process(char *name, function f, char **argv);
+pid_t sys_create_process(char *name, main_function f, char **argv);
+pid_t get_pid();
 
 
 enum syscall_numbers {
@@ -67,7 +69,8 @@ enum syscall_numbers {
     _SYSCALL_CLEAN_KB_BUFFER,
     _SYSCALL_MALLOC,
     _SYSCALL_FREE,
-    _SYSCALL_CREATE_PROCESS
+    _SYSCALL_CREATE_PROCESS,
+    _SYSCALL_GET_PID
 };
 
 enum status {

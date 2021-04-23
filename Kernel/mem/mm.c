@@ -29,14 +29,13 @@ static header start, * pEnd = NULL;
 static size_t free_bytes_remaining = 0;
 
 /* Total memory heap*/
-static uint8_t total_memory[TOTAL_HEAP_SIZE];
+uint8_t total_memory[TOTAL_HEAP_SIZE];
 
 /* Gets set to the top bit of an size_t type.  When this bit in the size
  * member of an header structure is set then the block belongs to the
  * application.  When the bit is free the block is still part of the free heap
  * space. */
 static size_t xBlockAllocatedBit = 0;
-
 
 
 void * malloc(size_t requestedSize) {

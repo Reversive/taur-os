@@ -17,12 +17,20 @@ void help() {
     puts("opcode - Generar excepcion de codigo de operacion invalido\n");
     puts("div0 - Generar excepcion de division por cero\n");
 	puts("mm_test - Corre el test del Memory Manager\n");
-	puts("create_proc - Imprime el PID del proceso creado (max cantidad de procesos a actual es 5 para testear)\n");
+	puts("create_proc - Crea 3 procesos, imprime sus pid's y los ejecuta\n");
 	return;
 }
 
-void new_process_test_function() {
-	printf("Esto todavia no lo deberia ver...\n");
+int new_process_test_function(int argc, char ** argv) {
+	while(1) printf("[PROCESO %d]Hola\n", get_pid());
+}
+
+int new_process2_test_function(int argc, char ** argv) {
+	while(1) printf("[PROCESO %d]Como\n", get_pid());
+}
+
+int new_process3_test_function(int argc, char ** argv) {
+	while(1) printf("[PROCESO %d]Estas\n", get_pid());
 }
 
 void assign_module(char * str) {
@@ -55,8 +63,25 @@ void assign_module(char * str) {
 		{
 			printf("Se creo el proceso con pid %d\n", resultado);
 		} else {
-			printf("No se puede crear mas procesos!!\n");
+			printf("No se pueden crear mas procesos o no hay suficiente memoria\n");
 		}
+		pid_t resultado2 = execv("Probando2", new_process2_test_function, argv);
+		if(resultado2 != -1)
+		{
+			printf("Se creo el proceso con pid %d\n", resultado2);
+		} else {
+			printf("No se pueden crear mas procesos o no hay suficiente memoria\n");
+		}
+
+		pid_t resultado3 = execv("Probando3", new_process3_test_function, argv);
+		if(resultado3 != -1)
+		{
+			printf("Se creo el proceso con pid %d\n", resultado3);
+		} else {
+			printf("No se pueden crear mas procesos o no hay suficiente memoria\n");
+		}
+
+
 	} 
 	else if(command_equal(str, "mm_test")) {
 		test_mm();

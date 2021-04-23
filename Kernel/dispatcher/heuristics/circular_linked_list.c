@@ -25,6 +25,7 @@ int length(node_st *tail) {
 
 node_st *insert_head(node_st *tail, void *data) {
     node_st *node = (node_st *)malloc(sizeof(node_st));
+    node->data = data;
     if(is_null(tail)) {
         tail = node;
         node->next = node;

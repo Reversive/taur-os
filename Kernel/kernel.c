@@ -7,7 +7,7 @@ static const uint64_t PageSize = 0x1000;
 
 static void * const sampleCodeModuleAddress = (void*)0x400000;
 static void * const sampleDataModuleAddress = (void*)0x500000;
-
+static void *const systemVar = (void *)0x0000000000005A00;
 typedef int (*EntryPoint)();
 
 void clearBSS(void * bssAddress, uint64_t bssSize)
@@ -42,9 +42,11 @@ void * initializeKernelBinary()
 int main()
 {	
 	load_idt();
+	initialize_scheduler();
 	_b_rip = sampleCodeModuleAddress;
 	_b_rsp = (uint64_t *)(_rsp() - (sizeof(uint64_t) << 1));
-	((EntryPoint)sampleCodeModuleAddress)();
-	
+	create_process("sh", sampleCodeModuleAddress, (char *[]){NULL}, MIN_PAGE_AMOUNT * PAGE_SIZE, 0);
+	_sti();
+	_idle();
 	return 0;
 }

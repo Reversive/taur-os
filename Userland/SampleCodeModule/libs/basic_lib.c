@@ -97,6 +97,9 @@ void * sys_malloc(size_t size) {
 void sys_free(void * address) {
     _syscall(_SYSCALL_FREE, (uint64_t) address, 0, 0, 0, 0);
 }
-pid_t sys_create_process(char *name, function f, char **argv) {
+pid_t sys_create_process(char *name, main_function f, char **argv) {
     return _syscall(_SYSCALL_CREATE_PROCESS, (uint64_t)name, (uint64_t)f, (uint64_t)argv, 0, 0);
+}
+pid_t get_pid() {
+    return _syscall(_SYSCALL_GET_PID, 0, 0, 0, 0, 0);
 }

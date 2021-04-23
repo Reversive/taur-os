@@ -6,6 +6,7 @@
 void _cli(void);
 void _sti(void);
 void _hlt(void);
+void _idle(void);
 uint64_t _rsp(void);
 
 //Termina la ejecución de la cpu.
@@ -15,4 +16,6 @@ void picMasterMask(uint8_t mask);
 void picSlaveMask(uint8_t mask);
 char _fetch_key(void);
 
+void *_stack_builder(void *_start, void *_main, void *stack, void *argv, int argc);
+void _force_scheduler();
 #endif

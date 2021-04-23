@@ -29,6 +29,7 @@ syscall * syscalls_table[_SYSCALLS_SIZE] = {
     [_SYSCALL_MALLOC] = syscall_malloc,
     [_SYSCALL_FREE] = syscall_free,
     [_SYSCALL_CREATE_PROCESS] = syscall_create_process,
+    [_SYSCALL_GET_PID] = syscall_get_pid
 };
 
 

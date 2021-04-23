@@ -8,12 +8,21 @@ tid_t get_available_tid(thread_st **thread_list) {
     return current_tid;
 }
 
-size_t calculate_stack_size(size_t size) {
-    return size == EMPTY ? size : size;
+
+size_t get_argv_count(char **argv) {
+    size_t count = EMPTY;
+    if(argv == NULL) return count;
+    while(argv[count] != NULL) count++;
+    return count;
 }
 
-thread_st *create_thread(address_t code, char **argv, size_t stack, thread_st **thread_list, pid_t pid) {
-    if(stack == EMPTY) return NULL;
+void _start(function_t _main, size_t argc, char **argv) {
+    int return_value = _main(argc, argv);
+    kill_process(get_current_pid(), return_value);
+}
+
+thread_st *create_thread(address_t main, char **argv, size_t stack_size, thread_st **thread_list, pid_t pid) {
+    if(stack_size == EMPTY) return NULL;
     tid_t tid = get_available_tid(thread_list);
     if(tid == UNAVAILABLE) return NULL;
     thread_st *thread = (thread_st *) malloc(sizeof(thread));
@@ -21,9 +30,10 @@ thread_st *create_thread(address_t code, char **argv, size_t stack, thread_st **
     thread->tid = tid;
     thread->pid = pid;
     thread->status = RUNNING;
-    size_t stack_size = calculate_stack_size(stack);
     thread->stack.base = stack_size == EMPTY ? NULL : malloc(stack_size);
     if(thread->stack.base == NULL) return NULL;
-    // TO-DO: queue thread to scheduler ?
+    size_t argc = get_argv_count(argv);
+    thread->stack.current = _stack_builder(&_start, main, (char *)thread->stack.base + stack_size, argv, argc);
+    queue_thread(thread);
     return thread;
 }
