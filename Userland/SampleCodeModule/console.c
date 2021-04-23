@@ -14,8 +14,6 @@ void help() {
 	printf("time - Consultar hora del sistema.\n");
 	printf("inforeg - Estado de registros.\n");
 	printf("printmem 0xDIR - Volcado de memoria.\n");
-    printf("opcode - Generar excepcion de codigo de operacion invalido.\n");
-    printf("div0 - Generar excepcion de division por cero.\n");
 	printf("mm_test - Corre el test del Memory Manager.\n");
 	printf("create_proc - Crea un proceso.\n");
 	printf("loop - Imprime su PID con un saludo cada 2 segundos.\n");
@@ -49,14 +47,6 @@ void assign_module(char * str) {
 		if(!info_mem(str))
 			printf("Ingrese una direccion como argumento\n");
 	}
-    else if(command_equal(str, "opcode") ) {
-        invalid_opcode_test();
-    }
-    else if(command_equal(str, "div0") ) {
-        int a = 0;
-		int b = 5;
-		b /= a;
-    }
 	else if(command_equal(str, "ps") ) {
 		ps_ts process_buffer[25];
 		int process_count = 0;
