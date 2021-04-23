@@ -28,7 +28,7 @@ parameters param_list[PROGRAM_COUNT] = { { "Hola", NULL }, { "Hola", "Como Estas
 
 
 int test_function(int argc, char **argv) {
-	while(1);
+	//while(1);
 	return 0;	
 }
 

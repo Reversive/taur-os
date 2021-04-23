@@ -8,7 +8,6 @@ void kill_process(pid_t pid, size_t return_value) {
 
     processes[pid]->status = KILLED;
     processes[pid]->return_value = return_value;
-    _force_scheduler();
 }
 
 process_status_et get_process_state(pid_t pid) {
@@ -35,6 +34,7 @@ size_t set_process_name(process_st * process, char *name) {
 void _start(function_t _main, size_t argc, char **argv) {
     int return_value = _main(argc, argv);
     kill_process(get_current_pid(), return_value);
+    _hlt();
 }
 
 size_t get_argv_count(char **argv) {
