@@ -1,4 +1,4 @@
-#include "../include/test_mm.h"
+#include "include/test_mm.h"
 
 #define MAX_BLOCKS 128
 #define MAX_MEMORY 1024 //Should be around 80% of memory managed by the MM

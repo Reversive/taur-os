@@ -106,6 +106,12 @@ pid_t sys_getpid() {
 void get_ps(ps_ts *process_list, int *process_count) {
     _syscall(_SYSCALL_PS, (uint64_t)process_list, (uint64_t)process_count, 0, 0, 0);
 }
-void sys_kill_process(pid_t pid) {
-    _syscall(_SYSCALL_KILL_PROCESS, (uint64_t)pid, 0, 0, 0, 0);
+pid_t sys_kill_process(pid_t pid) {
+    return _syscall(_SYSCALL_KILL_PROCESS, (uint64_t)pid, 0, 0, 0, 0);
+}
+pid_t sys_set_niceness(pid_t pid, int priority) {
+    return _syscall(_SYSCALL_NICE, (uint64_t)pid, (uint64_t)priority, 0, 0, 0);
+}
+pid_t sys_block(pid_t pid) {
+    return _syscall(_SYSCALL_BLOCK, (uint64_t)pid, 0, 0, 0, 0);
 }

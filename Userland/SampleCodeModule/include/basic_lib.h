@@ -40,8 +40,9 @@ void * sys_malloc(size_t size);
 void sys_free(void * address);
 pid_t sys_create_process(char *name, main_function f, char **argv);
 pid_t sys_getpid();
-void sys_kill_process(pid_t pid);
-
+pid_t sys_kill_process(pid_t pid);
+pid_t sys_set_niceness(pid_t pid, int priority);
+pid_t sys_block(pid_t pid);
 
 typedef enum { READY = 0, BLOCKED, KILLED } process_status_et;
 
@@ -75,7 +76,9 @@ enum syscall_numbers {
     _SYSCALL_CREATE_PROCESS,
     _SYSCALL_GET_PID,
     _SYSCALL_PS,
-    _SYSCALL_KILL_PROCESS
+    _SYSCALL_KILL_PROCESS,
+    _SYSCALL_NICE,
+    _SYSCALL_BLOCK
 };
 
 enum status {
@@ -86,6 +89,8 @@ enum status {
 typedef struct {
     pid_t pid;
     char *process_name;
+    int foreground;
+    int priority;
     void *cs;
     void *bp;
     process_status_et status;

@@ -181,7 +181,7 @@ uint64_t syscall_create_process(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64
     char *name = (char *)rsi;
     void *code = (void *)rdx;
     char **argv = (char**)rcx;
-    return create_process(name, code, argv, MIN_PAGE_AMOUNT * PAGE_SIZE, MIN_PAGE_AMOUNT * PAGE_SIZE);
+    return create_process(name, code, argv, MIN_PAGE_AMOUNT * PAGE_SIZE, 0);
 }
 
 uint64_t syscall_get_pid(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
@@ -197,8 +197,20 @@ uint64_t syscall_ps(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint6
 
 uint64_t syscall_kill_process(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
     pid_t pid = (pid_t)rsi;
-    kill_process(pid, KILL);
-    return SUCCESS;
+    return kill_process(pid, KILL);
+}
+
+uint64_t syscall_nice(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+    pid_t pid = (pid_t)rsi;
+    size_t priority = (size_t)rdx;
+    return set_process_niceness(pid, priority);
+}
+
+uint64_t syscall_block(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+    pid_t pid = (pid_t)rsi;
+    process_status_et current_status = get_process_state(pid);
+    process_status_et new_status = current_status == READY ? BLOCKED : (current_status == BLOCKED ? READY : INVALID);
+    return set_process_state(pid, new_status);
 }
 
 int read(unsigned int fd, char * buffer, size_t count) {

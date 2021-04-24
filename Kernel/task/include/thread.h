@@ -5,6 +5,8 @@
 #include "../../drivers/shell/include/shell.h"
 #include "data_structures.h"
 
+#define MAIN_THREAD 0
+
 #ifndef EMPTY
 #define EMPTY 0
 #endif

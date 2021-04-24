@@ -9,6 +9,14 @@ pid_t getpid() {
     return sys_getpid();
 }
 
-void kill(pid_t pid) {
-    sys_kill_process(pid);
+pid_t kill(pid_t pid) {
+    return sys_kill_process(pid);
+}
+
+pid_t nice(pid_t pid, int priority) {
+    return sys_set_niceness(pid, priority);
+}
+
+pid_t block(pid_t pid) {
+    return sys_block(pid);
 }

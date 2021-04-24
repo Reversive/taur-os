@@ -6,7 +6,7 @@ typedef void* address_t;
 #ifndef MAX_THREAD_COUNT
 #define MAX_THREAD_COUNT 1
 #endif
-typedef enum { READY = 0, BLOCKED, KILLED } process_status_et;
+typedef enum { READY = 0, BLOCKED, KILLED, INVALID } process_status_et;
 
 typedef struct memory_block_t {
     address_t base;
@@ -30,12 +30,16 @@ typedef struct {
     process_status_et status;
     memory_block_st heap;
     int return_value;
+    int priority;
+    int foreground;
     thread_st *threads[MAX_THREAD_COUNT];
 } process_st;
 
 typedef struct {
     pid_t pid;
     char *process_name;
+    int foreground;
+    int priority;
     address_t cs;
     address_t bp;
     process_status_et status;

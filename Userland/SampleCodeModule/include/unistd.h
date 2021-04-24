@@ -3,5 +3,7 @@
 #include "basic_lib.h"
 pid_t execv(char *name, main_function f, char **argv);
 pid_t getpid();
-void kill(pid_t pid);
+pid_t kill(pid_t pid);
+pid_t nice(pid_t pid, int priority);
+pid_t block(pid_t pid);
 #endif

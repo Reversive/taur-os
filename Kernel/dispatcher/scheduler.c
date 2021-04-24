@@ -59,7 +59,7 @@ void *schedule_handler(void *_rsp) {
     } else {
         current_thread->stack.current = _rsp;
         current_thread = poll(scheduler);
-        while(get_process_state(current_thread->pid) == KILLED) current_thread = poll(scheduler);
+        while(get_process_state(current_thread->pid) != READY) current_thread = poll(scheduler);
         current_quantum = START;
     }
 

@@ -31,7 +31,9 @@ syscall * syscalls_table[_SYSCALLS_SIZE] = {
     [_SYSCALL_CREATE_PROCESS] = syscall_create_process,
     [_SYSCALL_GET_PID] = syscall_get_pid,
     [_SYSCALL_PS] = syscall_ps,
-    [_SYSCALL_KILL_PROCESS] = syscall_kill_process
+    [_SYSCALL_KILL_PROCESS] = syscall_kill_process,
+    [_SYSCALL_NICE] = syscall_nice,
+    [_SYSCALL_BLOCK] = syscall_block
 };
 
 

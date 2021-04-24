@@ -4,13 +4,16 @@
 #define ESC_ASCII 27
 #define MAX 255
 #define MAX_ARGS 10
+#define INVALID_PID -1
 #include "time.h"
 #include "inforeg.h"
 #include "print_mem.h"
 #include "basic_lib.h"
-#include "test_mm.h"
+#include "../apps/include/test_mm.h"
+#include "../apps/include/test_processes.h"
 #include "unistd.h"
 #include "../apps/include/loop.h"
+
 #define PROGRAM_COUNT 2
 typedef char *parameters[MAX_ARGS];
 

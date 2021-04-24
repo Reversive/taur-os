@@ -9,6 +9,10 @@
 
 typedef int pid_t;
 
+#ifndef INVALID_PID
+#define INVALID_PID -1
+#endif
+
 #ifndef MAX_PROCESS_COUNT
 #define MAX_PROCESS_COUNT 25
 #endif
@@ -21,12 +25,18 @@ typedef int pid_t;
 #define NOT_ENOUGH_MEMORY -1
 #endif
 
+#ifndef MAX_PRIO
+#define MAX_PRIO 0
+#endif
+
 
 extern process_st *processes[MAX_PROCESS_COUNT];
 
 pid_t create_process(char *name, address_t code, char **argv, size_t stack, size_t heap);
 pid_t get_available_pid();
-void kill_process(pid_t pid, size_t return_value);
+int kill_process(pid_t pid, size_t return_value);
 process_status_et get_process_state(pid_t pid);
 void ps(ps_ts *process_info, int *p_count);
+int set_process_niceness(pid_t pid, int priority);
+pid_t set_process_state(pid_t pid, process_status_et status);
 #endif
