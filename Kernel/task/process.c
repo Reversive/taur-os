@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "include/process.h"
 
 size_t process_count = 0;
@@ -11,13 +13,13 @@ int kill_process(pid_t pid, size_t return_value) {
 }
 
 pid_t set_process_state(pid_t pid, process_status_et status) {
-    if(pid > MAX_PROCESS_COUNT || pid <= 0 || processes[pid] == NULL) return INVALID_PID;
+    if(pid >= MAX_PROCESS_COUNT || pid <= 0 || processes[pid] == NULL) return INVALID_PID;
     processes[pid]->status = status;
     return pid;
 }
 
 process_status_et get_process_state(pid_t pid) {
-    if(pid > MAX_PROCESS_COUNT || pid < 0 || processes[pid] == NULL) return INVALID;
+    if(pid >= MAX_PROCESS_COUNT || pid < 0 || processes[pid] == NULL) return INVALID;
     return processes[pid]->status;
 }
 pid_t get_available_pid() {
@@ -50,22 +52,34 @@ size_t get_argv_count(char **argv) {
     return count;
 }
 
+void free_process(process_st *p) {
+    if(p->process_name != NULL) free(p->process_name);
+    if(p->heap.base != NULL) free(p->heap.base);
+    if(p->threads[MAIN_THREAD] != NULL) free_thread(p->threads[MAIN_THREAD]);
+    free(p);
+}
+
 pid_t create_process(char *name, address_t main, char **argv, size_t stack_size, size_t heap_size) {
-    // to-do: erace pcb when stuff fails
     pid_t pid = get_available_pid();
     if(pid == UNAVAILABLE || main == NULL) return UNAVAILABLE;
-    process_st *process = (process_st *) malloc(sizeof(process));
+    process_st *process = (process_st *) malloc(sizeof(process_st));
     if(process == NULL) return NOT_ENOUGH_MEMORY;
     process->pid = pid;
     process->status = READY;
     process->priority = MAX_PRIO;
     process->foreground = 0;
-    if(set_process_name(process, name) == NOT_ENOUGH_MEMORY) return NOT_ENOUGH_MEMORY;
+    if(set_process_name(process, name) == NOT_ENOUGH_MEMORY) {
+        free_process(process);
+        return NOT_ENOUGH_MEMORY;
+    }
     process->heap.base = heap_size == EMPTY ? NULL : (address_t) malloc(heap_size);
     process->heap.size = heap_size;
     processes[process->pid] = process;
     thread_st *thread = create_thread(main, argv, stack_size, process->threads, process->pid);
-    if(thread == NULL) return NOT_ENOUGH_MEMORY;
+    if(thread == NULL) {
+        free_process(process);
+        return NOT_ENOUGH_MEMORY;
+    }
     size_t argc = get_argv_count(argv);
     thread->stack.current = _stack_builder(&_start, main, (char *)thread->stack.base + stack_size, argc, argv);
     queue_thread(thread);

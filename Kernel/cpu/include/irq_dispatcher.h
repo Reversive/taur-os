@@ -4,7 +4,6 @@
 #include "../../drivers/timer/include/time.h"
 #include <stdint.h>
 #include "../../drivers/keyboard/include/keyboard.h"
-#include "../../include/naiveConsole.h"
 #define TIMER_TICK 0
 #define KEYBOARD 1
 

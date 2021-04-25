@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "include/shell.h"
 
 
@@ -151,10 +153,10 @@ void _to_string(long num, char * buffer, int mode) {
         }
         num = num / factor ;
     }
-    char aux; //j apunta al comienzo del buffer, i al final
+    
     buffer[i--]=0;
      while(j<i){
-        aux = buffer[i];
+        char aux = buffer[i];
         buffer[i] = buffer[j];
         buffer[j]=aux;
         j++;

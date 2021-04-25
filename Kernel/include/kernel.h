@@ -4,7 +4,6 @@
 #include <stdint.h>
 #include <lib.h>
 #include <moduleLoader.h>
-#include <naiveConsole.h>
 #include "../cpu/include/idt_loader.h"
 #include "../drivers/video/include/video_driver.h"
 #include "../drivers/shell/include/shell.h"

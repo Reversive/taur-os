@@ -19,9 +19,8 @@ typedef char *parameters[MAX_ARGS];
 
 unsigned int command_equal(char * str1, char * str2);
 void assign_module(char * str);
-unsigned int console_finish_handler(char* buffer);
+unsigned int console_finish_handler(char* input_buffer);
 unsigned int is_newline_char(char chr);
-void console_key_handler(char input,char* buffer);
+void console_key_handler(char input, char* input_buffer);
 void help();
-void print_string_by_pos(int x, int y, char * str, int color, int size);
 #endif

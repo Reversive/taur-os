@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "include/exceptions.h"
 
 
@@ -15,7 +17,7 @@ exception * exceptions_table[_EXCEPTIONS_SIZE] = {
 void exceptionDispatcher(int ex_id, uint64_t * rip, uint64_t * rsp, uint64_t * top) {
     uint64_t *_old_rip = rip;
     uint64_t *_old_rsp = rsp;
-    if( ex_id < 0 || ex_id > _EXCEPTIONS_SIZE) return;
+    if( ex_id < 0 || ex_id >= _EXCEPTIONS_SIZE) return;
     exceptions_table[ex_id](_old_rip, _old_rsp, top);
     *rsp = (uint64_t)_b_rsp;
     *rip = (uint64_t)_b_rip;

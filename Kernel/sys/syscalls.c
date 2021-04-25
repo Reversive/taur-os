@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "include/syscalls.h"
 
 
@@ -246,11 +248,11 @@ int write(unsigned int fd, char * buffer, size_t count) {
 
 void copy_mem(char * from, char * buffer) {
 	int _byte_idx;
-	unsigned char aux;
+	
 
 	for(_byte_idx = 0; _byte_idx < 32; _byte_idx++) {
 		//Por cada byte leo 2 valores hexa
-		aux = from[_byte_idx] & 0xF0;// & 1111 0000
+		unsigned char aux = from[_byte_idx] & 0xF0;// & 1111 0000
 		aux = aux >> 4;
 		buffer[_byte_idx * 2] = get_char_data(aux);
 		aux = from[_byte_idx] & 0x0F;// & 0000 1111

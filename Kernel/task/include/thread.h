@@ -25,9 +25,10 @@
 
 
 
-thread_st *create_thread(address_t code, char **argv, size_t stack, thread_st **thread_list, pid_t pid);
+thread_st *create_thread(address_t main, char **argv, size_t stack_size, thread_st **thread_list, pid_t pid);
 size_t calculate_stack_size(size_t size);
 tid_t get_available_tid(thread_st **thread_list);
 size_t get_argv_count(char **argv);
+void free_thread(thread_st *t);
 
 #endif

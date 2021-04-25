@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <stdio.h>
 #include <unistd.h>
 #include <stdint.h>
@@ -108,10 +110,9 @@ int write_size(FILE *target, char *filename) {
 
 int write_file(FILE *target, FILE *source) {
 	char buffer[BUFFER_SIZE];
-	int read;
 
 	while (!feof(source)) {
-		read = fread(buffer, 1, BUFFER_SIZE, source);
+		int read = fread(buffer, 1, BUFFER_SIZE, source);
 		fwrite(buffer, 1, read, target);
 	}
 

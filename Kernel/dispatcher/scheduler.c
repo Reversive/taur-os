@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "include/scheduler.h"
 thread_st * current_thread;
 scheduler_ts *scheduler;
@@ -25,11 +27,16 @@ void add(scheduler_ts *scheduler, thread_st *thread) {
 }
 
 scheduler_ts *init_no_prio_round_robin(size_t quantum) {
-    scheduler_ts *scheduler = malloc(sizeof(scheduler_ts));
-    rrnp_ts *queue = malloc(sizeof(node_st));
-    scheduler->quantum = quantum;
-    scheduler->queue = queue;
-    return scheduler;
+    scheduler_ts *sch = malloc(sizeof(scheduler_ts));
+    if(sch == NULL) return NULL;
+    rrnp_ts *queue = malloc(sizeof(rrnp_ts));
+    if(queue == NULL) {
+        free(sch);
+        return NULL;
+    }
+    sch->quantum = quantum;
+    sch->queue = queue;
+    return sch;
 }
 
 int get_current_pid() {

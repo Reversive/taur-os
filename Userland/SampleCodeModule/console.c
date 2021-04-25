@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "include/console.h"
 
 
@@ -51,15 +53,18 @@ void sh_ps() {
 												itoa((uint64_t)process_buffer[i].priority, tmp[2], 10),
 												status == READY ? "READY" : status == BLOCKED ? "BLOCKED" : "KILLED",
 												itoa((uint64_t)process_buffer[i].cs, tmp[3], 16),
-												process_buffer[i].bp);
+												(uint64_t)process_buffer[i].bp);
 	}
 }
 
 void sh_kill(char *str) {
 	pid_t pid;
-	scanf(str, "%d", &pid);
-	if(kill(pid) == pid) {
-		printf("Proceso eliminado correctamente.\n");
+	if(scanf(str, "%d", &pid) > 0) {
+		if(kill(pid) == pid) {
+			printf("Proceso eliminado correctamente.\n");
+		} else {
+			printf("PID invalido.\n");
+		}
 	} else {
 		printf("PID invalido.\n");
 	}
@@ -67,9 +72,12 @@ void sh_kill(char *str) {
 
 void sh_nice(char *str) {
 	pid_t pid, priority;
-	scanf(str, "%d%d", &pid, &priority);
-	if(nice(pid, priority) == pid) {
-		printf("Prioridad cambiada correctamente.\n");
+	if(scanf(str, "%d%d", &pid, &priority) > 0) {
+		if(nice(pid, priority) == pid) {
+			printf("Prioridad cambiada correctamente.\n");
+		} else {
+			printf("PID invalido.\n");
+		}
 	} else {
 		printf("PID invalido.\n");
 	}
@@ -77,9 +85,12 @@ void sh_nice(char *str) {
 
 void sh_block(char *str) {
 	pid_t pid;
-	scanf(str, "%d", &pid);
-	if(block(pid) == pid) {
-		printf("Proceso bloqueado/desbloqueado correctamente.\n");
+	if(scanf(str, "%d", &pid) > 0) {
+		if(block(pid) == pid) {
+			printf("Proceso bloqueado/desbloqueado correctamente.\n");
+		} else {
+			printf("PID invalido.\n");
+		}
 	} else {
 		printf("PID invalido.\n");
 	}
@@ -134,7 +145,8 @@ void assign_module(char * str) {
 		sh_block(str);
 	} 
 	else if(command_equal(str, "mm_test")) {
-		test_mm();
+		pid_t pid = execv("mm_test", main_test_mm, param_list[0]);
+		print_execve_output(pid);
 	} 
 	else if(command_equal(str, "pr_test")) {
 		execv("process_test", test_processes_main, (char*[]){NULL});
@@ -181,8 +193,3 @@ void console_key_handler(char input,char* input_buffer) {
 	}
 }
 
-void print_string_by_pos(int x, int y, char * str, int color, int size) {
-	for(int i = 0; str[i] != 0; i++) {
-		sys_draw_character(x + i * size * 16, y , str[i], size, color);
-	}
-}

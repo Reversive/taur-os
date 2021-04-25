@@ -2,7 +2,7 @@
 #define _KB_SCANCODES_H
 
 
-#define OUT_OF_RANGE 0x80
+#define OUT_OF_RANGE 89
 #ifndef NULL
 #define NULL 0
 #endif

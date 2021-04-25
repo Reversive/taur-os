@@ -12,7 +12,7 @@ typedef int pid_t;
 uint64_t _syscall(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
 typedef void (*function)(void);
 typedef int (*main_function)(int argc, char **argv);
-unsigned int sys_time(char setting);
+unsigned int sys_time(char format);
 size_t sys_read(unsigned int fd, char * buffer, size_t length);
 size_t sys_write(unsigned int fd, char * buffer, size_t length);
 void sys_set_cursor_status(unsigned char status);

@@ -5,5 +5,5 @@
 #include "../../include/_loader.h"
 
 void test_mm();
-
+int main_test_mm(int argc, char **argv);
 #endif

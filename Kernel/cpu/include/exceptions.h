@@ -61,7 +61,7 @@ exception ex_div_by_zero;
 exception ex_invalid_opcode;
 
 extern exception * exception_table[_EXCEPTIONS_SIZE];
-void exceptionDispatcher(int exception, uint64_t * rip, uint64_t * rsp, uint64_t * top);
+void exceptionDispatcher(int ex_id, uint64_t * rip, uint64_t * rsp, uint64_t * top);
 
 
 #endif

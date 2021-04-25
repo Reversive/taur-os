@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "include/circular_linked_list.h"
 
 
@@ -24,8 +26,7 @@ int length(node_st *tail) {
 }
 
 node_st *insert_head(node_st *tail, void *data) {
-    node_st *node = (node_st *)malloc(sizeof(node_st));
-    node->data = data;
+    node_st *node = create_node(data);
     if(is_null(tail)) {
         tail = node;
         node->next = node;

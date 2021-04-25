@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 /* Based on FreeRTOS Kernel V10.4.3
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS */
@@ -11,7 +13,7 @@ typedef struct Header {
 
 /* Inserts a block of memory to the list of free mem blocks.
  * Merges adjacent free zones into one. */
-static void add_block_to_free_list(header * block);
+static void add_block_to_free_list(header * blockToInsert);
 
 /* Sets up the required heap on the first call to malloc */
 static void init_heap();

@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "include/keyboard.h"
 static state key_state = NONE;
 static ring kb_ring = {0, 0, 0, {0}};
@@ -66,7 +68,7 @@ void kb_trigger() {
     }
 
     // https://www.win.tue.nl/~aeb/linux/kbd/scancodes-1.html#ss1.1
-    if(current > OUT_OF_RANGE) return;
+    if(current >= OUT_OF_RANGE) return;
 
     key ascii = asciiNonShift[current];
     if(key_state == SHIFT) {

@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "../include/stdio.h"
 
 
@@ -56,12 +58,9 @@ void print_string(char * str){
 char *itoa(uint64_t value, char *buffer, uint32_t base) {
     char *p = buffer;
     char *p1, *p2;
-    uint32_t digits = 0;
-
     do {
         uint32_t reminder = value % base;
         *p++ = (reminder < 10) ? reminder + '0' : reminder + 'A' - 10;
-        digits++;
     } while (value /= base);
 
    
@@ -80,14 +79,14 @@ char *itoa(uint64_t value, char *buffer, uint32_t base) {
 }
 
 void align_string(char * str, char * buffer, int length) {
-	int dif;
+	
 	int i, j = 0;
 	for(i = 0; (i < length || length == 0) && str[i] != 0; i++) {
 		buffer[i] = str[i];
 	}
 
 	if(i < length) {
-		dif = (length - i);
+		int dif = (length - i);
 		for(j = 0; j < dif; j++)
 			buffer[i + j] = ' ';
 	}
@@ -174,21 +173,23 @@ int char_to_dec(char c) {
 }
 
 static int scan_number(char* source, int* dest, int* arg_count) {
-	int aux = 0;
 	int counter1 = 0;
-    int counter2 = 0;
-
 	if(!is_digit(*source)) {
 		while(!is_digit(*(source + counter1))) {
+            if(*(source+counter1) == 0) { 
+                break; 
+            }
             counter1++;
         }
 	}
 	if(is_digit(*(source + counter1))) {
+        int counter2 = 0;
 		(*arg_count)++;
 		while(is_digit(*(source + counter1))) {
             counter2++;
             counter1++;
 		}
+        int aux = 0;
         for(int i = 0; i < counter2; i++) {
             aux = aux + (pow(10, i))*char_to_dec(*(source + counter1 - i - 1));
         }
@@ -275,10 +276,10 @@ void hex_to_string(long num, char * buffer){
         buffer[i++] = get_char_data(num%16);
         num = num / 16 ;
     }
-    char aux; 
+    
     buffer[i--]=0;
      while(j<i){
-        aux = buffer[i];
+        char aux = buffer[i];
         buffer[i] = buffer[j];
         buffer[j]=aux;
         j++;

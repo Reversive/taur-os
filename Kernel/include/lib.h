@@ -29,12 +29,10 @@ typedef struct fs_register {
     uint64_t rax;
 } full_reg_snapshot;
 
-void * memset(void * destination, int32_t character, uint64_t length);
+void * memset(void * destination, int32_t c, uint64_t length);
 void * memcpy(void * destination, const void * source, uint64_t length);
 void dump_reg(int id, const char * desc, uint64_t * rip, uint64_t * rsp, uint64_t * top);
-void kernel_panic(uint64_t * rip, uint64_t * rsp, uint64_t * top, int id, const char * desc, bool halt);
 char *cpuVendor(char *result);
-void clear_interrupts();
 void halt_system();
 int strnlen(char * str);
 void my_strcpy(char * dest, char * origin);

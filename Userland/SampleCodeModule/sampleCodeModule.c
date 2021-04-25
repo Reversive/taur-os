@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 /* sampleCodeModule.c */
 #include "include/stdio.h"
 #include "include/time.h"
@@ -16,7 +18,7 @@ int main(int argc, char ** argv) {
 	sys_set_cursor_status(_ENABLED);
 	
 	while(NO_STOP) {
-		char c;
+		int c;
 		sys_set_text_color(WHITE);
 		puts("TaurOS> ");
 		sys_set_text_color(LIME);

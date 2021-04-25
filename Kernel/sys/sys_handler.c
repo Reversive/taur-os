@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "include/sys_handler.h"
 
 
@@ -38,6 +40,6 @@ syscall * syscalls_table[_SYSCALLS_SIZE] = {
 
 
 uint64_t sys80handler(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
-    if( rdi < 0 || rdi > _SYSCALLS_SIZE) return ERROR;
+    if(rdi >= _SYSCALLS_SIZE) return ERROR;
     return syscalls_table[rdi](rsi, rdx, rcx, r8, r9);
 }

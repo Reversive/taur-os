@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "include/test_mm.h"
 
 #define MAX_BLOCKS 128
@@ -11,7 +13,7 @@ typedef struct MM_rq{
 void test_mm(){
   mm_rq mm_rqs[MAX_BLOCKS];
   uint8_t rq;
-  uint32_t total;
+  int32_t total;
 
   while (1){
     rq = 0;
@@ -48,4 +50,9 @@ void test_mm(){
       if (mm_rqs[i].address != 0)
         sys_free(mm_rqs[i].address);  // TODO: Port this call as required
   } 
+}
+
+int main_test_mm(int argc, char **argv) {
+    test_mm();
+    return 0;
 }

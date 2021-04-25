@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "include/lib.h"
 
 void * memset(void * destination, int32_t c, uint64_t length)
@@ -9,10 +11,6 @@ void * memset(void * destination, int32_t c, uint64_t length)
 		dst[length] = chr;
 
 	return destination;
-}
-
-void clear_interrupts() {
-	_cli();
 }
 
 int strnlen(char * str) {
@@ -66,22 +64,6 @@ void remask_pic() {
 	picMasterMask(PIC_MASK);
 }
 
-void kernel_panic(uint64_t * rip, uint64_t * rsp, uint64_t * top, int id, const char * desc, bool halt) {
-	/*ncNewline();
-	ncPrint("[KERNEL PANIC]");
-	ncNewline();
-	ncPrint("[EXCEPTION ID]: ");
-	ncPrintDec(id);
-	ncNewline();
-	ncPrint("[DESCRIPTION]: ");
-	ncPrint(desc);
-	dump_reg(rip, rsp, top);
-	if(halt != 0) {
-		clear_interrupts();
-		remask_pic();
-		halt_system();
-	}*/
-}
 
 void dump_reg(int id, const char * desc, uint64_t * rip, uint64_t * rsp, uint64_t * top) {
 	full_reg_snapshot * regs = (full_reg_snapshot *)top;

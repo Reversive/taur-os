@@ -32,7 +32,7 @@ typedef int pid_t;
 
 extern process_st *processes[MAX_PROCESS_COUNT];
 
-pid_t create_process(char *name, address_t code, char **argv, size_t stack, size_t heap);
+pid_t create_process(char *name, address_t main, char **argv, size_t stack_size, size_t heap_size);
 pid_t get_available_pid();
 int kill_process(pid_t pid, size_t return_value);
 process_status_et get_process_state(pid_t pid);

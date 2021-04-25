@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "print_mem.h"
 
 unsigned int errorFlag;
@@ -7,12 +9,11 @@ void copy_mem(char* from,char* buffer){
 }
 
 int info_mem( char * str) {
-	
 	while(*str == ' ')
 		str++; 
 	while(*str != ' ')
 		str++; 
-	while(*str == ' ' && *str != 0)
+	while(*str == ' ')
 		str++;
 	if(*str == 0)
 		return 0; //No recibio argumento
@@ -57,10 +58,6 @@ char * parse_str_to_hexa(char * str) {
 	if(len > 16)
 		errorFlag = 1;
 	return (char *)number;
-}
-
-int is_number(char c){
-	return c>='0' && c<='9';
 }
 
 
