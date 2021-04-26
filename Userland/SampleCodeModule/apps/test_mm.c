@@ -28,7 +28,6 @@ void test_mm(){
         // exit(-1);
         break;
       }
-      printf("total= %d\n", total);
       total += mm_rqs[rq].size;
       rq++;
     }
