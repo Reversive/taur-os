@@ -25,7 +25,7 @@ thread_st *create_thread(address_t main, char **argv, size_t stack_size, thread_
     thread->tid = tid;
     thread->pid = pid;
     thread->thread_status = RUNNING;
-    thread->stack.base = malloc(stack_size);
+    thread->stack.base = (uint64_t)malloc(stack_size) + stack_size;
     if(thread->stack.base == NULL) {
         free_thread(thread);
         return NULL;

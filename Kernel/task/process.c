@@ -81,7 +81,7 @@ pid_t create_process(char *name, address_t main, char **argv, size_t stack_size,
         return NOT_ENOUGH_MEMORY;
     }
     size_t argc = get_argv_count(argv);
-    thread->stack.current = _stack_builder(&_start, main, (char *)thread->stack.base + stack_size, argc, argv);
+    thread->stack.current = _stack_builder(&_start, main, (char *)thread->stack.base, argc, argv);
     queue_thread(thread);
     processes[process->pid]->threads[thread->tid] = thread;
     process_count++;
