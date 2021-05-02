@@ -31,7 +31,9 @@ static header start, * pEnd = NULL;
 static size_t free_bytes_remaining = 0;
 
 /* Total memory heap*/
-uint8_t total_memory[TOTAL_HEAP_SIZE];
+// uint8_t total_memory[TOTAL_HEAP_SIZE];
+void * total_memory;
+
 
 /* Gets set to the top bit of an size_t type.  When this bit in the size
  * member of an header structure is set then the block belongs to the
@@ -126,6 +128,8 @@ static void init_heap() {
     uint8_t * pAlignedHeap;
     size_t totalMemPointer;
     size_t totalHeapSize = TOTAL_HEAP_SIZE;
+
+    sbrk_handler(TOTAL_HEAP_SIZE, &total_memory);
 
     /* Ensure the heap starts on a correctly aligned boundary. */
     totalMemPointer = (size_t) total_memory;

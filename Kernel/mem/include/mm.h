@@ -4,6 +4,7 @@
     // #include <stdio.h>
     #include <string.h>
     #include <stdint.h>
+    #include "sbrk.h"
 
     #define BYTE_ALIGNMENT 64
     #define BYTE_ALIGNMENT_MASK ( 0x003f )
