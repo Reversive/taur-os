@@ -4,7 +4,8 @@
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS */
 
-#include "include/mm.h"
+#include "include/buddy.h"
+#include "../drivers/shell/include/shell.h"
 
 typedef struct Header {
     struct Header * next;
@@ -31,8 +32,8 @@ static header start, * pEnd = NULL;
 static size_t free_bytes_remaining = 0;
 
 /* Total memory heap*/
-// uint8_t total_memory[TOTAL_HEAP_SIZE];
-void * total_memory;
+// uint8_t tot_mem[TOTAL_HEAP_SIZE];
+void * tot_mem;
 
 
 /* Gets set to the top bit of an size_t type.  When this bit in the size
@@ -42,7 +43,7 @@ void * total_memory;
 static size_t xBlockAllocatedBit = 0;
 
 
-void * myMalloc(size_t requestedSize) {
+void * malloc(size_t requestedSize) {
     header * currp, * prevp, *insertp;
     void * returnp = NULL;
 
@@ -84,7 +85,8 @@ void * myMalloc(size_t requestedSize) {
 
             /* If the end marker was reached then a block of adequate size
              * was not found. */
-            if(currp != pEnd) {
+            //if(currp != pEnd) {
+            if(currp != NULL) {
                 /* Return the memory space pointed to - jumping over the
                  * header structure at its start. */
                 returnp = (void *) (((uint8_t *) prevp->next) + heap_construct_size);
@@ -121,24 +123,44 @@ void * myMalloc(size_t requestedSize) {
 }
 
 
+int myPow(int base, int power) {
+    int result = 1;
+    int i;
+    for(i=0; i<power; i++) {
+        result *= base;
+    }
+    return result;
+}
 
+int biggestBuddy() {
+    int i = 0;
+    unsigned int totalHeap = 1;
+    while(myPow(2,i) < TOTAL_HEAP_SIZE){
+        totalHeap *=2; 
+        i++;
+    }
+    _internal_print_dec(totalHeap);
+    print_char('\n');
+    return totalHeap;
+
+}
 static void init_heap() {
     
     header * pFirstFreeBlock;
     uint8_t * pAlignedHeap;
     size_t totalMemPointer;
-    size_t totalHeapSize = TOTAL_HEAP_SIZE;
+    size_t totalHeapSize = biggestBuddy();
 
-    sbrk_handler(TOTAL_HEAP_SIZE, &total_memory);
+    sbrk_handler(totalHeapSize, &tot_mem);
 
     /* Ensure the heap starts on a correctly aligned boundary. */
-    totalMemPointer = (size_t) total_memory;
+    totalMemPointer = (size_t) tot_mem;
     
     // It checks the last bits and if they are not aligned then we align them
     if( ( totalMemPointer & BYTE_ALIGNMENT_MASK ) != 0 ) {
         totalMemPointer += ( BYTE_ALIGNMENT - 1 );
         totalMemPointer &= ~((size_t) BYTE_ALIGNMENT_MASK);
-        totalHeapSize -= totalMemPointer - (size_t) total_memory;
+        totalHeapSize -= totalMemPointer - (size_t) tot_mem;
     }
 
     pAlignedHeap = (uint8_t *) totalMemPointer;
@@ -160,11 +182,13 @@ static void init_heap() {
     /* To start, there is a single free block that is sized to take up the
      * entire heap space, minus the space taken by pEnd. */
     pFirstFreeBlock = (void *) pAlignedHeap;
-    pFirstFreeBlock->size = totalMemPointer - (size_t) pFirstFreeBlock;
-    pFirstFreeBlock->next = pEnd;
+    pFirstFreeBlock->size = totalMemPointer;
+    pFirstFreeBlock->next = NULL;
 
     /* Only one block exists - and it covers the entire usable heap space. */
     free_bytes_remaining = pFirstFreeBlock->size;
+    _internal_print_dec(free_bytes_remaining);
+
 
     /* Work out the position of the top bit in a size_t variable. */
     xBlockAllocatedBit = ((size_t) 1) << ((sizeof(size_t) * heapBITS_PER_BYTE) - 1);
@@ -172,7 +196,7 @@ static void init_heap() {
 
 
 
-void myFree(void *ptr){
+void free(void *ptr){
 
     uint8_t * currp = (uint8_t *) ptr;
     header * insertp;
@@ -227,12 +251,14 @@ static void add_block_to_free_list(header * blockToInsert) {
     
     // unir por derecha
     if((currp + blockToInsert->size) == (uint8_t *) iteratorp->next) {
-        if(iteratorp->next != pEnd) {
+        //if(iteratorp->next != pEnd) {
+        if(iteratorp->next != NULL) {
             /* Form one big block from the two blocks. */
             blockToInsert->size += iteratorp->next->size;
             blockToInsert->next = iteratorp->next->next;
         } else {
-            blockToInsert->next = pEnd;
+            //blockToInsert->next = pEnd;
+            blockToInsert->next = NULL;
         }
     } else {
         blockToInsert->next = iteratorp->next;
