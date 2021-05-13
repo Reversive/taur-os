@@ -10,7 +10,9 @@
 typedef struct Header {
     struct Header * next;
     size_t size;
+    char side[30] ;
 } header;
+// SIDE: 0=left, 1=right
 
 /* Inserts a block of memory to the list of free mem blocks.
  * Merges adjacent free zones into one. */
@@ -21,10 +23,10 @@ static void init_heap();
 
 /* The size of the structure placed at the beginning of each allocated
  *  memory block must be correctly byte aligned. */
-static const size_t heap_construct_size = (sizeof(header) + ((size_t) (BYTE_ALIGNMENT - 1))) & ~((size_t) BYTE_ALIGNMENT_MASK);
+//static const size_t heap_construct_size = (sizeof(header) + ((size_t) (BYTE_ALIGNMENT - 1))) & ~((size_t) BYTE_ALIGNMENT_MASK);
 
 /* Block sizes must not get too small. */
-#define heapMINIMUM_BLOCK_SIZE ((size_t) (heap_construct_size << 1 ))
+//#define heapMINIMUM_BLOCK_SIZE ((size_t) (heap_construct_size << 1 ))
 
 /* Links to the free list*/
 static header start, * pEnd = NULL;
@@ -41,10 +43,24 @@ void * tot_mem;
  * application.  When the bit is free the block is still part of the free heap
  * space. */
 static size_t xBlockAllocatedBit = 0;
-
+void printList(int num){
+    header *iteratorp;
+    iteratorp = &start;
+    _internal_print_string("LOOK AT FREE LIST ");
+    _internal_print_dec(num);
+    print_char('\n');
+    while(iteratorp->next !=NULL){
+        iteratorp = iteratorp->next;
+        _internal_print_dec(iteratorp->size);
+        print_char('\n');
+    }
+}
 
 void * malloc(size_t requestedSize) {
-    header * currp, * prevp, *insertp;
+    _internal_print_string("in malloc\n requested size");
+    _internal_print_dec(requestedSize);
+    print_char('\n');
+    header * currp,* prevp, *insertp, * minp, * minprevp;
     void * returnp = NULL;
 
     if(pEnd == NULL){
@@ -54,60 +70,90 @@ void * malloc(size_t requestedSize) {
     /* Checks that the requested block doesn't set the top bit
      * The top bit determines if the block is free or not. */
     if((requestedSize & xBlockAllocatedBit) == 0) {
-        /* The wanted size is smaller than our block size.
-         * We proceed to make it larger */
-        if((requestedSize > 0) && ((requestedSize + heap_construct_size) >  requestedSize)) {
-            
-            requestedSize += heap_construct_size;
-        
-            /* Ensure that blocks are always aligned. */
-            if((requestedSize & BYTE_ALIGNMENT_MASK) != 0x00) {
-                /* Byte alignment required. Check for overflow. */
-                if( (requestedSize + (BYTE_ALIGNMENT - (requestedSize & BYTE_ALIGNMENT_MASK)))  > requestedSize) {
-                    requestedSize += (BYTE_ALIGNMENT - (requestedSize & BYTE_ALIGNMENT_MASK));
-                } else {
-                    requestedSize = 0;
-                }  
-            }
-        }
-
         /* We have free space for the requested size */
         if((requestedSize > 0) && ( requestedSize <= free_bytes_remaining)) {
             /* Traverse the list from the start	(lowest address) block until
             * one of adequate size is found. */
             prevp = &start;
             currp = start.next;
+            minp = NULL; 
+            minprevp = &start;
 
-            while((currp->size < requestedSize) && (currp->next != NULL)) {
+            while((currp != NULL)) {
+                print_char('\n');
+                print_char('\n');
+                _internal_print_string("in while getting minp\n");
+                _internal_print_dec(currp->size);
+                print_char('\n');
+                _internal_print_string("requested size = ");
+                _internal_print_dec(requestedSize);
+                print_char('\n');
+
+
+                if((minp->size > currp->size || minp == NULL) && currp->size >= requestedSize){
+                    minprevp = prevp;
+                    minp = currp;
+                    if(minprevp->next->size != minp->size){
+                        while(1)
+                            _internal_print_string("there has been an error\n");
+                    }
+                }
                 prevp = currp;
                 currp = currp->next;
+
+                print_char('\n');
+                print_char('\n');
+                print_char('\n');
+                print_char('\n');
             }
 
             /* If the end marker was reached then a block of adequate size
              * was not found. */
-            //if(currp != pEnd) {
+            _internal_print_string("got minp\n");
+            currp = minp;
+            prevp = minprevp;
+            _internal_print_dec(currp->size);
+            print_char('\n');
             if(currp != NULL) {
                 /* Return the memory space pointed to - jumping over the
                  * header structure at its start. */
-                returnp = (void *) (((uint8_t *) prevp->next) + heap_construct_size);
+                //returnp = (void *) (((uint8_t *) prevp->next) + heap_construct_size);
+                returnp = (void *) (((uint8_t *) prevp->next) );
+
 
                 /* This block is being returned for use so must be taken out
                  * of the list of free blocks. */
                 prevp->next = currp->next;
-
                 /* If the block is larger than required it can be split into two. */
-                if((currp->size - requestedSize) > heapMINIMUM_BLOCK_SIZE) {
-                    /* This block is to be split into two.  Create a new
-                     * block following the number of bytes requested. The void
-                     * cast is used to prevent byte alignment warnings from the compiler. */
-                    insertp = (void *) (((uint8_t *) currp) + requestedSize);
-
-                    /* Calculate the sizes of two blocks split from the single block. */
-                    insertp->size = currp->size - requestedSize;
-                    currp->size = requestedSize;
-
-                    /* Insert the new block into the list of free blocks. */
-                    add_block_to_free_list(insertp);
+                    
+                while((currp->size/2)>=requestedSize){
+                    _internal_print_string("estamos en ");
+                    _internal_print_dec(currp->size);
+                    _internal_print_string(" queremos ir a ");
+                    _internal_print_dec(currp->size/2);
+                    print_char('\n');
+                    _internal_print_string(currp->side);
+                    print_char('\n');
+                    header * prightBlock;
+                    size_t sizes = ((currp->size)/2);
+                    header * iteratorp;
+                    prightBlock  = (void *) (((uint8_t *) currp) + sizes);
+                    
+                    
+                    prightBlock->size = sizes;
+                    
+                    currp->size = sizes;
+                    iteratorp = &start;
+                    int i = 0;
+                    while(currp->side[i]!=0){
+                        printList(0);
+                        prightBlock->side[i] = currp->side[i];
+                        printList(1);
+                        i++;
+                    }
+                    currp->side[i] = 'l';
+                    prightBlock->side[i] = 'r';
+                    add_block_to_free_list(prightBlock);
                 }
 
                 free_bytes_remaining -= currp->size;
@@ -116,9 +162,13 @@ void * malloc(size_t requestedSize) {
                  * by the application and has no "next" block. */
                 currp->size |= xBlockAllocatedBit;
                 currp->next = NULL;
+            }else{
+                while(1)
+                    _internal_print_string("couldnt find!\n");
             }
         }
     }
+    
     return returnp;
 }
 
@@ -133,6 +183,7 @@ int myPow(int base, int power) {
 }
 
 int biggestBuddy() {
+    _internal_print_string("biggest buddy\n");
     int i = 0;
     unsigned int totalHeap = 1;
     while(myPow(2,i) < TOTAL_HEAP_SIZE){
@@ -144,8 +195,10 @@ int biggestBuddy() {
     return totalHeap;
 
 }
+
 static void init_heap() {
-    
+    _internal_print_string("init heap");
+    print_char('\n');
     header * pFirstFreeBlock;
     uint8_t * pAlignedHeap;
     size_t totalMemPointer;
@@ -155,13 +208,6 @@ static void init_heap() {
 
     /* Ensure the heap starts on a correctly aligned boundary. */
     totalMemPointer = (size_t) tot_mem;
-    
-    // It checks the last bits and if they are not aligned then we align them
-    if( ( totalMemPointer & BYTE_ALIGNMENT_MASK ) != 0 ) {
-        totalMemPointer += ( BYTE_ALIGNMENT - 1 );
-        totalMemPointer &= ~((size_t) BYTE_ALIGNMENT_MASK);
-        totalHeapSize -= totalMemPointer - (size_t) tot_mem;
-    }
 
     pAlignedHeap = (uint8_t *) totalMemPointer;
 
@@ -172,24 +218,17 @@ static void init_heap() {
 
     /* pEnd is used to mark the end of the list of free blocks and is inserted
      * at the end of the heap space. */
-    totalMemPointer = ((size_t) pAlignedHeap) + totalHeapSize;
-    totalMemPointer -= heap_construct_size;
-    totalMemPointer &= ~((size_t) BYTE_ALIGNMENT_MASK);
     pEnd = (void *) totalMemPointer;
-    pEnd->size = 0;
-    pEnd->next = NULL;
 
     /* To start, there is a single free block that is sized to take up the
      * entire heap space, minus the space taken by pEnd. */
     pFirstFreeBlock = (void *) pAlignedHeap;
-    pFirstFreeBlock->size = totalMemPointer;
+    pFirstFreeBlock->size = totalHeapSize;
     pFirstFreeBlock->next = NULL;
+    pFirstFreeBlock->side[0] = 'l';
 
     /* Only one block exists - and it covers the entire usable heap space. */
     free_bytes_remaining = pFirstFreeBlock->size;
-    _internal_print_dec(free_bytes_remaining);
-
-
     /* Work out the position of the top bit in a size_t variable. */
     xBlockAllocatedBit = ((size_t) 1) << ((sizeof(size_t) * heapBITS_PER_BYTE) - 1);
 }
@@ -203,7 +242,7 @@ void free(void *ptr){
 
     if(ptr != NULL) {
         /* The memory being freed will have a header structure immediately before it. */
-        currp -= heap_construct_size;
+        //currp -= heap_construct_size;
 
         /* This casting is to keep the compiler from issuing warnings. */
         insertp = (void *) currp;
@@ -225,14 +264,22 @@ void free(void *ptr){
 
 
 static void add_block_to_free_list(header * blockToInsert) {
-    
+    _internal_print_string("ADD BLOCK TO FREE LIST\n");
     header * iteratorp;
     uint8_t * currp;
-
+    
     /* Iterate through the list until a block is found that has a higher address
      * than the block being inserted. */
+    
     iteratorp = &start;
-    while(iteratorp->next < blockToInsert) {
+    if(iteratorp->next == NULL){
+        _internal_print_string("free list empty\n");
+        start.next =  blockToInsert;
+        blockToInsert->next = NULL;
+       
+        return;
+    }
+    while(iteratorp->next < blockToInsert || iteratorp->next == NULL) {
         iteratorp = iteratorp->next;
     }
 
@@ -240,27 +287,46 @@ static void add_block_to_free_list(header * blockToInsert) {
      * make a contiguous block of memory? */
     currp = (uint8_t *) iteratorp;
     // unir del lado izquierdo 
-    if((currp + iteratorp->size) == (uint8_t *) blockToInsert) {
+    int i=0;
+    while(blockToInsert->side[i] != 0){
+        i++;
+    }
+    int j=0;
+    while(iteratorp->side[j] != 0){
+        j++;
+    }
+
+    if(((currp + iteratorp->size) == (uint8_t *) blockToInsert) && blockToInsert->side[i-1] == 'r' && iteratorp->side[j-1] == 'l'&& j==i) {
+        _internal_print_string("im gonna join left\n");
         iteratorp->size += blockToInsert->size;
+        iteratorp->side[j-1] = 0;
+        j--;
+        i--;
         blockToInsert = iteratorp;
     }
 
     /* Do the block being inserted, and the block it is being inserted before
      * make a contiguous block of memory? */
     currp = (uint8_t *) blockToInsert;
-    
+    j=0;
+    while(iteratorp->next->side[j] != 0){
+        j++;
+    }
     // unir por derecha
-    if((currp + blockToInsert->size) == (uint8_t *) iteratorp->next) {
+    if(((currp + blockToInsert->size) == (uint8_t *) iteratorp->next) && blockToInsert->side[i-1] == 'l' && iteratorp->next->side[j-1] == 'r'&& j==i) {
+        _internal_print_string("im gonna join right\n");
         //if(iteratorp->next != pEnd) {
         if(iteratorp->next != NULL) {
             /* Form one big block from the two blocks. */
             blockToInsert->size += iteratorp->next->size;
             blockToInsert->next = iteratorp->next->next;
+            blockToInsert->side[i-1] = 0;
         } else {
             //blockToInsert->next = pEnd;
             blockToInsert->next = NULL;
         }
     } else {
+        _internal_print_string("yey else\n");
         blockToInsert->next = iteratorp->next;
     }
 
@@ -269,6 +335,8 @@ static void add_block_to_free_list(header * blockToInsert) {
      * already been set, and should not be set here as that would make it point
      * to itself. */
     if(iteratorp != blockToInsert) {
+        _internal_print_string("fim in if\n");
         iteratorp->next = blockToInsert;
     }
+    
 }
