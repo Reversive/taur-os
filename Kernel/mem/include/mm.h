@@ -17,7 +17,7 @@
 
     // typedef unsigned int size_t;
 
-    void myFree(void *ptr);
-    void *myMalloc(size_t requestedSize);
+    void mmfree(void *ptr);
+    void *mmmalloc(size_t requestedSize);
 
 #endif
