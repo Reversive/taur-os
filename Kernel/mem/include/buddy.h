@@ -9,6 +9,7 @@
     #ifndef NULL
         #define NULL 0
     #endif
+    typedef enum { false, true } bool;
 
     void free(void *ptr);
     void *malloc(size_t requestedSize);

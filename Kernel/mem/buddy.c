@@ -3,110 +3,94 @@
 
 #include "include/buddy.h"
 
+//------------------------DECLARACION DE CONSTANTES----------------------------------------//
+
 #define BASE 2
-enum powersOfTwo{KILO = 10, MEGA = 20, GIGA = 30};
-#define MIN_ALLOC_LOG2 6 //Min size supported = 64 bytes 
+#define GIGA 30
+#define MIN_ALLOC_LOG2 6 //Min size supported = 64 bytes
 #define MAX_ALLOC_LOG2 (GIGA - MIN_ALLOC_LOG2) //Max size supported = 1 GB
 #define BINARY_POWER(x) (1 << (x))
-#define HEAP_SIZE (1024 * 500)
+#define TOTAL_HEAP_SIZE (1024 * 500)
 
-typedef struct blockNode_t
-{
-    unsigned short int level;
-    unsigned short int inUse;
-    struct blockNode_t *previuous;
-    struct blockNode_t *next;
-} blockNode_t;
+
+// ------------------------------DECLARACION DE FUNCIONES----------------------------------//
 
 static size_t getBlock(size_t request);
 static int getBlockToUse(size_t firstBlock);
-static blockNode_t *getBuddy(blockNode_t *node);
-static blockNode_t *getPrincipalAdress(blockNode_t *node);
-static void addNodeAndMerge(blockNode_t *node);
-static void addNewNode(blockNode_t *node, blockNode_t *lastNode, size_t level);
-
-static int isPower(int x, long int y); // https://www.geeksforgeeks.org/check-if-a-number-is-power-of-another-number/
+static block_t *getBuddy(block_t *block);
+static block_t *getPrincipalAdress(block_t *block);
+static void addBlockAndMerge(block_t *block);
+static void addNewBlock(block_t *block, block_t *lastNode, size_t level);
+static bool isPower(int x, long int y); // https://www.geeksforgeeks.org/check-if-a-number-is-power-of-another-number/
 static inline uint64_t log2(uint64_t n);
+static void pushBlock(block_t *oldBlock, block_t *newNode);
+static void deleteBlock(block_t *block);
+static block_t *popBlock(block_t *block);
+static int isBlockEmpty(block_t *block);
+static int myPow(int base, int power);
+static int biggestBuddy(size_t heap);
 
-static void pushNode(blockNode_t *oldNode, blockNode_t *newNode);
-static void deleteNode(blockNode_t *node);
-static blockNode_t *popNode(blockNode_t *node);
-static int isNodeEmpty(blockNode_t *node);
+//---------------------------DECLARACION DE VARIABLES--------------------------------------//
 
-static blockNode_t *heapPtr;
-static int began = 0;
+static block_t *totalMemory;
+static bool began = false;
 static size_t heapSize;
 static size_t cantBlocks;
-static blockNode_t blocksVec[MAX_ALLOC_LOG2];
-static size_t availableMemory;
+static block_t buckets[MAX_ALLOC_LOG2];
+static size_t freeBytesRemaining;
+
+typedef struct block_t
+{
+    bool inUse;
+    unsigned short int level;
+    struct block_t *prev;
+    struct block_t *next;
+} block_t;
+
+//-----------------------------------------------------------------------------------------//
 
 
 int * memInfo()
 {
-       info[] = {(int)heapSize, (int) availableMemory}; 
-        // printf(" - MEMORIA TOTAL: %d bytes",(int)heapSize);
-        // printf(" - MEMORIA LIBRE: %d bytes",(int)availableMemory);
-        // printf(" - MEMORIA UTILIZADA %d BYTES",(int)heapSize-availableMemory);
-     
+    info[] = {(int)heapSize, (int) freeBytesRemaining}; 
     return info;
 }
 
 
-int myPow(int base, int power) {
-    int result = 1;
-    int i;
-    for(i=0; i<power; i++) {
-        result *= base;
-    }
-    return result;
-}
-
-int biggestBuddy(size_t heap) {
-    int i = 0;
-    size_t totalHeap = 1;
-    while(myPow(2,i) < heap){
-        totalHeap *=2; 
-        i++;
-    }
-    return totalHeap;
-
-}
-
-
-void initializeMemoryManager()
+void initHeap()
 {
-    static void* heapPtrAux;    
-    heapSize = availableMemory = biggestBuddy(HEAP_SIZE);
-    sbrk_handler(heapSize, &heapPtrAux);
+    static void* totalMemoryAux;    
+    heapSize = freeBytesRemaining = biggestBuddy(TOTAL_HEAP_SIZE);
+    sbrk_handler(heapSize, &totalMemoryAux);
 
-    heapPtr = (blockNode_t *)heapPtrAux;
+    totalMemory = (block_t *)totalMemoryAux;
     
     cantBlocks = log2(heapSize) - MIN_ALLOC_LOG2 + 1;
 
     if (cantBlocks > MAX_ALLOC_LOG2)
         cantBlocks = MAX_ALLOC_LOG2;
 
-    blockNode_t * aux= blocksVec;
+    block_t * aux= buckets;
 
     //inicializo los bloques del arreglo
     for (int i = 0; i < cantBlocks; i++,aux++)
     {
-        blocksVec[i].level = i;
-        blocksVec[i].inUse = 1;
-        blocksVec[i].previuous = blocksVec[i].next = aux ;
+        buckets[i].level = i;
+        buckets[i].inUse = true;
+        buckets[i].prev = buckets[i].next = aux ;
     }
     //agrego el de mayor tamaño al heap
-    addNewNode(heapPtr, &blocksVec[cantBlocks - 1], cantBlocks - 1);
+    addNewBlock(totalMemory, &buckets[cantBlocks - 1], cantBlocks - 1);
 }
 
-void *malloc(size_t nbytes)
+void *malloc(size_t requestedSize)
 {
-    if(began == 0 ){
-        initializeMemoryManager();
-        began =1;
+    if(began == false ){
+        initHeap();
+        began = true;
     }
-    size_t totalBytes = nbytes + sizeof(blockNode_t);
-    if (nbytes == 0 || totalBytes > availableMemory)
+    size_t totalBytes = requestedSize + sizeof(block_t);
+    if (requestedSize == 0 || totalBytes > freeBytesRemaining)
     {
         return NULL;
     }
@@ -119,16 +103,16 @@ void *malloc(size_t nbytes)
         return NULL;
     }
 
-    blockNode_t *ptr;
-    for (ptr = popNode(&blocksVec[parentBlock]); block < parentBlock; parentBlock--)
+    block_t *ptr;
+    for (ptr = popBlock(&buckets[parentBlock]); block < parentBlock; parentBlock--)
     {
         ptr->level--;
-        addNewNode(getBuddy(ptr), &blocksVec[parentBlock - 1], parentBlock - 1);
+        addNewBlock(getBuddy(ptr), &buckets[parentBlock - 1], parentBlock - 1);
     }
-    ptr->inUse = 1;
+    ptr->inUse = true;
     ptr++;
 
-    availableMemory -= BINARY_POWER(block + MIN_ALLOC_LOG2);
+    freeBytesRemaining -= BINARY_POWER(block + MIN_ALLOC_LOG2);
 
     return (void *)ptr;
 }
@@ -139,18 +123,18 @@ void free(void *ptr)
     if (ptr == NULL)
         return;
 
-    blockNode_t *blockNode = (blockNode_t *)ptr - 1;
+    block_t *blockNode = (block_t *)ptr - 1;
 
-    blockNode->inUse = 0;
+    blockNode->inUse = false;
 
-    availableMemory += BINARY_POWER(blockNode->level + MIN_ALLOC_LOG2);
+    freeBytesRemaining += BINARY_POWER(blockNode->level + MIN_ALLOC_LOG2);
 
-    addNodeAndMerge(blockNode);
+    addBlockAndMerge(blockNode);
 
     return;
 }
 
-static int isPower(int x, long int y)
+static bool isPower(int x, long int y)
 {
     // The only power of 1 is 1 itself
     if (x == 1)
@@ -167,89 +151,88 @@ static int isPower(int x, long int y)
 
 static uint64_t log2(uint64_t n)
 {
-    uint64_t val;
-    for (val = 0; n > 1; val++, n >>= 1)
-        ;
-
+    uint64_t val = 0;
+    while(n > 1)
+    {
+        val++;
+        n >>= 1;
+    }
     return val;
 }
 
-static void pushNode(blockNode_t *oldNode, blockNode_t *newNode)
+static void pushBlock(block_t *oldBlock, block_t *newBlock)
 {
-    blockNode_t *previuous = oldNode->previuous;
-    newNode->previuous = previuous;
-    newNode->next = oldNode;
-    previuous->next = newNode;
-    oldNode->previuous = newNode;
+    block_t prev = oldBlock->prev;
+    newBlock->prev = prev;
+    newBlock->next = oldBlock;
+    prev->next = newBlock;
+    oldBlock->prev = newBlock;
 }
 
-static void deleteNode(blockNode_t *node)
+static void deleteBlock(block_t *block)
 {
-    blockNode_t *previuous = node->previuous;
-    blockNode_t *next = node->next;
-
-    previuous->next = next;
-    next->previuous = previuous;
+    block_t *prev = block->prev;
+    block_t *next = block->next;
+    prev->next = next;
+    next->prev = prev;
 }
 
-static blockNode_t *popNode(blockNode_t *node)
+static block_t *popBlock(block_t *block)
 {
-    blockNode_t *aux = node->previuous;
-
-    if (aux == node)
+    block_t *aux = block->prev;
+    if (aux == block)
         return NULL;
-
-    deleteNode(aux);
+    deleteBlock(aux);
 
     return aux;
 }
 
-static int isNodeEmpty(blockNode_t *node)
+static int isBlockEmpty(block_t *block)
 {
-    return node->previuous == node;
+    return block->prev == block;
 }
 
-static void addNewNode(blockNode_t *node, blockNode_t *lastNode, size_t level)
+static void addNewBlock(block_t *block, block_t *lastNode, size_t level)
 {
-    node->inUse = 0;
-    node->level = level;
-    pushNode(lastNode, node);
+    block->inUse = false;
+    block->level = level;
+    pushBlock(lastNode, block);
 }
 
-static void addNodeAndMerge(blockNode_t *node)
+static void addBlockAndMerge(block_t *block)
 {
-    blockNode_t *buddy = getBuddy(node);
+    block_t *buddy = getBuddy(block);
 
-    while (node->level != cantBlocks - 1 && buddy->inUse == 0 && buddy->level == node->level)
+    while (block->level != cantBlocks - 1 && buddy->inUse == false && buddy->level == block->level)
     {
-        deleteNode(buddy);
+        deleteBlock(buddy);
 
-        node = getPrincipalAdress(node);
-        node->level++;
+        block = getPrincipalAdress(block);
+        block->level++;
 
-        buddy = getBuddy(node);
+        buddy = getBuddy(block);
     }
-    pushNode(&blocksVec[node->level], node);
+    pushBlock(&buckets[block->level], block);
 }
 
-static blockNode_t *getBuddy(blockNode_t *node)
+static block_t *getBuddy(block_t *block)
 {
 
-    uint64_t currentOffset = (uint64_t)node - (uint64_t)heapPtr;
-    uint64_t newOffset = currentOffset ^ BINARY_POWER(MIN_ALLOC_LOG2 + node->level);
+    uint64_t currentOffset = (uint64_t)block - (uint64_t)totalMemory;
+    uint64_t newOffset = currentOffset ^ BINARY_POWER(MIN_ALLOC_LOG2 + block->level);
 
-    return (blockNode_t *)((uint64_t)heapPtr + newOffset);
+    return (block_t *)((uint64_t)totalMemory + newOffset);
 }
 
-static blockNode_t *getPrincipalAdress(blockNode_t *node)
+static block_t *getPrincipalAdress(block_t *block)
 {
-    uint64_t mask = BINARY_POWER(node->level +MIN_ALLOC_LOG2);
+    uint64_t mask = BINARY_POWER(block->level +MIN_ALLOC_LOG2);
     mask = ~mask;
 
-    uint64_t currentOffset = (uint64_t)node - (uint64_t)heapPtr;
+    uint64_t currentOffset = (uint64_t)block - (uint64_t)totalMemory;
     uint64_t newOffset = currentOffset & mask;
 
-    return (blockNode_t *)((uint64_t)heapPtr + newOffset);
+    return (block_t *)((uint64_t)totalMemory + newOffset);
 }
 
 static size_t getBlock(size_t request)
@@ -262,7 +245,7 @@ static size_t getBlock(size_t request)
 
     aux -= MIN_ALLOC_LOG2;
 
-    return isPower(BASE, request) == 0 ? aux + 1 : aux;
+    return isPower(BASE, request) == false ? aux + 1 : aux;
 }
 
 static int getBlockToUse(size_t firstBlock)
@@ -270,11 +253,30 @@ static int getBlockToUse(size_t firstBlock)
 
     int currentBlock = firstBlock;
 
-    while (currentBlock < cantBlocks && isNodeEmpty(&blocksVec[currentBlock]))
+    while (currentBlock < cantBlocks && isBlockEmpty(&buckets[currentBlock]))
         currentBlock++;
 
     if (currentBlock == cantBlocks)
         return -1;
 
     return currentBlock;
+}
+
+static int myPow(int base, int power) {
+    int result = 1;
+    int i;
+    for(i=0; i<power; i++) {
+        result *= base;
+    }
+    return result;
+}
+
+int biggestBuddy(size_t heap) {
+    int i = 0;
+    size_t totalHeap = 1;
+    while(myPow(2,i) < heap){
+        totalHeap *=2; 
+        i++;
+    }
+    return totalHeap;
 }
