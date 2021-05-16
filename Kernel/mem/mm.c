@@ -42,7 +42,7 @@ void * total_memory;
 static size_t xBlockAllocatedBit = 0;
 
 
-void * mmalloc(size_t requestedSize) {
+void * malloc(size_t requestedSize) {
     header * currp, * prevp, *insertp;
     void * returnp = NULL;
 
@@ -172,7 +172,7 @@ static void init_heap() {
 
 
 
-void mmfree(void *ptr){
+void free(void *ptr){
 
     uint8_t * currp = (uint8_t *) ptr;
     header * insertp;
