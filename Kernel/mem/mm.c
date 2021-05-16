@@ -41,7 +41,10 @@ void * total_memory;
  * space. */
 static size_t xBlockAllocatedBit = 0;
 
-
+int * memInfo(){
+    int info[] = {TOTAL_HEAP_SIZE, free_bytes_remaining};
+    return info;
+}
 void * malloc(size_t requestedSize) {
     header * currp, * prevp, *insertp;
     void * returnp = NULL;

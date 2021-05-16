@@ -215,6 +215,11 @@ uint64_t syscall_block(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, ui
     return set_process_state(pid, new_status);
 }
 
+uint64_t syscall_mem_info(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+    int * mem_info = memInfo();
+    return (uint64_t) mem_info;
+}
+
 int read(unsigned int fd, char * buffer, size_t count) {
     unsigned int bytes_read = 0;
     char popped_key;

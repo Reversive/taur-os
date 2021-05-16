@@ -5,6 +5,8 @@
 #include "../../drivers/shell/include/shell.h"
 #include "../include/lib.h"
 #include "../../task/include/process.h"
+#include "../../mem/include/mm.h"
+#include "../../mem/include/buddy.h"
 
 #define _STDIN 0x1
 #define SUCCESS 1
@@ -50,10 +52,11 @@ enum syscall_numbers {
     _SYSCALL_PS,
     _SYSCALL_KILL_PROCESS,
     _SYSCALL_NICE,
-    _SYSCALL_BLOCK
+    _SYSCALL_BLOCK,
+    _SYSCALL_MEM_INFO
 };
 
-#define _SYSCALLS_LAST _SYSCALL_BLOCK
+#define _SYSCALLS_LAST _SYSCALL_MEM_INFO
 #define _SYSCALLS_SIZE (_SYSCALLS_LAST + 1)
 
 syscall syscall_read;
@@ -88,6 +91,7 @@ syscall syscall_ps;
 syscall syscall_kill_process;
 syscall syscall_nice;
 syscall syscall_block;
+syscall syscall_mem_info;
 
 extern syscall * syscalls_table[_SYSCALLS_SIZE];
 extern unsigned int get_time(char t);

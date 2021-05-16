@@ -1,6 +1,5 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
-// #ifndef FREE_LIST_MEMORY_MANAGER
 
 #include "include/buddy.h"
 
@@ -9,7 +8,7 @@ enum powersOfTwo{KILO = 10, MEGA = 20, GIGA = 30};
 #define MIN_ALLOC_LOG2 6 //Min size supported = 64 bytes 
 #define MAX_ALLOC_LOG2 (GIGA - MIN_ALLOC_LOG2) //Max size supported = 1 GB
 #define BINARY_POWER(x) (1 << (x))
-#define HEAP_SIZE (1024 * 128)
+#define HEAP_SIZE (1024 * 500)
 
 typedef struct blockNode_t
 {
@@ -19,12 +18,12 @@ typedef struct blockNode_t
     struct blockNode_t *next;
 } blockNode_t;
 
-static unsigned int getBlock(unsigned int request);
-static int getBlockToUse(unsigned int firstBlock);
+static size_t getBlock(size_t request);
+static int getBlockToUse(size_t firstBlock);
 static blockNode_t *getBuddy(blockNode_t *node);
 static blockNode_t *getPrincipalAdress(blockNode_t *node);
 static void addNodeAndMerge(blockNode_t *node);
-static void addNewNode(blockNode_t *node, blockNode_t *lastNode, unsigned int level);
+static void addNewNode(blockNode_t *node, blockNode_t *lastNode, size_t level);
 
 static int isPower(int x, long int y); // https://www.geeksforgeeks.org/check-if-a-number-is-power-of-another-number/
 static inline uint64_t log2(uint64_t n);
@@ -35,37 +34,53 @@ static blockNode_t *popNode(blockNode_t *node);
 static int isNodeEmpty(blockNode_t *node);
 
 static blockNode_t *heapPtr;
-static void* heapPtrAux;
 static int began = 0;
-static unsigned int heapSize;
-static unsigned int cantBlocks;
+static size_t heapSize;
+static size_t cantBlocks;
 static blockNode_t blocksVec[MAX_ALLOC_LOG2];
-static unsigned int availableMemory;
+static size_t availableMemory;
 
 
-int memInfo()
+int * memInfo()
 {
-        
-        // newLineScreen();
+       info[] = {(int)heapSize, (int) availableMemory}; 
         // printf(" - MEMORIA TOTAL: %d bytes",(int)heapSize);
-        // newLineScreen();
         // printf(" - MEMORIA LIBRE: %d bytes",(int)availableMemory);
-        // newLineScreen();
         // printf(" - MEMORIA UTILIZADA %d BYTES",(int)heapSize-availableMemory);
-        // newLineScreen();
      
-    return 0;
+    return info;
 }
 
-// 
-// initializeMemoryManager(heapBaseAddress, HEAP_SIZE);
-// void initializeMemoryManager(char *heapBase, unsigned long size)
+
+int myPow(int base, int power) {
+    int result = 1;
+    int i;
+    for(i=0; i<power; i++) {
+        result *= base;
+    }
+    return result;
+}
+
+int biggestBuddy(size_t heap) {
+    int i = 0;
+    size_t totalHeap = 1;
+    while(myPow(2,i) < heap){
+        totalHeap *=2; 
+        i++;
+    }
+    return totalHeap;
+
+}
+
+
 void initializeMemoryManager()
 {
-    sbrk_handler(HEAP_SIZE, &heapPtrAux);
+    static void* heapPtrAux;    
+    heapSize = availableMemory = biggestBuddy(HEAP_SIZE);
+    sbrk_handler(heapSize, &heapPtrAux);
 
     heapPtr = (blockNode_t *)heapPtrAux;
-    heapSize = availableMemory = HEAP_SIZE;
+    
     cantBlocks = log2(heapSize) - MIN_ALLOC_LOG2 + 1;
 
     if (cantBlocks > MAX_ALLOC_LOG2)
@@ -90,18 +105,13 @@ void *malloc(size_t nbytes)
         initializeMemoryManager();
         began =1;
     }
-    if (nbytes == 0)
-    {
-        return NULL;
-    }
-    unsigned int totalBytes = nbytes + sizeof(blockNode_t);
-
-    if (totalBytes > heapSize)
+    size_t totalBytes = nbytes + sizeof(blockNode_t);
+    if (nbytes == 0 || totalBytes > availableMemory)
     {
         return NULL;
     }
 
-    unsigned int block = getBlock(totalBytes);
+    size_t block = getBlock(totalBytes);
 
     int parentBlock = getBlockToUse(block);
     if (parentBlock == -1)
@@ -199,7 +209,7 @@ static int isNodeEmpty(blockNode_t *node)
     return node->previuous == node;
 }
 
-static void addNewNode(blockNode_t *node, blockNode_t *lastNode, unsigned int level)
+static void addNewNode(blockNode_t *node, blockNode_t *lastNode, size_t level)
 {
     node->inUse = 0;
     node->level = level;
@@ -242,10 +252,10 @@ static blockNode_t *getPrincipalAdress(blockNode_t *node)
     return (blockNode_t *)((uint64_t)heapPtr + newOffset);
 }
 
-static unsigned int getBlock(unsigned int request)
+static size_t getBlock(size_t request)
 {
 
-    unsigned int aux = log2(request);
+    size_t aux = log2(request);
 
     if (aux < MIN_ALLOC_LOG2)
         return 0;
@@ -255,7 +265,7 @@ static unsigned int getBlock(unsigned int request)
     return isPower(BASE, request) == 0 ? aux + 1 : aux;
 }
 
-static int getBlockToUse(unsigned int firstBlock)
+static int getBlockToUse(size_t firstBlock)
 {
 
     int currentBlock = firstBlock;
@@ -268,5 +278,3 @@ static int getBlockToUse(unsigned int firstBlock)
 
     return currentBlock;
 }
-
-// #endif

@@ -1,6 +1,6 @@
 #ifndef THREAD_H
 #define THREAD_H
-//#include "../../mem/include/mm.h"
+#include "../../mem/include/mm.h"
 #include "../../mem/include/buddy.h"
 #include "../../asm/include/libasm.h"
 #include "../../drivers/shell/include/shell.h"
