@@ -18,6 +18,7 @@ void help() {
 	printf("printmem 0xDIR - Volcado de memoria.\n");
 	printf("mm_test - Corre el test del Memory Manager.\n");
 	printf("pr_test - Corre el test de procesos (1 vez).\n");
+	printf("prio_test - Corre el test de prioridades.\n");
 	printf("create_endless_proc - Crea un proceso que no termina.\n");
 	printf("create_ending_proc - Crea un proceso que termina.\n");
 	printf("loop - Crea proceso loop donde imprime su PID con un saludo cada 2 segundos.\n");
@@ -25,6 +26,7 @@ void help() {
 	printf("kill <pid> - Mata el proceso del PID especificado.\n");
 	printf("nice <pid> <prio> - Cambia la prioridad de un proceso dado su PID y la nueva prioridad.\n");
 	printf("block <pid> - Cambia el estado de un proceso entre bloqueado y listo dado su PID.\n");
+
 	return;
 }
 
@@ -32,7 +34,9 @@ parameters param_list[PROGRAM_COUNT] = { { "Hola", NULL }, { "Hola", "Como Estas
 
 
 int endless_proc(int argc, char **argv) {
-	while(1);
+	while(1) {
+		bussy_wait(MINOR_WAIT);
+	}
 }
 
 int ending_proc(int argc, char **argv) {
@@ -105,6 +109,8 @@ void print_execve_output(pid_t pid) {
 	}
 }
 
+
+
 void assign_module(char * str) {
 	if(command_equal(str, "help") ) {
 		help();
@@ -147,7 +153,10 @@ void assign_module(char * str) {
 	else if(command_equal(str, "mm_test")) {
 		pid_t pid = execv("mm_test", main_test_mm, param_list[0]);
 		print_execve_output(pid);
-	} 
+	}
+	else if(command_equal(str, "prio_test")) {
+		execv("prio_test", main_test_prio, (char*[]){NULL});
+	}
 	else if(command_equal(str, "pr_test")) {
 		execv("process_test", test_processes_main, (char*[]){NULL});
 	} else {

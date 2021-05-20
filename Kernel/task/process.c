@@ -12,6 +12,10 @@ int kill_process(pid_t pid, size_t return_value) {
     return pid;
 }
 
+process_st *get_process_by_id(pid_t pid) {
+    return processes[pid];
+}
+
 pid_t set_process_state(pid_t pid, process_status_et status) {
     if(pid >= MAX_PROCESS_COUNT || pid <= 0 || processes[pid] == NULL) return INVALID_PID;
     processes[pid]->status = status;
@@ -82,7 +86,7 @@ pid_t create_process(char *name, address_t main, char **argv, size_t stack_size,
     }
     size_t argc = get_argv_count(argv);
     thread->stack.current = _stack_builder(&_start, main, (char *)thread->stack.base, argc, argv);
-    queue_thread(thread);
+    queue_thread(thread, STARTING_PRIO);
     processes[process->pid]->threads[thread->tid] = thread;
     process_count++;
     return process->pid;

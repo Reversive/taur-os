@@ -10,5 +10,14 @@
 #Object files
 *.o
 
+#VSCode
 .vscode
 .bash_history
+
+#Extra
+.config
+index.html
+package-lock.json
+PVS-Studio.log
+report.tasks
+strace_out
