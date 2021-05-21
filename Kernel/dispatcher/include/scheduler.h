@@ -7,6 +7,9 @@
 #define START 0
 #define BURST_TIME 3
 
+#define MAX_PRIO 5
+
+
 typedef struct {
     node_st *tail;
 } rrnp_ts;
@@ -18,7 +21,7 @@ typedef struct scheduler_s{
 } scheduler_ts;
 
 
-void queue_thread(thread_st *t);
+void queue_thread(thread_st *t, uint64_t priority);
 scheduler_ts *init_no_prio_round_robin(size_t quantum);
 void *schedule_handler(void *_rsp);
 int get_current_pid();

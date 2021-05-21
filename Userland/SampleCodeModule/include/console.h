@@ -11,6 +11,7 @@
 #include "basic_lib.h"
 #include "../apps/include/test_mm.h"
 #include "../apps/include/test_processes.h"
+#include "../apps/include/test_prio.h"
 #include "unistd.h"
 #include "../apps/include/loop.h"
 
