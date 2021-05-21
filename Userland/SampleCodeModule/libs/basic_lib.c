@@ -96,6 +96,9 @@ void sys_clean_kb_buffer() {
 void * sys_malloc(size_t size) {
     return (void *)_syscall(_SYSCALL_MALLOC, size, 0, 0, 0, 0);
 }
+int * sys_mem_info() {
+    return (int *)_syscall(_SYSCALL_MEM_INFO, 0, 0, 0, 0, 0);
+}
 void sys_free(void * address) {
     _syscall(_SYSCALL_FREE, (uint64_t) address, 0, 0, 0, 0);
 }

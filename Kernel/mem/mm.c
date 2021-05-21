@@ -1,10 +1,13 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+
 /* Based on FreeRTOS Kernel V10.4.3
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS */
 
 #include "include/mm.h"
+
+// ------------------------------DECLARACION DE FUNCIONES----------------------------------//
 
 typedef struct Header {
     struct Header * next;
@@ -13,106 +16,95 @@ typedef struct Header {
 
 /* Inserts a block of memory to the list of free mem blocks.
  * Merges adjacent free zones into one. */
-static void add_block_to_free_list(header * blockToInsert);
+static void addBlockToFreeList(header * blockToInsert);
 
 /* Sets up the required heap on the first call to malloc */
-static void init_heap();
+static void initHeap();
 
-/* The size of the structure placed at the beginning of each allocated
- *  memory block must be correctly byte aligned. */
-static const size_t heap_construct_size = (sizeof(header) + ((size_t) (BYTE_ALIGNMENT - 1))) & ~((size_t) BYTE_ALIGNMENT_MASK);
+/* The size of the structure placed at the beginning of each
+ * allocated memory block must be correctly byte aligned. */
+static const size_t heapConstructSize = (sizeof(header) + ((size_t) (BYTE_ALIGNMENT - 1))) & ~((size_t) BYTE_ALIGNMENT_MASK);
 
-/* Block sizes must not get too small. */
-#define heapMINIMUM_BLOCK_SIZE ((size_t) (heap_construct_size << 1 ))
+#define HEAP_MINIMUM_BLOCK_SIZE ((size_t) (heapConstructSize << 1 ))
 
 /* Links to the free list*/
 static header start, * pEnd = NULL;
 
-static size_t free_bytes_remaining = 0;
+static size_t freeBytesRemaining = 0;
 
-/* Total memory heap*/
-// uint8_t total_memory[TOTAL_HEAP_SIZE];
-void * total_memory;
+void * totalMemory;
 
-
-/* Gets set to the top bit of an size_t type.  When this bit in the size
- * member of an header structure is set then the block belongs to the
- * application.  When the bit is free the block is still part of the free heap
- * space. */
+/* Gets set to the top bit of a size_t type. If this bit in the
+ * size member of a header structure is set, then the block belongs
+ * to the application. When the bit is free, the block is still part
+ * of the free heap space. */
 static size_t xBlockAllocatedBit = 0;
 
 
-void * malloc(size_t requestedSize) {
+//-----------------------------------------------------------------------------------------//
+
+
+int * memInfo()
+{
+    int info[] = {TOTAL_HEAP_SIZE, freeBytesRemaining};
+    return info;
+}
+
+void * malloc(size_t requestedSize)
+{
     header * currp, * prevp, *insertp;
     void * returnp = NULL;
 
-    if(pEnd == NULL){
-        init_heap();
+    if(pEnd == NULL)
+    {
+        initHeap();
     }
 
-    /* Checks that the requested block doesn't set the top bit
-     * The top bit determines if the block is free or not. */
-    if((requestedSize & xBlockAllocatedBit) == 0) {
-        /* The wanted size is smaller than our block size.
-         * We proceed to make it larger */
-        if((requestedSize > 0) && ((requestedSize + heap_construct_size) >  requestedSize)) {
+    if((requestedSize & xBlockAllocatedBit) == 0)      // Checks that the requested block doesn't set the top bit
+    {
+        if((requestedSize > 0) && ((requestedSize + heapConstructSize) >  requestedSize))       // The wanted size is smaller than the block size
+        {                                                                                       // so we are going to make it larger
+            requestedSize += heapConstructSize;
             
-            requestedSize += heap_construct_size;
-        
-            /* Ensure that blocks are always aligned. */
-            if((requestedSize & BYTE_ALIGNMENT_MASK) != 0x00) {
-                /* Byte alignment required. Check for overflow. */
-                if( (requestedSize + (BYTE_ALIGNMENT - (requestedSize & BYTE_ALIGNMENT_MASK)))  > requestedSize) {
+            if((requestedSize & BYTE_ALIGNMENT_MASK) != 0x00)    // Align blocks if needed
+            {
+                // Check for overflow.
+                if( (requestedSize + (BYTE_ALIGNMENT - (requestedSize & BYTE_ALIGNMENT_MASK)))  > requestedSize)
+                {
                     requestedSize += (BYTE_ALIGNMENT - (requestedSize & BYTE_ALIGNMENT_MASK));
-                } else {
+                } else
+                {
                     requestedSize = 0;
                 }  
             }
         }
 
-        /* We have free space for the requested size */
-        if((requestedSize > 0) && ( requestedSize <= free_bytes_remaining)) {
-            /* Traverse the list from the start	(lowest address) block until
-            * one of adequate size is found. */
+        if((requestedSize > 0) && ( requestedSize <= freeBytesRemaining))       // We have free space for the requested size
+        {                                                                       // Traverse the list from the start	block (lowest address) to find an adequate sized block
             prevp = &start;
             currp = start.next;
 
-            while((currp->size < requestedSize) && (currp->next != NULL)) {
+            while((currp->size < requestedSize) && (currp->next != NULL))
+            {
                 prevp = currp;
                 currp = currp->next;
             }
 
-            /* If the end marker was reached then a block of adequate size
-             * was not found. */
-            if(currp != pEnd) {
-                /* Return the memory space pointed to - jumping over the
-                 * header structure at its start. */
-                returnp = (void *) (((uint8_t *) prevp->next) + heap_construct_size);
+            if(currp != pEnd)       // If this happens, then the adequate block wasn't found
+            {
+                returnp = (void *) (((uint8_t *) prevp->next) + heapConstructSize);     // Return the memory space, jumping over the header structure at its start
+                prevp->next = currp->next;      // Take out the block from the free list
 
-                /* This block is being returned for use so must be taken out
-                 * of the list of free blocks. */
-                prevp->next = currp->next;
-
-                /* If the block is larger than required it can be split into two. */
-                if((currp->size - requestedSize) > heapMINIMUM_BLOCK_SIZE) {
-                    /* This block is to be split into two.  Create a new
-                     * block following the number of bytes requested. The void
-                     * cast is used to prevent byte alignment warnings from the compiler. */
-                    insertp = (void *) (((uint8_t *) currp) + requestedSize);
-
-                    /* Calculate the sizes of two blocks split from the single block. */
-                    insertp->size = currp->size - requestedSize;
+                if((currp->size - requestedSize) > HEAP_MINIMUM_BLOCK_SIZE)         // If the block is bigger than the required size, split it into two
+                {
+                    insertp = (void *) (((uint8_t *) currp) + requestedSize);       // Create a new block following the number of bytes requested. The (void *) cast is used to prevent byte alignment warnings
+                    insertp->size = currp->size - requestedSize;        // Calculate the sizes of the new two blocks
                     currp->size = requestedSize;
-
-                    /* Insert the new block into the list of free blocks. */
-                    add_block_to_free_list(insertp);
+                    addBlockToFreeList(insertp);        // Insert the new block into the list of free blocks
                 }
 
-                free_bytes_remaining -= currp->size;
-
-                /* The block is being returned - it is allocated and owned
-                 * by the application and has no "next" block. */
-                currp->size |= xBlockAllocatedBit;
+                freeBytesRemaining -= currp->size;
+                currp->size |= xBlockAllocatedBit;      // The block is marked as allocated and owned by the app
                 currp->next = NULL;
             }
         }
@@ -122,127 +114,102 @@ void * malloc(size_t requestedSize) {
 
 
 
-static void init_heap() {
+static void initHeap()
+{
     
     header * pFirstFreeBlock;
     uint8_t * pAlignedHeap;
     size_t totalMemPointer;
     size_t totalHeapSize = TOTAL_HEAP_SIZE;
 
-    sbrk_handler(TOTAL_HEAP_SIZE, &total_memory);
-
-    /* Ensure the heap starts on a correctly aligned boundary. */
-    totalMemPointer = (size_t) total_memory;
+    sbrkHandler(TOTAL_HEAP_SIZE, &totalMemory);
+    totalMemPointer = (size_t) totalMemory;         // Ensure the heap starts on a correctly aligned boundary
     
-    // It checks the last bits and if they are not aligned then we align them
-    if( ( totalMemPointer & BYTE_ALIGNMENT_MASK ) != 0 ) {
+    if( ( totalMemPointer & BYTE_ALIGNMENT_MASK ) != 0 )        // Checks the last bits and if they are not aligned then we align them
+    {
         totalMemPointer += ( BYTE_ALIGNMENT - 1 );
         totalMemPointer &= ~((size_t) BYTE_ALIGNMENT_MASK);
-        totalHeapSize -= totalMemPointer - (size_t) total_memory;
+        totalHeapSize -= totalMemPointer - (size_t) totalMemory;
     }
 
     pAlignedHeap = (uint8_t *) totalMemPointer;
-
-    /* start is used to hold a pointer to the first item in the list of free
-     * blocks.  The void cast is used to prevent compiler warnings. */
-    start.next = (void *) pAlignedHeap;
+    start.next = (void *) pAlignedHeap;             // Pointer to the first item in the list of free blocks
     start.size = (size_t) 0;
-
-    /* pEnd is used to mark the end of the list of free blocks and is inserted
-     * at the end of the heap space. */
     totalMemPointer = ((size_t) pAlignedHeap) + totalHeapSize;
-    totalMemPointer -= heap_construct_size;
+    totalMemPointer -= heapConstructSize;
     totalMemPointer &= ~((size_t) BYTE_ALIGNMENT_MASK);
-    pEnd = (void *) totalMemPointer;
+    pEnd = (void *) totalMemPointer;                // Pointer to the end of the list of free blocks, inserted at the end of the heap space
     pEnd->size = 0;
     pEnd->next = NULL;
-
-    /* To start, there is a single free block that is sized to take up the
-     * entire heap space, minus the space taken by pEnd. */
-    pFirstFreeBlock = (void *) pAlignedHeap;
+    pFirstFreeBlock = (void *) pAlignedHeap;        // Single free block that is sized to take up the entire heap space, minus the pEnd space
     pFirstFreeBlock->size = totalMemPointer - (size_t) pFirstFreeBlock;
     pFirstFreeBlock->next = pEnd;
-
-    /* Only one block exists - and it covers the entire usable heap space. */
-    free_bytes_remaining = pFirstFreeBlock->size;
-
-    /* Work out the position of the top bit in a size_t variable. */
-    xBlockAllocatedBit = ((size_t) 1) << ((sizeof(size_t) * heapBITS_PER_BYTE) - 1);
+    freeBytesRemaining = pFirstFreeBlock->size;     // Only one block exists, covering the entire usable heap space
+    xBlockAllocatedBit = ((size_t) 1) << ((sizeof(size_t) * heapBITS_PER_BYTE) - 1);    // Work out the position of the top bit in a size_t variable
 }
 
 
-
-void free(void *ptr){
+void free(void *ptr)
+{
 
     uint8_t * currp = (uint8_t *) ptr;
     header * insertp;
 
-    if(ptr != NULL) {
-        /* The memory being freed will have a header structure immediately before it. */
-        currp -= heap_construct_size;
+    if(ptr != NULL)     // The memory being freed will have a header structure immediately before it
+    {
+        currp -= heapConstructSize;
+        insertp = (void *) currp;   // Cast avoiding compiler warnings
 
-        /* This casting is to keep the compiler from issuing warnings. */
-        insertp = (void *) currp;
-
-        if((insertp->size & xBlockAllocatedBit) != 0) {
-            if(insertp->next == NULL) {
-                /* The block is being returned to the heap - it is no longer allocated. */
-                insertp->size &= ~xBlockAllocatedBit;
-                
-                /* Add this block to the list of free blocks. */
-                free_bytes_remaining += insertp->size;
-                // traceFREE( ptr, insertp->size );
-                add_block_to_free_list(((header *) insertp));
+        if((insertp->size & xBlockAllocatedBit) != 0)
+        {
+            if(insertp->next == NULL)
+            {
+                insertp->size &= ~xBlockAllocatedBit;   // The block is no longer allocated
+                freeBytesRemaining += insertp->size;    // Add this block to the list of free blocks
+                addBlockToFreeList(((header *) insertp));
             }
         }
     }
 }
 
 
-
-static void add_block_to_free_list(header * blockToInsert) {
+static void addBlockToFreeList(header * blockToInsert)
+{
     
     header * iteratorp;
     uint8_t * currp;
 
-    /* Iterate through the list until a block is found that has a higher address
-     * than the block being inserted. */
     iteratorp = &start;
-    while(iteratorp->next < blockToInsert) {
+    while(iteratorp->next < blockToInsert)      // Iterate through the list until a block is found that has
+    {                                           // a higher address than the block being inserted
         iteratorp = iteratorp->next;
     }
 
-    /* Do the block being inserted, and the block it is being inserted after
-     * make a contiguous block of memory? */
     currp = (uint8_t *) iteratorp;
-    // unir del lado izquierdo 
-    if((currp + iteratorp->size) == (uint8_t *) blockToInsert) {
-        iteratorp->size += blockToInsert->size;
+    if((currp + iteratorp->size) == (uint8_t *) blockToInsert)  // The block being inserted makes a contiguous
+    {                                                           // block of memory with the one on its left
+        iteratorp->size += blockToInsert->size;                 // So we merge
         blockToInsert = iteratorp;
     }
 
-    /* Do the block being inserted, and the block it is being inserted before
-     * make a contiguous block of memory? */
     currp = (uint8_t *) blockToInsert;
-    
-    // unir por derecha
-    if((currp + blockToInsert->size) == (uint8_t *) iteratorp->next) {
-        if(iteratorp->next != pEnd) {
-            /* Form one big block from the two blocks. */
+    if((currp + blockToInsert->size) == (uint8_t *) iteratorp->next)    // The block being inserted makes a contiguous
+    {                                                                   // block of memory with the one on its right
+        if(iteratorp->next != pEnd)                                     // So we merge (if it's not the end)
+        {
             blockToInsert->size += iteratorp->next->size;
             blockToInsert->next = iteratorp->next->next;
-        } else {
+        } else
+        {
             blockToInsert->next = pEnd;
         }
-    } else {
+    } else
+    {
         blockToInsert->next = iteratorp->next;
     }
 
-    /* If the block being inserted plugged a gab, so was merged with the block
-     * before and the block after, then it's next pointer will have
-     * already been set, and should not be set here as that would make it point
-     * to itself. */
-    if(iteratorp != blockToInsert) {
-        iteratorp->next = blockToInsert;
+    if(iteratorp != blockToInsert)          // If the block was merged with the block before and after him,
+    {                                       // then the ptr has been set already and shouldn't change here
+        iteratorp->next = blockToInsert;    // (or it would point to itself)
     }
 }

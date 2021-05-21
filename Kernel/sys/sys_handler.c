@@ -35,7 +35,8 @@ syscall * syscalls_table[_SYSCALLS_SIZE] = {
     [_SYSCALL_PS] = syscall_ps,
     [_SYSCALL_KILL_PROCESS] = syscall_kill_process,
     [_SYSCALL_NICE] = syscall_nice,
-    [_SYSCALL_BLOCK] = syscall_block
+    [_SYSCALL_BLOCK] = syscall_block,
+    [_SYSCALL_MEM_INFO] = syscall_mem_info,
 };
 
 

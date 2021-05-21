@@ -1,21 +1,18 @@
 // // This is a personal academic project. Dear PVS-Studio, please check it.
 // // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+
 #include "include/sbrk.h"
-#include <stdlib.h>
 
-/***************************************************************/
-/*                        Variables                            */
-/***************************************************************/
+//---------------------------DECLARACION DE VARIABLES--------------------------------------//
 
-static void *const sampleDataModuleAddress = (void *)0x600000;
-static void *const maxAddress = (void *)0xF00000;
+static void *const sampleDataModuleAddress = (void *)0x600000; 
+static void *const maxAddress = (void *)0xF00000;             
 void *topAddress = NULL;
 
-/***************************************************************/
-/*                   Funciones Publicas                        */
-/***************************************************************/
+//-----------------------------------------------------------------------------------------//
 
-void sbrk_handler(int increment, void **buffer)
+
+void sbrkHandler(int increment, void **buffer)
 {
         if (topAddress == NULL)
         {
@@ -27,10 +24,24 @@ void sbrk_handler(int increment, void **buffer)
 
                 *buffer = topAddress;
                 topAddress += increment;
-        }
-        else
+        } else
         {
                 *buffer = NULL;
         }
         return;
+}
+
+int brk_handler(void *addr)
+{
+        if (topAddress == NULL)
+        {
+                topAddress = sampleDataModuleAddress;
+        }
+        if (addr > maxAddress || addr < topAddress)     // Can't have more memory than the process
+        {                                               // nor less than the already assigned value
+                return -1;
+        }
+
+        topAddress = addr;
+        return 0;
 }

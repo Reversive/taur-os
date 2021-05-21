@@ -8,6 +8,7 @@
 #include "../drivers/video/include/video_driver.h"
 #include "../drivers/shell/include/shell.h"
 #include "../mem/include/mm.h"
+#include "../mem/include/buddy.h"
 #include "../task/include/process.h"
 #include "../dispatcher/include/scheduler.h"
 

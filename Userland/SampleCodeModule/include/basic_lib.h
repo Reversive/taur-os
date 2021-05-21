@@ -38,6 +38,7 @@ int sys_restore_screen();
 void sys_clean_kb_buffer();
 void * sys_malloc(size_t size);
 void sys_free(void * address);
+int *sys_mem_info();
 pid_t sys_create_process(char *name, main_function f, char **argv);
 pid_t sys_getpid();
 pid_t sys_kill_process(pid_t pid);
@@ -78,7 +79,8 @@ enum syscall_numbers {
     _SYSCALL_PS,
     _SYSCALL_KILL_PROCESS,
     _SYSCALL_NICE,
-    _SYSCALL_BLOCK
+    _SYSCALL_BLOCK,
+    _SYSCALL_MEM_INFO,
 };
 
 enum status {

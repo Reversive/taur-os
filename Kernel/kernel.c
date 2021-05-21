@@ -50,5 +50,6 @@ int main()
 	create_process("sh", sampleCodeModuleAddress, (char *[]){NULL}, MIN_PAGE_AMOUNT * PAGE_SIZE, 0);
 	_sti();
 	_idle();
-	return 0;
+	
+  return 0;
 }
