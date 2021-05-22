@@ -47,7 +47,7 @@ int main()
 	initialize_scheduler();
 	_b_rip = sampleCodeModuleAddress;
 	_b_rsp = (uint64_t *)(_rsp() - (sizeof(uint64_t) << 1));
-	create_process("sh", sampleCodeModuleAddress, (char *[]){NULL}, MIN_PAGE_AMOUNT * PAGE_SIZE, 0);
+	create_process("sh", sampleCodeModuleAddress, (char *[]){NULL}, MIN_PAGE_AMOUNT * PAGE_SIZE, 0, 5);
 	_sti();
 	_idle();
 	

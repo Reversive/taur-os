@@ -1,11 +1,8 @@
 #include "./include/test_prio.h"
 
-
-
 uint64_t my_getpid(){
   return sys_getpid();
 }
-
 
 uint64_t my_nice(uint64_t pid, uint64_t newPrio){
   return sys_set_niceness(pid, newPrio);
@@ -37,7 +34,6 @@ int prio_endless_loop(int argc, char **argv){
   }
   return 0;
 }
-
 
 #define TOTAL_PROCESSES 3
 

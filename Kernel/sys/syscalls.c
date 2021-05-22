@@ -183,7 +183,7 @@ uint64_t syscall_create_process(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64
     char *name = (char *)rsi;
     void *code = (void *)rdx;
     char **argv = (char**)rcx;
-    return create_process(name, code, argv, MIN_PAGE_AMOUNT * PAGE_SIZE, 0);
+    return create_process(name, code, argv, MIN_PAGE_AMOUNT * PAGE_SIZE, 0, 5);
 }
 
 uint64_t syscall_get_pid(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {

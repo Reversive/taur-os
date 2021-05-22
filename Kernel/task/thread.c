@@ -11,7 +11,7 @@ tid_t get_available_tid(thread_st **thread_list) {
 }
 
 void free_thread(thread_st *t) {
-    if(t->stack.base != NULL) free(t->stack.base);
+    free(t->stack.base);
     free(t);
 }
 
@@ -20,7 +20,7 @@ thread_st *create_thread(address_t main, char **argv, size_t stack_size, thread_
     if(stack_size == EMPTY) return NULL;
     tid_t tid = get_available_tid(thread_list);
     if(tid == UNAVAILABLE) return NULL;
-    thread_st *thread = (thread_st *) malloc(sizeof(thread_st));
+    thread_st *thread = (thread_st *) malloc(sizeof(thread));
     if(thread == NULL) return NULL;
     thread->tid = tid;
     thread->pid = pid;
@@ -28,6 +28,7 @@ thread_st *create_thread(address_t main, char **argv, size_t stack_size, thread_
     thread->stack.base = (void*)((uint64_t)malloc(stack_size) + stack_size);
     if(thread->stack.base == NULL) {
         free_thread(thread);
+        thread_list[MAIN_THREAD] = NULL;
         return NULL;
     }
     return thread;

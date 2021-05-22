@@ -41,6 +41,30 @@ node_st *insert_tail(node_st *tail, void *data) {
     return insert_head(tail, data)->next;
 }
 
+node_st *delete_by_value(node_st *tail, void *data, comparator cmp, fdata free_data) {
+    node_st *current = tail, *previous;
+    if (tail == NULL)
+        return tail;
+    else if (tail == tail->next) {
+        if (cmp(tail->data, data) == 0) {
+            tail = NULL;
+            free_data(current->data);
+            free(current);
+        }
+    }
+    do {
+        previous = current;
+        current = current->next;
+        if (cmp(current->data, data) == 0) {
+            previous->next = current->next;
+            if (current == tail) tail = previous;
+            free_data(current->data);
+            free(current);
+        }
+    } while (current != tail);
+    return tail;
+}
+
 void *get_head_data(node_st *tail) {
     return is_null(tail) ? NULL : tail->next->data;
 }

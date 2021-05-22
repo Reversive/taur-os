@@ -17,10 +17,10 @@ void help() {
 	printf("inforeg - Estado de registros.\n");
 	printf("printmem 0xDIR - Volcado de memoria.\n");
 	printf("mm_test - Corre el test del Memory Manager.\n");
-	printf("pr_test - Corre el test de procesos (1 vez).\n");
+	printf("pr_test - Corre el test de procesos.\n");
 	printf("prio_test - Corre el test de prioridades.\n");
-	printf("create_endless_proc - Crea un proceso que no termina.\n");
-	printf("create_ending_proc - Crea un proceso que termina.\n");
+	printf("endless - Crea un proceso que no termina.\n");
+	printf("ending - Crea un proceso que termina.\n");
 	printf("loop - Crea proceso loop donde imprime su PID con un saludo cada 2 segundos.\n");
 	printf("ps - Lista los procesos actuales.\n");
 	printf("kill <pid> - Mata el proceso del PID especificado.\n");
@@ -44,13 +44,14 @@ int ending_proc(int argc, char **argv) {
 }
 
 void sh_ps() {
-	ps_ts process_buffer[25];
+	ps_ts process_buffer[50];
 	int process_count = 0;
 	char tmp[20][4];
 	get_ps(process_buffer, &process_count);
 	printf("%6s%16s%16s%12s%12s%10s%s\n", "PID", "NAME", "FOREGROUND", "PRIORITY", "STATUS", "STACK", "BASE POINTER");
 	for(int i = 0; i < process_count; i++) {
-		int status = process_buffer[i].status;
+		int status = process_buffer[i].status; 
+		if(status == 3) continue;
 		printf("%6s%16s%16s%12s%12s%10s%X\n",	itoa((uint64_t)process_buffer[i].pid, tmp[0], 10),
 												process_buffer[i].process_name,
 												itoa((uint64_t)process_buffer[i].foreground, tmp[1], 10),
@@ -133,11 +134,11 @@ void assign_module(char * str) {
 		pid_t pid = execv("loop", loop, param_list[1]);
 		print_execve_output(pid);
 	}
-	else if(command_equal(str, "create_endless_proc")) {
+	else if(command_equal(str, "endless")) {
 		pid_t pid = execv("endless_proc", endless_proc, param_list[0]);
 		print_execve_output(pid);
 	}
-	else if(command_equal(str, "create_ending_proc")) {
+	else if(command_equal(str, "ending")) {
 		pid_t pid = execv("ending_proc", ending_proc, param_list[0]);
 		print_execve_output(pid);
 	}

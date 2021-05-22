@@ -17,7 +17,7 @@
 #endif
 
 #ifndef MIN_PAGE_AMOUNT
-#define MIN_PAGE_AMOUNT 4
+#define MIN_PAGE_AMOUNT 2
 #endif
 
 #ifndef UNAVAILABLE

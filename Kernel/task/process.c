@@ -7,8 +7,9 @@ process_st *processes[MAX_PROCESS_COUNT] = {NULL};
 
 int kill_process(pid_t pid, size_t return_value) {
     if(set_process_state(pid, KILLED) == INVALID_PID) return INVALID_PID;
+    process_count--;
     processes[pid]->return_value = return_value;
-    if(pid == get_current_pid()) _hlt();
+    if(pid == get_current_pid()) _force_scheduler();
     return pid;
 }
 
@@ -38,7 +39,7 @@ pid_t get_available_pid() {
 }
 
 size_t set_process_name(process_st * process, char *name) {
-    process->process_name = (char *) malloc(strnlen(name));
+    process->process_name = (char *) malloc(strnlen(name) + 1);
     if(process->process_name == NULL) return NOT_ENOUGH_MEMORY;
     my_strcpy(process->process_name, name);
     return SUCCESS;
@@ -56,32 +57,37 @@ size_t get_argv_count(char **argv) {
     return count;
 }
 
-void free_process(process_st *p) {
-    if(p->process_name != NULL) free(p->process_name);
-    if(p->heap.base != NULL) free(p->heap.base);
-    if(p->threads[MAIN_THREAD] != NULL) free_thread(p->threads[MAIN_THREAD]);
-    free(p);
+void free_process(pid_t pid) {
+    if(processes[pid]->process_name != NULL) free(processes[pid]->process_name);
+    if(processes[pid]->heap.base != NULL) free(processes[pid]->heap.base);
+    //free_thread(processes[pid]->threads[MAIN_THREAD]);
+    free(processes[pid]->threads[MAIN_THREAD]->stack.base);
+    free(processes[pid]->threads[MAIN_THREAD]);
+    processes[pid]->threads[MAIN_THREAD] = NULL;
+    free(processes[pid]);
+    processes[pid] = NULL;
 }
 
-pid_t create_process(char *name, address_t main, char **argv, size_t stack_size, size_t heap_size) {
+pid_t create_process(char *name, address_t main, char **argv, size_t stack_size, size_t heap_size, int prio) {
     pid_t pid = get_available_pid();
     if(pid == UNAVAILABLE || main == NULL) return UNAVAILABLE;
     process_st *process = (process_st *) malloc(sizeof(process_st));
     if(process == NULL) return NOT_ENOUGH_MEMORY;
     process->pid = pid;
     process->status = READY;
-    process->priority = MAX_PRIO;
+    process->priority = prio;
     process->foreground = 0;
     if(set_process_name(process, name) == NOT_ENOUGH_MEMORY) {
-        free_process(process);
+        free_process(process->pid);
         return NOT_ENOUGH_MEMORY;
     }
+
     process->heap.base = heap_size == EMPTY ? NULL : (address_t) malloc(heap_size);
     process->heap.size = heap_size;
     processes[process->pid] = process;
     thread_st *thread = create_thread(main, argv, stack_size, process->threads, process->pid);
     if(thread == NULL) {
-        free_process(process);
+        free_process(process->pid);
         return NOT_ENOUGH_MEMORY;
     }
     size_t argc = get_argv_count(argv);
@@ -94,14 +100,16 @@ pid_t create_process(char *name, address_t main, char **argv, size_t stack_size,
 
 
 void ps(ps_ts *process_info, int *p_count) {
-    for(int i = 0; i < process_count; i++) {
-        process_info[i].process_name = processes[i]->process_name;
-        process_info[i].pid = processes[i]->pid;
-        process_info[i].status = processes[i]->status;
-        process_info[i].cs = processes[i]->threads[MAIN_THREAD]->stack.current;
-        process_info[i].bp = processes[i]->threads[MAIN_THREAD]->stack.base;
-        process_info[i].priority = processes[i]->priority;
-        process_info[i].foreground = processes[i]->foreground;
+    int real_index = 0;
+    for(int i = 0; i < MAX_PROCESS_COUNT; i++) {
+        if(processes[i] == NULL) continue;
+        process_info[real_index].process_name = processes[i]->process_name;
+        process_info[real_index].pid = processes[i]->pid;
+        process_info[real_index].status = processes[i]->status;
+        process_info[real_index].cs = processes[i]->threads[MAIN_THREAD]->stack.current;
+        process_info[real_index].bp = processes[i]->threads[MAIN_THREAD]->stack.base;
+        process_info[real_index].priority = processes[i]->priority;
+        process_info[real_index++].foreground = processes[i]->foreground;
     }
     *p_count = process_count;
 }

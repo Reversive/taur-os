@@ -6,6 +6,10 @@ scheduler_ts *scheduler;
 size_t current_quantum = START;
 int first_appearence = YES;
 
+int cmp(void * p1, void * p2) {
+    return !(p1 == p2);
+}
+
 thread_st *get_current_thread() {
     return current_thread;
 }
@@ -17,8 +21,13 @@ thread_st *rrnp_poll(scheduler_ts *scheduler) {
     return head;
 }
 
-thread_st *rrnp_remove(scheduler_ts *scheduler, thread_st *thread) {
-    return NULL; // to-do
+void free_data(void *data) {
+    free_thread((thread_st *)data);
+}
+
+void rrnp_remove(scheduler_ts *scheduler, thread_st *thread) {
+    rrnp_ts *queue = scheduler->queue;
+    queue->tail = delete_by_value(queue->tail, thread, cmp, free_data);
 }
 
 void rrnp_add(scheduler_ts *scheduler, thread_st *thread) {
@@ -60,15 +69,32 @@ void *schedule_handler(void *_rsp) {
         first_appearence = !first_appearence;
         return current_thread->stack.current;
     }
-    
-   if(current_quantum < get_process_by_id(current_thread->pid)->priority) {
-        current_thread->stack.current = _rsp;
-        current_quantum++;
-    } else {
-        current_thread->stack.current = _rsp;
+
+    process_st *p = get_process_by_id(current_thread->pid);
+    if(p->status == KILLED) {
+        free_process(p->pid);
+        rrnp_remove(scheduler, current_thread);
         current_thread = rrnp_poll(scheduler);
         while(get_process_state(current_thread->pid) != READY) current_thread = rrnp_poll(scheduler);
         current_quantum = START;
+    } else {
+        if(current_quantum < p->priority) {
+            current_thread->stack.current = _rsp;
+            current_quantum++;
+        } else {
+            current_thread->stack.current = _rsp;
+            current_thread = rrnp_poll(scheduler);
+            process_status_et status = get_process_state(current_thread->pid);
+            while(status != READY) {
+                if(status == KILLED) {
+                    free_process(current_thread->pid);
+                    rrnp_remove(scheduler, current_thread);
+                }
+                current_thread = rrnp_poll(scheduler);
+                status = get_process_state(current_thread->pid);
+            }
+            current_quantum = START;
+        }
     }
 
     return current_thread->stack.current;
