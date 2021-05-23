@@ -27,6 +27,7 @@ void help() {
 	printf("nice <pid> <prio> - Cambia la prioridad de un proceso dado su PID y la nueva prioridad.\n");
 	printf("block <pid> - Cambia el estado de un proceso entre bloqueado y listo dado su PID.\n");
 	printf("mem_info - Muestra el estado actual de la memoria\n");
+	printf("pipes - Muestra el estado de los pipes\n");
 	return;
 }
 
@@ -165,7 +166,12 @@ void assign_module(char * str) {
 		int * info = sys_mem_info();
 		printf("ESTADO DE LA MEMORIA\nTOTAL\t\t LIBRE\t\t OCUPADA\n");
 		printf("%d\t\t%d\t\t%d\n", info[0], info[1], info[0] - info[1]);
-	} else {
+	}
+	else if(command_equal(str, "pipes")) {
+		char * info = sys_pipes_info();
+		printf("%s\n", info);
+	}
+	 else {
 		printf("Ingrese un comando valido.\n");
 	}
 }

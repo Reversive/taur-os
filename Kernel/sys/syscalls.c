@@ -172,6 +172,10 @@ uint64_t syscall_malloc(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, u
     if(response ==  NULL) return ERROR;
     return (uint64_t)response;
 }
+uint64_t syscall_pipes_info(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+    char *response = pipesInfo();
+    return (uint64_t)response;
+}
 
 uint64_t syscall_free(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
     void * address = (void*) rsi;
@@ -198,13 +202,13 @@ uint64_t syscall_pipe_read(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8
 uint64_t syscall_pipe_open(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
     
     char* name = (char*) rsi;
-    int* fd = (char*) rdx;
+    int* fd = (int*) rdx;
     return (uint64_t)pipeOpen(name, fd);
 }
 uint64_t syscall_pipe_close(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
-    
     int id = (int) rsi;
-    return (uint64_t)pipeClose(id);
+    pipeClose(id);
+    return SUCCESS;
 }
 
 uint64_t syscall_create_process(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {

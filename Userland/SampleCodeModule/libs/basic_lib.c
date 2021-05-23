@@ -96,18 +96,20 @@ void sys_clean_kb_buffer() {
 void * sys_malloc(size_t size) {
     return (void *)_syscall(_SYSCALL_MALLOC, size, 0, 0, 0, 0);
 }
+char * sys_pipes_info() {
+    return (char *)_syscall(_SYSCALL_PIPE_INFO, 0, 0, 0, 0, 0);
+}
 int sys_pipe_write(int i, char* addr, int n) {
-    return (int)_syscall(_SYSCALL_PIPE_WRITE, (uint64_t) i, addr, n, 0, 0);
+    return (int)_syscall(_SYSCALL_PIPE_WRITE, (uint64_t) i, (uint64_t)addr, (uint64_t)n, 0, 0);
 }
 int sys_pipe_read(int i , char* addr, int n) {
-    _syscall(_SYSCALL_PIPE_READ, i, addr, n, 0, 0);
-    return;
+    return _syscall(_SYSCALL_PIPE_READ, (uint64_t)i, (uint64_t)addr, (uint64_t)n, 0, 0);
 }
 int sys_pipe_open(char* name, int fd[2]) {
-    return (int)_syscall(_SYSCALL_PIPE_OPEN, name, fd, 0, 0, 0);
+    return (int)_syscall(_SYSCALL_PIPE_OPEN, (uint64_t)name, (uint64_t)fd, 0, 0, 0);
 }
 void sys_pipe_close(int index) {
-    return (int)_syscall(_SYSCALL_PIPE_CLOSE, (int)index,0, 0, 0, 0);
+    _syscall(_SYSCALL_PIPE_CLOSE, (int)index,0, 0, 0, 0);
 }
 int * sys_mem_info() {
     return (int *)_syscall(_SYSCALL_MEM_INFO, 0, 0, 0, 0, 0);

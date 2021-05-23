@@ -41,6 +41,7 @@ syscall * syscalls_table[_SYSCALLS_SIZE] = {
     [_SYSCALL_PIPE_READ] = syscall_pipe_read,
     [_SYSCALL_PIPE_OPEN] = syscall_pipe_open,
     [_SYSCALL_PIPE_CLOSE] = syscall_pipe_close,
+    [_SYSCALL_PIPE_INFO] = syscall_pipes_info,
 };
 
 

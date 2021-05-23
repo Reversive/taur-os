@@ -29,6 +29,23 @@ void my_strcpy(char * dest, char * origin) {
     dest[i] = 0;
 }
 
+char* my_strcat(char* destination, const char* source)
+{
+    // make `ptr` point to the end of the destination string
+    char* ptr = destination + strnlen(destination);
+ 
+    // appends characters of the source to the destination string
+    while (*source != '\0') {
+        *ptr++ = *source++;
+    }
+ 
+    // null terminate destination string
+    *ptr = '\0';
+ 
+    // the destination is returned by standard `strcat()`
+    return destination;
+}
+
 void * memcpy(void * destination, const void * source, uint64_t length)
 {
 

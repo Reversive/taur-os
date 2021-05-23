@@ -39,6 +39,7 @@ void sys_clean_kb_buffer();
 void * sys_malloc(size_t size);
 void sys_free(void * address);
 int *sys_mem_info();
+char* sys_pipes_info();
 int sys_pipe_write(int i, char *addr, int n);
 int sys_pipe_read(int i, char *addr, int n);
 int sys_pipe_open(char *name, int *fd);
@@ -88,6 +89,7 @@ enum syscall_numbers {
     _SYSCALL_PIPE_WRITE,
     _SYSCALL_PIPE_READ,
     _SYSCALL_PIPE_OPEN,
+    _SYSCALL_PIPE_INFO,
     _SYSCALL_PIPE_CLOSE,
 };
 

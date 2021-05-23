@@ -4,6 +4,7 @@
 
 pipe_t pipes[MAXPIPES];
 
+
 void blockProcessPipe(int * p, int pid) {
     int i;
     for(i = 0; i < PROCESSES && p[i] != 0; i++);
@@ -83,7 +84,7 @@ int lookPipe(char* name) {
 }
 int pipeOpen(char* name, int fd[2]) {
     int i;
-    if(i = lookPipe(name) != -1){
+    if((i = lookPipe(name)) != -1){
         // pipe already opened
         fd[0] = (i+1)*10;
         fd[1] = fd[0] + 1;
@@ -113,4 +114,45 @@ void pipeClose(int index) {
 pipe_t * getPipe(int p) {
     int aux = p/10 - 1;
     return &pipes[aux];
+}
+
+void listBlockedProcesses(int * p, char * buf) {
+    char pid[5]={0};
+    for (int i = 0; i < PROCESSES; i++) {
+        if (p[i] != 0) {
+            itoa(p[i], pid, 10);
+            my_strcat(buf, pid);
+            my_strcat(buf, ", ");
+        }
+    }
+}
+
+char retpipes[MAXPIPES*100] = {0};
+char *pipesInfo() {
+    int cant = 0;
+    char namePipe[10], brp[50] = {0}, bwp[50] = {0};
+    for (int p=0; p < MAXPIPES; p++) {
+        if (pipes[p].created != 0) {
+            cant++;
+            itoa(p, namePipe, 10);
+            my_strcat(namePipe, pipes[p].name);
+            listBlockedProcesses(pipes[p].rProcesses, brp);
+            listBlockedProcesses(pipes[p].wProcesses, bwp);
+            my_strcpy(retpipes, "Pipe: ");
+            my_strcat(retpipes, namePipe);
+            my_strcat(retpipes, "\n");
+            my_strcat(retpipes, "State: ");
+            my_strcat(retpipes, pipes[p].data);
+            my_strcat(retpipes, "\n");
+            my_strcat(retpipes, "Blocked Read Processes: ");
+            my_strcat(retpipes, brp);
+            my_strcat(retpipes, "\n");
+            my_strcat(retpipes, "Blocked Write Processes: ");
+            my_strcat(retpipes, bwp);
+            my_strcat(retpipes, "\n");
+        }
+    }
+    if (cant == 0)
+        my_strcpy(retpipes, "No pipes available\n");
+    return retpipes;
 }

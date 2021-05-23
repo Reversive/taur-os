@@ -4,6 +4,7 @@
 #include "../../drivers/keyboard/include/keyboard.h"
 #include "../../drivers/shell/include/shell.h"
 #include "../include/lib.h"
+#include "../include/pipe.h"
 #include "../../task/include/process.h"
 #include "../../mem/include/mm.h"
 #include "../../mem/include/buddy.h"
@@ -57,6 +58,7 @@ enum syscall_numbers {
     _SYSCALL_PIPE_WRITE,
     _SYSCALL_PIPE_READ,
     _SYSCALL_PIPE_OPEN,
+    _SYSCALL_PIPE_INFO,
     _SYSCALL_PIPE_CLOSE
 };
 
@@ -99,6 +101,7 @@ syscall syscall_mem_info;
 syscall syscall_pipe_write;
 syscall syscall_pipe_open;
 syscall syscall_pipe_read;
+syscall syscall_pipes_info;
 syscall syscall_pipe_close;
 
 extern syscall * syscalls_table[_SYSCALLS_SIZE];
