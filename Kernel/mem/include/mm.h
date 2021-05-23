@@ -16,5 +16,7 @@
 
     void free(void *ptr);
     void *malloc(size_t requestedSize);
+    int * memInfo();
+
 
 #endif

@@ -21,6 +21,14 @@ int strnlen(char * str) {
     return i;
 }
 
+int strcomp(char * str1, char * str2) {
+	while(*str1 && (*str1 == *str2)) {
+        str1++;
+        str2++;
+    }
+    return *(const unsigned char*)str1 - *(const unsigned char*)str2;
+}
+
 void my_strcpy(char * dest, char * origin) {
     int i;
     for(i = 0; origin[i] != 0; i++)
