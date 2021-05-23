@@ -2,7 +2,7 @@
 #define _SHELL_H
 #include "../../video/include/video_driver.h"
 #include "../../../include/lib.h"
-
+#include "../../timer/include/time.h"
 
 void print_char(unsigned char key);
 void _enable_cursor();

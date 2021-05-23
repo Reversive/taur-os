@@ -1,13 +1,13 @@
-#include <mutex.h>
+#include "include/mutex.h"
 
-mutex * makeMutex() {
+mutex_t * makeMutex() {
+    return 0;
+}
+
+void mutexLock(mutex_t * mutex) {
 
 }
 
-void mutexLock(Mutex * mutex) {
+void mutexUnlock(mutex_t * mutex) {
 
-}
-
-void mutexUnlock(Mutex * mutex) {
-    
 }

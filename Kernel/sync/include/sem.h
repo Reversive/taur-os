@@ -11,22 +11,18 @@
     #define MAX_SEMS 256
     #define NAME_CHAR_LIMIT 1024
     #define OUT_OF_BOUNDS -1
-    #define EMPTY -1
     #define ERROR -1
-    #define SUCCESS 0
 
-    typedef enum { FALSE, TRUE } bool;
-    
     typedef struct semInfo {
         int semId;
         char name[NAME_CHAR_LIMIT];
-        Mutex *mutex;   // Mutex as lock
+        mutex_t *mutex;   // Mutex as lock
         int value;
         int wakeups;    // Counter of pending 'close' signals
         int blockedProcesses[MAX_PROC];
     } semInfo_t;
 
-    int semOpen(const char *semName, int initValue);
+    int semOpen(char *semName, int initValue);
     int	semWait(char *semName);
     int semPost(char *semName);
     int semClose(char *semName);

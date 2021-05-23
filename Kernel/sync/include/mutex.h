@@ -5,8 +5,8 @@
         
     } mutex_t;
 
-    mutex * makeMutex();
-    void mutexLock(mutex * m);
-    void mutexUnlock(mutex * m);
+    mutex_t * makeMutex();
+    void mutexLock(mutex_t * m);
+    void mutexUnlock(mutex_t * m);
 
 #endif
