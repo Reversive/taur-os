@@ -37,7 +37,7 @@ void halt_system();
 int strnlen(char * str);
 void my_strcpy(char * dest, char * origin);
 void get_registers(unsigned char *data);
-
+char *itoa(uint64_t value, char *buffer, uint32_t base);
 extern void save_registers_data(unsigned char* data);
 void print_reg();
 extern int test();

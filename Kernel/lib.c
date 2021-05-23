@@ -128,3 +128,26 @@ char get_char_data( char hexa_num) {
     return (hexa_num < 0xA) ? hexa_num + '0' : hexa_num + 'A' - 10;
 }
 
+char *itoa(uint64_t value, char *buffer, uint32_t base) {
+    char *p = buffer;
+    char *p1, *p2;
+    do {
+        uint32_t reminder = value % base;
+        *p++ = (reminder < 10) ? reminder + '0' : reminder + 'A' - 10;
+    } while (value /= base);
+
+   
+    *p = 0;
+    p1 = buffer;
+    p2 = p - 1;
+    while (p1 < p2) {
+        char tmp = *p1;
+        *p1 = *p2;
+        *p2 = tmp;
+        p1++;
+        p2--;
+    }
+
+    return buffer;
+}
+

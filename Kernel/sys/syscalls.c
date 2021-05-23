@@ -179,6 +179,34 @@ uint64_t syscall_free(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uin
     return SUCCESS;
 }
 
+uint64_t syscall_pipe_write(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+    
+    int id = (int) rsi;
+    char* addr = (char*) rdx;
+    int n = (int) rcx;
+    
+    return (uint64_t)pipeWrite(id, addr, n);
+}
+uint64_t syscall_pipe_read(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+    
+    int id = (int) rsi;
+    char* addr = (char*) rdx;
+    int n = (int) rcx;
+    
+    return (uint64_t)pipeRead(id, addr, n);
+}
+uint64_t syscall_pipe_open(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+    
+    char* name = (char*) rsi;
+    int* fd = (char*) rdx;
+    return (uint64_t)pipeOpen(name, fd);
+}
+uint64_t syscall_pipe_close(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+    
+    int id = (int) rsi;
+    return (uint64_t)pipeClose(id);
+}
+
 uint64_t syscall_create_process(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
     char *name = (char *)rsi;
     void *code = (void *)rdx;

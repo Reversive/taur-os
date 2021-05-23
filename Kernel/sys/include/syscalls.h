@@ -53,10 +53,14 @@ enum syscall_numbers {
     _SYSCALL_KILL_PROCESS,
     _SYSCALL_NICE,
     _SYSCALL_BLOCK,
-    _SYSCALL_MEM_INFO
+    _SYSCALL_MEM_INFO,
+    _SYSCALL_PIPE_WRITE,
+    _SYSCALL_PIPE_READ,
+    _SYSCALL_PIPE_OPEN,
+    _SYSCALL_PIPE_CLOSE
 };
 
-#define _SYSCALLS_LAST _SYSCALL_MEM_INFO
+#define _SYSCALLS_LAST _SYSCALL_PIPE_CLOSE
 #define _SYSCALLS_SIZE (_SYSCALLS_LAST + 1)
 
 syscall syscall_read;
@@ -92,6 +96,10 @@ syscall syscall_kill_process;
 syscall syscall_nice;
 syscall syscall_block;
 syscall syscall_mem_info;
+syscall syscall_pipe_write;
+syscall syscall_pipe_open;
+syscall syscall_pipe_read;
+syscall syscall_pipe_close;
 
 extern syscall * syscalls_table[_SYSCALLS_SIZE];
 extern unsigned int get_time(char t);
