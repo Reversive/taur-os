@@ -7,6 +7,7 @@ typedef void* address_t;
 #define MAX_THREAD_COUNT 1
 #endif
 typedef enum { READY = 0, BLOCKED, KILLED, INVALID } process_status_et;
+typedef unsigned long size_t;
 
 typedef struct memory_block_t {
     address_t base;

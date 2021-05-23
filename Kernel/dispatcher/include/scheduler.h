@@ -1,6 +1,8 @@
 #ifndef SCHEDULER_H
 #define SCHEDULER_H
 #include "circular_linked_list.h"
+#include "../../task/include/data_structures.h"
+#include "../../task/include/thread.h"
 #include "../../task/include/process.h"
 
 #define YES 1

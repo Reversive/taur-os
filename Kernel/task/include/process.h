@@ -7,8 +7,6 @@
 #include <string.h>
 #include "../../dispatcher/include/scheduler.h"
 
-typedef int pid_t;
-
 #ifndef INVALID_PID
 #define INVALID_PID -1
 #endif
