@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include "../../drivers/keyboard/include/keyboard.h"
 #include "../../drivers/shell/include/shell.h"
-#include "../include/lib.h"
+#include "../../include/lib.h"
 #include "../../task/include/process.h"
 #include "../../mem/include/mm.h"
 #include "../../mem/include/buddy.h"
@@ -53,10 +53,15 @@ enum syscall_numbers {
     _SYSCALL_KILL_PROCESS,
     _SYSCALL_NICE,
     _SYSCALL_BLOCK,
-    _SYSCALL_MEM_INFO
+    _SYSCALL_MEM_INFO,
+    _SYSCALL_SEM_OPEN,
+    _SYSCALL_SEM_WAIT,
+    _SYSCALL_SEM_POST,
+    _SYSCALL_SEM_CLOSE,
+    _SYSCALL_SEMS_INFO,
 };
 
-#define _SYSCALLS_LAST _SYSCALL_MEM_INFO
+#define _SYSCALLS_LAST _SYSCALL_SEMS_INFO
 #define _SYSCALLS_SIZE (_SYSCALLS_LAST + 1)
 
 syscall syscall_read;
@@ -92,6 +97,11 @@ syscall syscall_kill_process;
 syscall syscall_nice;
 syscall syscall_block;
 syscall syscall_mem_info;
+syscall syscall_sem_open;
+syscall syscall_sem_wait;
+syscall syscall_sem_post;
+syscall syscall_sem_close;
+syscall syscall_sems_info;
 
 extern syscall * syscalls_table[_SYSCALLS_SIZE];
 extern unsigned int get_time(char t);

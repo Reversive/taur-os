@@ -37,6 +37,11 @@ syscall * syscalls_table[_SYSCALLS_SIZE] = {
     [_SYSCALL_NICE] = syscall_nice,
     [_SYSCALL_BLOCK] = syscall_block,
     [_SYSCALL_MEM_INFO] = syscall_mem_info,
+    [_SYSCALL_SEM_OPEN] = syscall_sem_open,
+    [_SYSCALL_SEM_WAIT] = syscall_sem_wait,
+    [_SYSCALL_SEM_POST] = syscall_sem_post,
+    [_SYSCALL_SEM_CLOSE] = syscall_sem_close,
+    [_SYSCALL_SEMS_INFO] = syscall_sems_info,
 };
 
 
