@@ -7,6 +7,7 @@
 #include "../../task/include/process.h"
 #include "../../mem/include/mm.h"
 #include "../../mem/include/buddy.h"
+#include "../../sync/include/sem.h"
 
 #define _STDIN 0x1
 #define SUCCESS 1

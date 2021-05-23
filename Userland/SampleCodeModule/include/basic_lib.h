@@ -44,6 +44,10 @@ pid_t sys_getpid();
 pid_t sys_kill_process(pid_t pid);
 pid_t sys_set_niceness(pid_t pid, int priority);
 pid_t sys_block(pid_t pid);
+int sys_sem_open(char *semName, int initValue);
+int	sys_sem_wait(char *semName);
+int sys_sem_post(char *semName);
+int sys_sem_close(char *semName);
 
 typedef enum { READY = 0, BLOCKED, KILLED } process_status_et;
 
@@ -81,6 +85,11 @@ enum syscall_numbers {
     _SYSCALL_NICE,
     _SYSCALL_BLOCK,
     _SYSCALL_MEM_INFO,
+    _SYSCALL_SEM_OPEN,
+    _SYSCALL_SEM_WAIT,
+    _SYSCALL_SEM_POST,
+    _SYSCALL_SEM_CLOSE,
+    _SYSCALL_SEMS_INFO,
 };
 
 enum status {

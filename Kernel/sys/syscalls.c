@@ -221,24 +221,29 @@ uint64_t syscall_mem_info(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8,
 }
 
 uint64_t syscall_sem_open(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
-    return rsi;
+    char *semName = (char*) rsi;
+    int initValue = rdx; 
+    return semOpen(semName,initValue);
 }
 
 uint64_t syscall_sem_wait(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
-    return rsi;
+    char *semName = (char*) rsi;
+    return semWait(semName);
 }
 
 uint64_t syscall_sem_post(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
-    return rsi;
-
+    char *semName = (char*) rsi;
+    return semPost(semName);
 }
 
 uint64_t syscall_sem_close(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
-    return rsi;
+    char *semName = (char*) rsi;
+    return semClose(semName);
 }
 
 uint64_t syscall_sems_info(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
-    return rsi;
+    
+    return SUCCESS;
 }
 
 int read(unsigned int fd, char * buffer, size_t count) {
