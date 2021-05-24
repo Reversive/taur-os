@@ -46,7 +46,6 @@ int endless_proc(int argc, char **argv) {
 }
 
 int ending_proc(int argc, char **argv) {
-	printf("Holis %s %s %s %d\n", "xd", argv[0], argv[1], argc);
 	return 0;
 }
 
@@ -56,8 +55,7 @@ int ending_proc(int argc, char **argv) {
 
 void sems() {
 	semInfo_t * buffer = sys_malloc(sizeof(semInfo_t));
-	// int semsCount = sys_sems_count();
-	int semsCount = MAX_SEMS;
+	int semsCount = sys_sems_count();
 	if(semsCount-->0) {
 		printf("%s\t%s\t%s\t%s\t%s\n","SEM_ID","NAME","VALUE","IS_LOCKED","BLOCKED_PROCESSES");
 		for(int idx=0; idx<semsCount; idx++) {

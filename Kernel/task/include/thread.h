@@ -20,7 +20,7 @@
 #endif
 
 #ifndef UNAVAILABLE
-#define UNAVAILABLE -1
+#define UNAVAILABLE -2
 #endif
 
 

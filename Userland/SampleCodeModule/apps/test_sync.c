@@ -1,9 +1,10 @@
 #include "include/test_sync.h"
 #include "../include/console.h"
+#include "stdio.h"
 
-#define TOTAL_PAIR_PROCESSES 3
+#define TOTAL_PAIR_PROCESSES 8
 #define SEM_ID "sem"
-#define N "20"
+#define N "10"
 
 int64_t global;  //shared memory
 
@@ -40,16 +41,20 @@ int inc_main(int argc, char **argv){
 
 parameters arg1 = {"1", "1", N, NULL};
 parameters arg2 = {"1", "-1", N, NULL};
-int test_sync(int argc, char **argv){
-  uint64_t i;
 
+int test_sync(int argc, char **argv){
+  
+  uint64_t i;
   global = 0;
 
   printf("CREATING PROCESSES...(WITH SEM)\n");
-
+  
+  int pid;
   for(i = 0; i < TOTAL_PAIR_PROCESSES; i++){
-    execv("inc", inc_main, arg1);
-    execv("inc", inc_main, arg2);
+    pid = execv("inc", (main_function) inc_main, arg1);
+    printf("PID1 %d\n",pid);
+    pid = execv("inc", (main_function) inc_main, arg2);
+    printf("PID2 %d\n",pid);
   }
   return 0;
 }
@@ -57,16 +62,21 @@ int test_sync(int argc, char **argv){
 
 parameters arg1_no = {"0", "1", N, NULL};
 parameters arg2_no = {"0", "-1", N, NULL};
-int test_no_sync(int argc, char **argv){
-  uint64_t i;
 
+int test_no_sync(int argc, char **argv){
+  
+  uint64_t i;
   global = 0;
 
   printf("CREATING PROCESSES...(WITHOUT SEM)\n");
 
+  int pid;
   for(i = 0; i < TOTAL_PAIR_PROCESSES; i++){
-    execv("inc", inc_main, arg1_no);
-    execv("inc", inc_main, arg2_no);
+    pid = execv("inc", (main_function) inc_main, arg1_no);
+    printf("PID1 %d\n",pid);
+    pid = execv("inc", (main_function) inc_main, arg2_no);
+    printf("PID2 %d\n",pid);
+
   }
   return 0;
 }
