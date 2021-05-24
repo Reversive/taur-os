@@ -8,14 +8,18 @@ uint64_t syscall_read(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uin
     unsigned int fd = (unsigned int) rsi;
     char * buffer = (char *) rdx;
     size_t count = (size_t) rcx;
-    return read(fd, buffer, count);
+    if(fd == 1)
+        return read(fd, buffer, count);
+    return pipeWrite(fd-2, buffer, count);
 }
 
 uint64_t syscall_write(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
     unsigned int fd = (unsigned int) rsi;
     char * buffer = (char *) rdx;
     size_t count = (size_t) rcx;
-    return write(fd, buffer, count);
+    if(fd == 0)
+        return write(fd, buffer, count);
+    return pipeRead(fd, buffer, count);
 }
 
 uint64_t syscall_time(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
@@ -172,10 +176,41 @@ uint64_t syscall_malloc(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, u
     if(response ==  NULL) return ERROR;
     return (uint64_t)response;
 }
+uint64_t syscall_pipes_info(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+    char *response = pipesInfo();
+    return (uint64_t)response;
+}
 
 uint64_t syscall_free(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
     void * address = (void*) rsi;
     free(address);
+    return SUCCESS;
+}
+
+uint64_t syscall_pipe_write(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+    
+    int id = (int) rsi;
+    char* addr = (char*) rdx;
+    int n = (int) rcx;
+    
+    return (uint64_t)pipeWrite(id, addr, n);
+}
+uint64_t syscall_pipe_read(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+    
+    int id = (int) rsi;
+    char* addr = (char*) rdx;
+    int n = (int) rcx;
+    
+    return (uint64_t)pipeRead(id, addr, n);
+}
+uint64_t syscall_pipe_open(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+    
+    char* name = (char*) rsi;
+    return (uint64_t)pipeOpen(name);
+}
+uint64_t syscall_pipe_close(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+    int id = (int) rsi;
+    pipeClose(id);
     return SUCCESS;
 }
 

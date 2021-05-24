@@ -45,6 +45,22 @@ typedef struct {
     process_status_et status;
 } ps_ts;
 
+#define MAXPIPES 10
+#define PIPESIZE 1000
+#define PROCESSES 10
+#define MAX_NAM 100
+typedef struct {
+    char name[MAX_NAM];
+    int created;
+    char data[PIPESIZE];
+    int rProcesses[PROCESSES];
+    int wProcesses[PROCESSES];
+    unsigned int nread;
+    unsigned int nwrite;
+    int usingPipe;
+    int waitingPid;
+    int fd;
+}pipe_t;
 typedef int (*function_t)(size_t argc, char **argv);
 
 

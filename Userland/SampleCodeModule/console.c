@@ -27,10 +27,12 @@ void help() {
 	printf("nice <pid> <prio> - Cambia la prioridad de un proceso dado su PID y la nueva prioridad.\n");
 	printf("block <pid> - Cambia el estado de un proceso entre bloqueado y listo dado su PID.\n");
 	printf("mem_info - Muestra el estado actual de la memoria\n");
+	printf("pipes - Muestra el estado de los pipes\n");
+	printf("test_pipes - test de los pipes\n");
 	return;
 }
 
-parameters param_list[PROGRAM_COUNT] = { { "Hola", NULL }, { "Hola", "Como Estas", NULL }};
+parameters param_list[PROGRAM_COUNT] = { { "9", NULL }, { "Hola", "Como Estas", NULL }};
 
 
 int endless_proc(int argc, char **argv) {
@@ -110,8 +112,18 @@ void print_execve_output(pid_t pid) {
 	}
 }
 
-
-
+int pr1(int argc, char **argv) {
+	char r[50];
+	int fd = atoi(argv[0]);
+	sys_read(fd, r, 30);
+	printf("Im process: %d this is what i read %s\n", sys_getpid() ,r);
+	//sys_pipe_close(fd);
+	while (1)
+	{
+		;
+	}
+	return 0;
+}
 void assign_module(char * str) {
 	if(command_equal(str, "help") ) {
 		help();
@@ -165,10 +177,35 @@ void assign_module(char * str) {
 		int * info = sys_mem_info();
 		printf("ESTADO DE LA MEMORIA\nTOTAL\t\t LIBRE\t\t OCUPADA\n");
 		printf("%d\t\t%d\t\t%d\n", info[0], info[1], info[0] - info[1]);
-	} else {
+	}
+	else if(command_equal(str, "pipes")) {
+		char * info = sys_pipes_info();
+		printf("%s\n", info);
+	}
+	else if(command_equal(str, "test_pipes")) {
+		int fd1 = sys_pipe_open("p1");
+		int fd2 = sys_pipe_open("p2");
+		int fd3 = sys_pipe_open("p3");
+		sys_write(fd1, "0", 2);
+		sys_write(fd2, "1", 2);
+		sys_write(fd3, "Hello, this is taur-os using pipes", 35);
+		printf("Im process: %d this is what i wrote: Hello, this is taur-os using pipes\n\n", sys_getpid());
+		char * info = sys_pipes_info();
+		printf("%s\n", info);
+		
+		param_list[0][0] = itoa(fd3, param_list[0][0], 10);
+		execv("pipe_test", pr1, param_list[0]);
+
+		sys_pipe_close(fd1);
+		sys_pipe_close(fd2);
+		//
+				
+	}
+	 else {
 		printf("Ingrese un comando valido.\n");
 	}
 }
+
 
 unsigned int command_equal(char * str1, char * str2) {
     while(*str1 == ' ')

@@ -28,7 +28,7 @@ typedef struct fs_register {
     uint64_t rbx;
     uint64_t rax;
 } full_reg_snapshot;
-
+char* my_strcat(char* destination, const char* source);
 void * memset(void * destination, int32_t c, uint64_t length);
 void * memcpy(void * destination, const void * source, uint64_t length);
 void dump_reg(int id, const char * desc, uint64_t * rip, uint64_t * rsp, uint64_t * top);
@@ -37,7 +37,7 @@ void halt_system();
 int strnlen(char * str);
 void my_strcpy(char * dest, char * origin);
 void get_registers(unsigned char *data);
-
+char *itoa(uint64_t value, char *buffer, uint32_t base);
 extern void save_registers_data(unsigned char* data);
 void print_reg();
 extern int test();

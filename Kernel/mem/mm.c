@@ -42,11 +42,12 @@ static size_t xBlockAllocatedBit = 0;
 
 
 //-----------------------------------------------------------------------------------------//
-
+int info[2] = {0};
 
 int * memInfo()
 {
-    int info[] = {TOTAL_HEAP_SIZE, freeBytesRemaining};
+    info[0] = TOTAL_HEAP_SIZE;
+    info[1] = freeBytesRemaining;
     return info;
 }
 
