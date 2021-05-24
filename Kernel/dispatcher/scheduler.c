@@ -27,12 +27,17 @@ void free_data(void *data) {
 
 void rrnp_remove(scheduler_ts *scheduler, thread_st *thread) {
     rrnp_ts *queue = scheduler->queue;
+    free_process(thread->pid);
     queue->tail = delete_by_value(queue->tail, thread, cmp, free_data);
 }
 
 void rrnp_add(scheduler_ts *scheduler, thread_st *thread) {
     rrnp_ts *queue = scheduler->queue;
     queue->tail = insert_tail(queue->tail, thread);
+}
+
+void dequeue_current_process() {
+    rrnp_remove(scheduler, current_thread);
 }
 
 scheduler_ts *init_no_prio_round_robin(size_t quantum) {
@@ -71,23 +76,23 @@ void *schedule_handler(void *_rsp) {
     }
 
     process_st *p = get_process_by_id(current_thread->pid);
+
     if(p->status == KILLED) {
-        free_process(p->pid);
         rrnp_remove(scheduler, current_thread);
         current_thread = rrnp_poll(scheduler);
         while(get_process_state(current_thread->pid) != READY) current_thread = rrnp_poll(scheduler);
         current_quantum = START;
     } else {
-        if(current_quantum < p->priority) {
+        if(current_quantum < p->priority && !is_forcing) {
             current_thread->stack.current = _rsp;
             current_quantum++;
         } else {
+            if(is_forcing) is_forcing = 0;
             current_thread->stack.current = _rsp;
             current_thread = rrnp_poll(scheduler);
             process_status_et status = get_process_state(current_thread->pid);
             while(status != READY) {
                 if(status == KILLED) {
-                    free_process(current_thread->pid);
                     rrnp_remove(scheduler, current_thread);
                 }
                 current_thread = rrnp_poll(scheduler);

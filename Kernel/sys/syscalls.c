@@ -255,6 +255,22 @@ uint64_t syscall_mem_info(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8,
     return (uint64_t) mem_info;
 }
 
+uint64_t syscall_sem_open(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+
+}
+
+uint64_t syscall_sem_post(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+
+}
+
+uint64_t syscall_sem_wait(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+
+}
+
+uint64_t syscall_sem_close(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+
+}
+
 int read(unsigned int fd, char * buffer, size_t count) {
     unsigned int bytes_read = 0;
     char popped_key;

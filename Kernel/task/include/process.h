@@ -29,7 +29,7 @@ typedef int pid_t;
 #define STARTING_PRIO 5
 #endif
 
-
+extern int is_forcing;
 extern process_st *processes[MAX_PROCESS_COUNT];
 pid_t create_process(char *name, address_t main, char **argv, size_t stack_size, size_t heap_size, int prio);
 pid_t get_available_pid();

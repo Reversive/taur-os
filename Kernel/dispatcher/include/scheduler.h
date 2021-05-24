@@ -27,5 +27,6 @@ void *schedule_handler(void *_rsp);
 int get_current_pid();
 void initialize_scheduler();
 thread_st *get_current_thread();
+void dequeue_current_process();
 
 #endif

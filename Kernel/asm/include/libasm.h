@@ -18,4 +18,5 @@ char _fetch_key(void);
 
 void *_stack_builder(void *_start, void *_main, void *stack, int argc, void *argv);
 void _force_scheduler();
+int _atomic_get(int *value);
 #endif

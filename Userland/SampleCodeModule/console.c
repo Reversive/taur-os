@@ -171,7 +171,8 @@ void assign_module(char * str) {
 		execv("prio_test", main_test_prio, (char*[]){NULL});
 	}
 	else if(command_equal(str, "pr_test")) {
-		execv("process_test", test_processes_main, (char*[]){NULL});
+		test_processes();
+		//execv("process_test", test_processes_main, (char*[]){NULL});
 	} 
 	else if(command_equal(str, "mem_info")) {
 		int * info = sys_mem_info();

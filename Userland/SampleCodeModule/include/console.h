@@ -24,4 +24,5 @@ unsigned int console_finish_handler(char* input_buffer);
 unsigned int is_newline_char(char chr);
 void console_key_handler(char input, char* input_buffer);
 void help();
+void sh_ps();
 #endif

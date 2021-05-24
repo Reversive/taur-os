@@ -12,8 +12,19 @@ GLOBAL save_registers_data
 GLOBAL _stack_builder
 GLOBAL _force_scheduler
 GLOBAL _idle
+GLOBAL _atomic_get
 
 section .text
+
+
+_atomic_get:
+	push rbp
+	mov rbp, rsp
+	mov eax, 1
+	xchg eax, [rdi]
+	mov rsp, rbp
+	pop rbp
+	ret
 
 
 _force_scheduler:

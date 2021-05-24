@@ -11,6 +11,7 @@ typedef enum { READY = 0, BLOCKED, KILLED, INVALID } process_status_et;
 typedef struct memory_block_t {
     address_t base;
     address_t current;
+    address_t start;
     size_t size;
 } memory_block_st;
 

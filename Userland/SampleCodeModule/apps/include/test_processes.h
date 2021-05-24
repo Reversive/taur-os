@@ -4,5 +4,5 @@
 #include "../../include/unistd.h"
 #include "../../include/stdio.h"
 int test_processes_main(int argc, char **argv);
-
+void test_processes();
 #endif

@@ -72,3 +72,28 @@ void *get_head_data(node_st *tail) {
 void *get_tail_data(node_st *tail) {
     return is_null(tail) ? NULL : tail->data;
 }
+
+node_st *delete_by_location(node_st *tail, int location) {
+    node_st *current = tail, *previous = tail;
+    int len = length(tail), i;
+    if (location < 1 || location > len) {
+        return tail;
+    } else if (len == 1) {
+        tail = NULL;
+        free(current);
+    } else {
+        current = tail->next;
+        for (i = 1; i < location; i++) {
+            previous = current;
+            current = current->next;
+        }
+        previous->next = current->next;
+        if (current == tail) tail = previous;
+        free(current);
+    }
+    return tail;
+}
+
+node_st *delete_head(node_st *tail) {
+    return delete_by_location(tail, 1);
+}

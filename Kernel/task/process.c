@@ -2,6 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "include/process.h"
 
+int is_forcing = 0;
 size_t process_count = 0;
 process_st *processes[MAX_PROCESS_COUNT] = {NULL};
 
@@ -9,7 +10,12 @@ int kill_process(pid_t pid, size_t return_value) {
     if(set_process_state(pid, KILLED) == INVALID_PID) return INVALID_PID;
     process_count--;
     processes[pid]->return_value = return_value;
-    if(pid == get_current_pid()) _force_scheduler();
+    if(pid == get_current_pid()) {
+        _force_scheduler();
+    } else {
+        is_forcing = 1;
+        _force_scheduler(); 
+    }
     return pid;
 }
 
@@ -60,11 +66,9 @@ size_t get_argv_count(char **argv) {
 void free_process(pid_t pid) {
     if(processes[pid]->process_name != NULL) free(processes[pid]->process_name);
     if(processes[pid]->heap.base != NULL) free(processes[pid]->heap.base);
-    //free_thread(processes[pid]->threads[MAIN_THREAD]);
-    free(processes[pid]->threads[MAIN_THREAD]->stack.base);
-    free(processes[pid]->threads[MAIN_THREAD]);
+    thread_st *t = processes[pid]->threads[MAIN_THREAD];
+    free_thread(t);
     processes[pid]->threads[MAIN_THREAD] = NULL;
-    free(processes[pid]);
     processes[pid] = NULL;
 }
 
@@ -76,7 +80,7 @@ pid_t create_process(char *name, address_t main, char **argv, size_t stack_size,
     process->pid = pid;
     process->status = READY;
     process->priority = prio;
-    process->foreground = 0;
+    process->foreground = 1;
     if(set_process_name(process, name) == NOT_ENOUGH_MEMORY) {
         free_process(process->pid);
         return NOT_ENOUGH_MEMORY;
@@ -87,6 +91,7 @@ pid_t create_process(char *name, address_t main, char **argv, size_t stack_size,
     processes[process->pid] = process;
     thread_st *thread = create_thread(main, argv, stack_size, process->threads, process->pid);
     if(thread == NULL) {
+        _internal_print_string("Falle en malloc thread");
         free_process(process->pid);
         return NOT_ENOUGH_MEMORY;
     }
