@@ -136,3 +136,15 @@ int sys_sem_post(char *semName) {
 int sys_sem_close(char *semName) {
     return _syscall(_SYSCALL_SEM_CLOSE, (uint64_t)semName, 0, 0, 0, 0);
 }
+
+int sys_sem_info(int idx, semInfo_t *buffer) {
+    return _syscall(_SYSCALL_SEM_INFO, idx, (uint64_t)buffer, 0, 0, 0);
+}
+
+int sys_sems_count() {
+    return _syscall(_SYSCALL_SEMS_COUNT, 0, 0, 0, 0, 0);
+}
+
+void sys_yield() {
+    _syscall(_SYSCALL_YIELD, 0, 0, 0, 0, 0);
+}

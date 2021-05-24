@@ -12,16 +12,30 @@ GLOBAL save_registers_data
 GLOBAL _stack_builder
 GLOBAL _force_scheduler
 GLOBAL _idle
+GLOBAL _xchg
+GLOBAL _cmpxchg
+EXTERN schedule_handler
 
 section .text
 
+_xchg:
+	mov rax, rsi 
+	xchg [rdi], rax 
+	ret
+
+_cmpxchg:
+	mov rax, rdx
+	lock cmpxchg [rdi], rsi
+	ret
 
 _force_scheduler:
-	enter 0,0	; push and initialize the EBP register
-	pushState
+	; pushState
 	int 20h
-	popState
-	leave		; copy EBP to ESP and then restore the old EBP from the stack
+	; mov rdi, rsp
+	; call schedule_handler
+	; mov rsp, rax
+	; popState
+	sti
 	ret
 
 _fetch_key:
@@ -225,10 +239,10 @@ ciclo:
 _stack_builder:
 	mov r9, rsp ; save rsp
 	mov rsp, rdx ; set stack
-	push 0x0 ; push SS
-	push rdx ; push BP
-	push 0x202 ; push RFLAGS
-	push 0x08 ; push CS
+	; push 0x0 ; push SS
+	; push rdx ; push BP
+	; push 0x202 ; push RFLAGS
+	; push 0x08 ; push CS
 	push rdi ; push _start
 	push 0x0
 	mov rdi, rsi ; main

@@ -1,6 +1,9 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "include/console.h"
+#include "apps/include/test_sync.h"
+#include "basic_lib.h"
+#include "stdio.h"
 
 
 unsigned int console_num;
@@ -27,6 +30,9 @@ void help() {
 	printf("nice <pid> <prio> - Cambia la prioridad de un proceso dado su PID y la nueva prioridad.\n");
 	printf("block <pid> - Cambia el estado de un proceso entre bloqueado y listo dado su PID.\n");
 	printf("mem_info - Muestra el estado actual de la memoria\n");
+	printf("sync_test - Corre el test de sincronizacion de procesos con semaforos\n");
+	printf("no_sync_test - Corre el test de sincronizacion de procesos sin semaforos\n");
+	printf("sems - Informacion sobre todos los semaforos\n");
 	return;
 }
 
@@ -40,7 +46,32 @@ int endless_proc(int argc, char **argv) {
 }
 
 int ending_proc(int argc, char **argv) {
+	printf("Holis %s %s %s %d\n", "xd", argv[0], argv[1], argc);
 	return 0;
+}
+
+#define NO_PID -1
+#define MAX_SEMS 256
+#define MAX_PROC 50
+
+void sems() {
+	semInfo_t * buffer = sys_malloc(sizeof(semInfo_t));
+	// int semsCount = sys_sems_count();
+	int semsCount = MAX_SEMS;
+	if(semsCount-->0) {
+		printf("%s\t%s\t%s\t%s\t%s\n","SEM_ID","NAME","VALUE","IS_LOCKED","BLOCKED_PROCESSES");
+		for(int idx=0; idx<semsCount; idx++) {
+			sys_sem_info(idx, buffer);
+			printf("%d\t\t%s\t\t%d\t\t%d\t\t",buffer->semId,buffer->name,buffer->value,buffer->lock);
+			if(buffer->blockedProcesses[0] != NO_PID) {
+				printf("%d\n",buffer->blockedProcesses[0]);
+				int cantBlockProc = (buffer->blockedLast)%MAX_PROC - (buffer->blockedFirst)%MAX_PROC;
+				for(int i=1; i<cantBlockProc; i++) {
+					printf("\t\t\t\t%d\n",buffer->blockedProcesses[i]);
+				}
+			}
+		}
+	}
 }
 
 void sh_ps() {
@@ -165,7 +196,17 @@ void assign_module(char * str) {
 		int * info = sys_mem_info();
 		printf("ESTADO DE LA MEMORIA\nTOTAL\t\t LIBRE\t\t OCUPADA\n");
 		printf("%d\t\t%d\t\t%d\n", info[0], info[1], info[0] - info[1]);
-	} else {
+	}
+	else if(command_equal(str, "sync_test")) {
+		execv("sync_test", test_sync, (char*[]){NULL});
+	} 
+	else if(command_equal(str, "no_sync_test")) {
+		execv("no_sync_test", test_no_sync, (char*[]){NULL});
+	}
+	else if(command_equal(str, "sems")) {
+		sems();
+	}
+	else {
 		printf("Ingrese un comando valido.\n");
 	}
 }

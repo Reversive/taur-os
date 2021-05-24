@@ -1,6 +1,7 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "../include/stdio.h"
+#include "../include/print_mem.h"
 
 
 unsigned int getchar(void) {
@@ -217,6 +218,20 @@ static int scan_str(char* source, char*dest, int* arg_count) {
 	(*dest) = '\0';
 	return counter;
 }
+
+// https://www.geeksforgeeks.org/write-your-own-atoi/
+int atoi(char* str) { 
+    int res = 0; 
+    int sign = 1; 
+    int i = 0; 
+    if (str[0] == '-') { 
+        sign = -1; 
+        i++; 
+    } 
+    for (; str[i] != '\0'; ++i) 
+        res = res * 10 + str[i] - '0'; 
+    return sign * res; 
+} 
 
 static int scan_char(char* source, char* dest, int* arg_count) {
 	if((*source) == ' ' || (*source) == '\n') {

@@ -59,10 +59,12 @@ enum syscall_numbers {
     _SYSCALL_SEM_WAIT,
     _SYSCALL_SEM_POST,
     _SYSCALL_SEM_CLOSE,
-    _SYSCALL_SEMS_INFO,
+    _SYSCALL_SEM_INFO,
+    _SYSCALL_SEM_COUNT,
+    _SYSCALL_YIELD,
 };
 
-#define _SYSCALLS_LAST _SYSCALL_SEMS_INFO
+#define _SYSCALLS_LAST _SYSCALL_YIELD
 #define _SYSCALLS_SIZE (_SYSCALLS_LAST + 1)
 
 syscall syscall_read;
@@ -102,7 +104,9 @@ syscall syscall_sem_open;
 syscall syscall_sem_wait;
 syscall syscall_sem_post;
 syscall syscall_sem_close;
-syscall syscall_sems_info;
+syscall syscall_sem_info;
+syscall syscall_sem_count;
+syscall syscall_yield;
 
 extern syscall * syscalls_table[_SYSCALLS_SIZE];
 extern unsigned int get_time(char t);

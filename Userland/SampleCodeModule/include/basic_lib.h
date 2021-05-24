@@ -5,6 +5,21 @@
 
 typedef unsigned int size_t;
 typedef int pid_t;
+
+#define MAX_PROC 50
+#define NAME_CHAR_LIMIT 1024
+
+typedef struct semInfo {
+    int semId;
+    char name[NAME_CHAR_LIMIT];
+    uint64_t lock;   // lock
+    int value;
+    uint64_t openCount;    // Counter of pending 'close' signals
+    uint64_t blockedProcesses[MAX_PROC];
+    uint64_t blockedFirst;
+    uint64_t blockedLast;
+} semInfo_t;
+
 #define STDIN 0x1
 #define NO_STOP 1
 #define UINT_MAX 0xffffffff
@@ -48,6 +63,9 @@ int sys_sem_open(char *semName, int initValue);
 int	sys_sem_wait(char *semName);
 int sys_sem_post(char *semName);
 int sys_sem_close(char *semName);
+int sys_sem_info(int idx, semInfo_t *buffer);
+int sys_sems_count();
+void sys_yield();
 
 typedef enum { READY = 0, BLOCKED, KILLED } process_status_et;
 
@@ -89,7 +107,9 @@ enum syscall_numbers {
     _SYSCALL_SEM_WAIT,
     _SYSCALL_SEM_POST,
     _SYSCALL_SEM_CLOSE,
-    _SYSCALL_SEMS_INFO,
+    _SYSCALL_SEM_INFO,
+    _SYSCALL_SEMS_COUNT,
+    _SYSCALL_YIELD,
 };
 
 enum status {

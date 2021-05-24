@@ -241,9 +241,19 @@ uint64_t syscall_sem_close(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8
     return semClose(semName);
 }
 
-uint64_t syscall_sems_info(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
-    
-    return SUCCESS;
+uint64_t syscall_sem_info(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+    int idx = rsi;
+    semInfo_t *buffer = (semInfo_t *) rdx;
+    return getSemInfo(idx, buffer);
+}
+
+uint64_t syscall_yield(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+    _force_scheduler();
+    return 0;
+}
+
+uint64_t syscall_sem_count(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+    return getSemsCount();
 }
 
 int read(unsigned int fd, char * buffer, size_t count) {

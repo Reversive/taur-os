@@ -1,6 +1,7 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "include/kernel.h"
+#include "drivers/shell/include/shell.h"
 
 
 uint64_t * _b_rsp;
@@ -48,7 +49,6 @@ int main()
 	_b_rip = sampleCodeModuleAddress;
 	_b_rsp = (uint64_t *)(_rsp() - (sizeof(uint64_t) << 1));
 	create_process("sh", sampleCodeModuleAddress, (char *[]){NULL}, MIN_PAGE_AMOUNT * PAGE_SIZE, 0, 5);
-	_sti();
 	_idle();
 	
   return 0;

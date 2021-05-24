@@ -1,9 +1,8 @@
 #ifndef LIB_H
 #define LIB_H
 
-    #include "../drivers/shell/include/shell.h"
     #include "../cpu/include/defs.h"
-    #include "../asm/include/interrupts.h"
+    #include <stdint.h>
 
     typedef unsigned char bool;
     #define PIC_MASK 0xFF

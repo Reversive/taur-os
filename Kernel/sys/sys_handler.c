@@ -41,7 +41,9 @@ syscall * syscalls_table[_SYSCALLS_SIZE] = {
     [_SYSCALL_SEM_WAIT] = syscall_sem_wait,
     [_SYSCALL_SEM_POST] = syscall_sem_post,
     [_SYSCALL_SEM_CLOSE] = syscall_sem_close,
-    [_SYSCALL_SEMS_INFO] = syscall_sems_info,
+    [_SYSCALL_SEM_INFO] = syscall_sem_info,
+    [_SYSCALL_SEM_COUNT] = syscall_sem_count,
+    [_SYSCALL_YIELD] = syscall_yield,
 };
 
 

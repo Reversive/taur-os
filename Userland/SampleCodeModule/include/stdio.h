@@ -2,8 +2,6 @@
 #define _STDIO_H
 #include "basic_lib.h"
 #include "../include/inforeg.h"
-#include "../include/time.h"
-#include "print_mem.h"
 #include <stdarg.h>
 #include "math.h"
 #define SIZE_BYTE 8
@@ -20,6 +18,7 @@ int puts(const char *str);
 unsigned int strlen(char * str);
 void print_string(char * str);
 char *itoa(uint64_t value, char *buffer, uint32_t base);
+int atoi(char* str);
 int printf(char * fmt, ...);
 int scanf(char* source, char* format, ...);
 void hex_to_string(long num, char * buffer);

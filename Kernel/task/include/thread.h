@@ -3,7 +3,6 @@
 #include "../../mem/include/mm.h"
 #include "../../mem/include/buddy.h"
 #include "../../asm/include/libasm.h"
-#include "../../drivers/shell/include/shell.h"
 #include "data_structures.h"
 
 #define MAIN_THREAD 0

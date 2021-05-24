@@ -18,4 +18,7 @@ char _fetch_key(void);
 
 void *_stack_builder(void *_start, void *_main, void *stack, int argc, void *argv);
 void _force_scheduler();
+uint64_t _xchg(uint64_t *dest, uint64_t value);
+uint64_t _cmpxchg(uint64_t *dest, uint64_t value, uint64_t test);
+
 #endif

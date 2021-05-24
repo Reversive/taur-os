@@ -3,7 +3,6 @@
 #include "circular_linked_list.h"
 #include "../../task/include/data_structures.h"
 #include "../../task/include/thread.h"
-#include "../../task/include/process.h"
 
 #define YES 1
 #define START 0
@@ -29,5 +28,7 @@ void *schedule_handler(void *_rsp);
 int get_current_pid();
 void initialize_scheduler();
 thread_st *get_current_thread();
+void scheduler_enable();
+void scheduler_disable();
 
 #endif

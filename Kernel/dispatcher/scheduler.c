@@ -1,10 +1,13 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "include/scheduler.h"
+#include "../task/include/process.h"
+
 thread_st * current_thread;
 scheduler_ts *scheduler;
 size_t current_quantum = START;
 int first_appearence = YES;
+uint64_t disable_count = 0;
 
 int cmp(void * p1, void * p2) {
     return !(p1 == p2);
@@ -61,9 +64,24 @@ void queue_thread(thread_st *t, uint64_t priority) {
     rrnp_add(scheduler, t);
 }
 
+void scheduler_enable() {
+    if(disable_count > 0)
+        disable_count--;
+}
+
+void scheduler_disable() {
+    int count;
+    do count = disable_count; 
+    while(_cmpxchg(&disable_count, count+1, count) != count);
+}
 
 void *schedule_handler(void *_rsp) {
-    if(current_thread == NULL) current_thread = rrnp_poll(scheduler);
+    if(disable_count) {
+        return current_thread->stack.current = _rsp;
+    }
+
+    if(current_thread == NULL)
+        current_thread = rrnp_poll(scheduler);
 
     if(first_appearence) {
         first_appearence = !first_appearence;
