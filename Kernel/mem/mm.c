@@ -42,13 +42,9 @@ static size_t xBlockAllocatedBit = 0;
 
 
 //-----------------------------------------------------------------------------------------//
-<<<<<<< Updated upstream
+
 int info[2] = {0};
 
-=======
-
-int info[] = {0, 0};
->>>>>>> Stashed changes
 int * memInfo()
 {
     info[0] = TOTAL_HEAP_SIZE;
