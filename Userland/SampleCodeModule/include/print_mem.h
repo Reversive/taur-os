@@ -2,7 +2,6 @@
 #define _PRINT_MEM_H
 #include "basic_lib.h"
 #include "stdio.h"
-#include "time.h"
 
 void print_mem(char * from, char * buffer);
 int info_mem( char * str);

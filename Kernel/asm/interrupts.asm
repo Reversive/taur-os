@@ -128,6 +128,7 @@ _sys80handler:
 
 ;8254 Timer (Timer Tick)
 _irq00Handler:
+	push .continue
 	pushState
 	mov rdi, 0
 	call irqDispatcher
@@ -137,6 +138,9 @@ _irq00Handler:
 	mov al, 20h
 	out 20h, al
 	popState
+	sti
+	ret
+.continue:
 	iretq
 
 

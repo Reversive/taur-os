@@ -132,3 +132,31 @@ pid_t sys_set_niceness(pid_t pid, int priority) {
 pid_t sys_block(pid_t pid) {
     return _syscall(_SYSCALL_BLOCK, (uint64_t)pid, 0, 0, 0, 0);
 }
+
+int sys_sem_open(char *semName, int initValue) {
+    return _syscall(_SYSCALL_SEM_OPEN, (uint64_t)semName, initValue, 0, 0, 0);
+}
+
+int	sys_sem_wait(char *semName) {
+    return _syscall(_SYSCALL_SEM_WAIT, (uint64_t)semName, 0, 0, 0, 0);
+}
+
+int sys_sem_post(char *semName) {
+    return _syscall(_SYSCALL_SEM_POST, (uint64_t)semName, 0, 0, 0, 0);
+}
+
+int sys_sem_close(char *semName) {
+    return _syscall(_SYSCALL_SEM_CLOSE, (uint64_t)semName, 0, 0, 0, 0);
+}
+
+int sys_sem_info(int idx, semInfo_t *buffer) {
+    return _syscall(_SYSCALL_SEM_INFO, idx, (uint64_t)buffer, 0, 0, 0);
+}
+
+int sys_sems_count() {
+    return _syscall(_SYSCALL_SEMS_COUNT, 0, 0, 0, 0, 0);
+}
+
+void sys_yield() {
+    _syscall(_SYSCALL_YIELD, 0, 0, 0, 0, 0);
+}

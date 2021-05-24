@@ -2,6 +2,8 @@
 #define PIPES_H_
 #include "../dispatcher/include/scheduler.h"
 #include <stdint.h>
+#include "../task/include/process.h"
+#include "lib.h"
 
 /*#define MAXPIPES 10
 #define PIPESIZE 1000

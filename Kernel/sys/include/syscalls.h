@@ -3,11 +3,13 @@
 #include <stdint.h>
 #include "../../drivers/keyboard/include/keyboard.h"
 #include "../../drivers/shell/include/shell.h"
-#include "../include/lib.h"
-#include "../include/pipe.h"
+#include "../../include/lib.h"
 #include "../../task/include/process.h"
 #include "../../mem/include/mm.h"
 #include "../../mem/include/buddy.h"
+#include "../../sync/include/sem.h"
+#include "../../include/pipe.h"
+
 #define _STDIN 0x1
 #define SUCCESS 1
 #define ERROR -1
@@ -53,13 +55,20 @@ enum syscall_numbers {
     _SYSCALL_KILL_PROCESS,
     _SYSCALL_NICE,
     _SYSCALL_BLOCK,
-    _SYSCALL_MEM_INFO,
     _SYSCALL_PIPE_OPEN,
     _SYSCALL_PIPE_INFO,
-    _SYSCALL_PIPE_CLOSE
+    _SYSCALL_PIPE_CLOSE,
+    _SYSCALL_MEM_INFO,
+    _SYSCALL_SEM_OPEN,
+    _SYSCALL_SEM_WAIT,
+    _SYSCALL_SEM_POST,
+    _SYSCALL_SEM_CLOSE,
+    _SYSCALL_SEM_INFO,
+    _SYSCALL_SEM_COUNT,
+    _SYSCALL_YIELD,
 };
 
-#define _SYSCALLS_LAST _SYSCALL_PIPE_CLOSE
+#define _SYSCALLS_LAST _SYSCALL_YIELD
 #define _SYSCALLS_SIZE (_SYSCALLS_LAST + 1)
 
 syscall syscall_read;
@@ -98,6 +107,13 @@ syscall syscall_mem_info;
 syscall syscall_pipe_open;
 syscall syscall_pipes_info;
 syscall syscall_pipe_close;
+syscall syscall_sem_open;
+syscall syscall_sem_wait;
+syscall syscall_sem_post;
+syscall syscall_sem_close;
+syscall syscall_sem_info;
+syscall syscall_sem_count;
+syscall syscall_yield;
 
 extern syscall * syscalls_table[_SYSCALLS_SIZE];
 extern unsigned int get_time(char t);

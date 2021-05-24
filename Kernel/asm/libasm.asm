@@ -12,23 +12,30 @@ GLOBAL save_registers_data
 GLOBAL _stack_builder
 GLOBAL _force_scheduler
 GLOBAL _idle
-GLOBAL _atomic_get
+GLOBAL _xchg
+GLOBAL _cmpxchg
+EXTERN schedule_handler
 
 section .text
 
-
-_atomic_get:
-	push rbp
-	mov rbp, rsp
-	mov eax, 1
-	xchg eax, [rdi]
-	mov rsp, rbp
-	pop rbp
+_xchg:
+	mov rax, rsi 
+	xchg [rdi], rax 
 	ret
 
+_cmpxchg:
+	mov rax, rdx
+	lock cmpxchg [rdi], rsi
+	ret
 
 _force_scheduler:
+	; pushState
 	int 20h
+	; mov rdi, rsp
+	; call schedule_handler
+	; mov rsp, rax
+	; popState
+	sti
 	ret
 
 _fetch_key:
@@ -175,6 +182,43 @@ ciclo:
 	pop rsp
 	ret
 
+%macro pushState 0
+	push rax
+	push rbx
+	push rcx
+	push rdx
+	push rbp
+	push rdi
+	push rsi
+	push r8
+	push r9
+	push r10
+	push r11
+	push r12
+	push r13
+	push r14
+	push r15
+
+%endmacro
+
+%macro popState 0
+	pop r15
+	pop r14
+	pop r13
+	pop r12
+	pop r11
+	pop r10
+	pop r9
+	pop r8
+	pop rsi
+	pop rdi
+	pop rbp
+	pop rdx
+	pop rcx
+	pop rbx
+	pop rax
+%endmacro
+
 %macro push_state_no_rax 0
 	push rbx
 	push rcx
@@ -195,10 +239,10 @@ ciclo:
 _stack_builder:
 	mov r9, rsp ; save rsp
 	mov rsp, rdx ; set stack
-	push 0x0 ; push SS
-	push rdx ; push BP
-	push 0x202 ; push RFLAGS
-	push 0x08 ; push CS
+	; push 0x0 ; push SS
+	; push rdx ; push BP
+	; push 0x202 ; push RFLAGS
+	; push 0x08 ; push CS
 	push rdi ; push _start
 	push 0x0
 	mov rdi, rsi ; main
