@@ -5,12 +5,12 @@ int endless_loop(int argc, char **argv){
   while(1);
 }
 
-#define MAX_PROCESSES 3
+#define MAX_PROCESSES 5
 
 typedef struct P_rq{
   uint32_t pid;
   process_status_et state;
-}p_rq;
+} p_rq;
 
 void test_processes(){
   p_rq p_rqs[MAX_PROCESSES];
@@ -24,7 +24,8 @@ void test_processes(){
         printf("Error creating process\n");              
         return;
       }else{
-
+        
+        printf("Creating process with pid: %d\n", p_rqs[rq].pid);
         p_rqs[rq].state = READY;
         alive++;
       }
@@ -41,6 +42,9 @@ void test_processes(){
                 printf("Error killing process\n");        
                 return;
               }
+              sys_set_text_color(WHITE);
+              printf("Deleting process with pid: %d\n", p_rqs[rq].pid);
+              sys_set_text_color(LIME);
               p_rqs[rq].state = KILLED; 
               alive--;
             }

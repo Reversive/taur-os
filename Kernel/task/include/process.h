@@ -12,7 +12,7 @@
 #endif
 
 #ifndef MAX_PROCESS_COUNT
-#define MAX_PROCESS_COUNT 50
+#define MAX_PROCESS_COUNT 100
 #endif
 
 #ifndef SUCCESS
