@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include "../task/include/process.h"
 #include "lib.h"
+#include "../sync/include/sem.h"
 
 /*#define MAXPIPES 10
 #define PIPESIZE 1000

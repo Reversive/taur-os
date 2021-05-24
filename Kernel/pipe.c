@@ -8,35 +8,40 @@ void blockProcessPipe(int * p, int pid);
 void releaseProcessesPipe(int * p);
 
 int pipeWrite(int index, char *addr, int n) {
-    while(pipes[index].usingPipe){// si el pipe esta siendo usado bloque este proceso y espero a que me desbloqueen para poder acceder al buffer
-        blockProcessPipe(pipes[index].wProcesses, get_current_pid());   
-        //sem.wait()
-    }
-    pipes[index].usingPipe = 1;
+    // bloqueo proceso
+    semWait(pipes[index].name);
+    // desbloqueo el proceso
     int i;
     for (i = 0; i < n && addr[i] != 0; i++) {
         pipes[index].data[pipes[index].nwrite++ % PIPESIZE] = addr[i];
     }
     pipes[index].data[pipes[index].nwrite % PIPESIZE] = -1;
-    pipes[index].usingPipe = 0;
-    //sem.post
-    releaseProcessesPipe(pipes[index].wProcesses);
+    
+    semPost(pipes[index].name);
     return i;
 }
 
+// process -->el que esta usando
+// bloq --->  
+
 int pipeRead(int index, char *addr, int n) {
-    while(pipes[index].usingPipe){// si el pipe esta siendo usado bloque este proceso y espero a que me desbloqueen para poder acceder al buffer
-        blockProcessPipe(pipes[index].rProcesses, get_current_pid());   
-        //sem.wait()
-    }
-    pipes[index].usingPipe = 1;
+    //if(pipes[index].isusing != NULL){
+        // me bloqueo
+    //}
+    
+    // bloqueo proceso
+    semWait(pipes[index].name);
+    //desbloqueo proceso
+    //_internal_print_string("after wait\n");
+    
     int i ;
     for (i = 0; i < n && pipes[index].data[pipes[index].nread % PIPESIZE] != -1; i++) {
         addr[i] = pipes[index].data[pipes[index].nread++ % PIPESIZE];
     }
-    pipes[index].usingPipe = 0;
-    //sem.post
-    releaseProcessesPipe(pipes[index].rProcesses);
+    semPost(pipes[index].name);
+    /*if(pipes[index].bloqProcesses!= NULL){
+        pipes[index].wProcesses
+    }*/
     addr[i] = 0;
     if (pipes[index].data[pipes[index].nread % PIPESIZE] == -1)
         pipes[index].data[pipes[index].nread % PIPESIZE] = 0;
@@ -98,6 +103,7 @@ int pipeOpen(char* name) {
     pipes[firstFree].created = 1;
     pipes[firstFree].usingPipe = 0;
     pipes[firstFree].waitingPid = -1;
+    semOpen(name, 1);
     my_strcpy(pipes[firstFree].name, name);
     //_internal_print_string("new pipe");
     //_internal_print_dec(firstFree);
@@ -137,6 +143,7 @@ void fill0(char* arr){
 char retpipes[MAXPIPES*100] = {0};
 
 char *pipesInfo() {
+    _internal_print_string("in pipe Info\n");
     fill0(retpipes);
     int cant = 0;
     char namePipe[10], brp[50] = {0}, bwp[50] = {0};

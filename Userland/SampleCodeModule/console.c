@@ -141,18 +141,6 @@ void print_execve_output(pid_t pid) {
 	}
 }
 
-int pr1(int argc, char **argv) {
-	char r[50];
-	int fd = atoi(argv[0]);
-	sys_read(fd, r, 30);
-	printf("Im process: %d this is what i read %s\n", sys_getpid() ,r);
-	//sys_pipe_close(fd);
-	while (1)
-	{
-		;
-	}
-	return 0;
-}
 void assign_module(char * str) {
 	if(command_equal(str, "help") ) {
 		help();
@@ -213,22 +201,7 @@ void assign_module(char * str) {
 		printf("%s\n", info);
 	}
 	else if(command_equal(str, "test_pipes")) {
-		int fd1 = sys_pipe_open("p1");
-		int fd2 = sys_pipe_open("p2");
-		int fd3 = sys_pipe_open("p3");
-		sys_write(fd1, "0", 2);
-		sys_write(fd2, "1", 2);
-		sys_write(fd3, "Hello, this is taur-os using pipes", 35);
-		printf("Im process: %d this is what i wrote: Hello, this is taur-os using pipes\n\n", sys_getpid());
-		char * info = sys_pipes_info();
-		printf("%s\n", info);
-		
-		param_list[0][0] = itoa(fd3, param_list[0][0], 10);
-		execv("pipe_test", pr1, param_list[0]);
-
-		sys_pipe_close(fd1);
-		sys_pipe_close(fd2);
-				
+		test_pipe();
 	}
 	
 	else if(command_equal(str, "sync_test")) {
