@@ -22,6 +22,11 @@ void help() {
 	printf("mm_test - Corre el test del Memory Manager.\n");
 	printf("pr_test - Corre el test de procesos.\n");
 	printf("prio_test - Corre el test de prioridades.\n");
+	printf("sync_test - Corre el test de sincronizacion de procesos con semaforos\n");
+	printf("no_sync_test - Corre el test de sincronizacion de procesos sin semaforos\n");
+	printf("sems - Informacion sobre todos los semaforos\n");
+	printf("pipes_test - Corre el test de los pipes\n");
+	printf("pipes - Muestra el estado de los pipes\n");
 	printf("endless - Crea un proceso que no termina.\n");
 	printf("ending - Crea un proceso que termina.\n");
 	printf("loop - Crea proceso loop donde imprime su PID con un saludo cada 2 segundos.\n");
@@ -30,11 +35,6 @@ void help() {
 	printf("nice <pid> <prio> - Cambia la prioridad de un proceso dado su PID y la nueva prioridad.\n");
 	printf("block <pid> - Cambia el estado de un proceso entre bloqueado y listo dado su PID.\n");
 	printf("mem_info - Muestra el estado actual de la memoria\n");
-	printf("pipes - Muestra el estado de los pipes\n");
-	printf("test_pipes - test de los pipes\n");
-	printf("sync_test - Corre el test de sincronizacion de procesos con semaforos\n");
-	printf("no_sync_test - Corre el test de sincronizacion de procesos sin semaforos\n");
-	printf("sems - Informacion sobre todos los semaforos\n");
 	return;
 }
 
@@ -189,7 +189,6 @@ void assign_module(char * str) {
 	}
 	else if(command_equal(str, "pr_test")) {
 		test_processes();
-		//execv("process_test", test_processes_main, (char*[]){NULL});
 	} 
 	else if(command_equal(str, "mem_info")) {
 		int * info = sys_mem_info();
@@ -200,7 +199,7 @@ void assign_module(char * str) {
 		char * info = sys_pipes_info();
 		printf("%s\n", info);
 	}
-	else if(command_equal(str, "test_pipes")) {
+	else if(command_equal(str, "pipes_test")) {
 		test_pipe();
 	}
 	
