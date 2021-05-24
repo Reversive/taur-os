@@ -12,6 +12,9 @@
 #include "../apps/include/test_mm.h"
 #include "../apps/include/test_processes.h"
 #include "../apps/include/test_prio.h"
+#include "../apps/include/wc.h"
+#include "../apps/include/filter.h"
+#include "../apps/include/cat.h"
 #include "unistd.h"
 #include "../apps/include/loop.h"
 

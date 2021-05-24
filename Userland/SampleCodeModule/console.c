@@ -5,6 +5,9 @@
 #include "basic_lib.h"
 #include "stdio.h"
 
+#define NO_PID -1
+#define MAX_SEMS 256
+#define MAX_PROC 50
 
 unsigned int console_num;
 unsigned int input_read_size = 0;
@@ -17,24 +20,28 @@ void help() {
 	printf("Comandos posibles:\n");
 	printf("help - Ver comandos.\n");
 	printf("time - Consultar hora del sistema.\n");
-	printf("inforeg - Estado de registros.\n");
-	printf("printmem 0xDIR - Volcado de memoria.\n");
-	printf("mm_test - Corre el test del Memory Manager.\n");
-	printf("pr_test - Corre el test de procesos.\n");
-	printf("prio_test - Corre el test de prioridades.\n");
-	printf("endless - Crea un proceso que no termina.\n");
-	printf("ending - Crea un proceso que termina.\n");
-	printf("loop - Crea proceso loop donde imprime su PID con un saludo cada 2 segundos.\n");
 	printf("ps - Lista los procesos actuales.\n");
 	printf("kill <pid> - Mata el proceso del PID especificado.\n");
 	printf("nice <pid> <prio> - Cambia la prioridad de un proceso dado su PID y la nueva prioridad.\n");
 	printf("block <pid> - Cambia el estado de un proceso entre bloqueado y listo dado su PID.\n");
+	printf("inforeg - Estado de registros.\n");
+	printf("endless - Crea un proceso que no termina.\n");
+	printf("ending - Crea un proceso que termina.\n");
+	printf("loop - Crea proceso loop donde imprime su PID con un saludo cada 2 segundos.\n");
+	printf("printmem 0xDIR - Volcado de memoria.\n");
 	printf("mem_info - Muestra el estado actual de la memoria\n");
 	printf("pipes - Muestra el estado de los pipes\n");
-	printf("test_pipes - test de los pipes\n");
+	printf("sems - Informacion sobre todos los semaforos\n");
+	printf("cat - Imprime el stdin tal como lo recibe\n");
+	printf("wc - Cuenta la cantidad de lineas del input\n");
+	printf("filter - Filtra las vocales del input\n");
+	printf("Tests:\n");
+	printf("pipes_test - test de los pipes\n");
+	printf("mm_test - Corre el test del Memory Manager.\n");
+	printf("pr_test - Corre el test de procesos.\n");
+	printf("prio_test - Corre el test de prioridades.\n");
 	printf("sync_test - Corre el test de sincronizacion de procesos con semaforos\n");
 	printf("no_sync_test - Corre el test de sincronizacion de procesos sin semaforos\n");
-	printf("sems - Informacion sobre todos los semaforos\n");
 	return;
 }
 
@@ -51,14 +58,10 @@ int ending_proc(int argc, char **argv) {
 	return 0;
 }
 
-#define NO_PID -1
-#define MAX_SEMS 256
-#define MAX_PROC 50
-
 void sems() {
 	semInfo_t * buffer = sys_malloc(sizeof(semInfo_t));
 	int semsCount = sys_sems_count();
-	if(semsCount-->0) {
+	if(semsCount>0) {
 		printf("%s\t%s\t%s\t%s\t%s\n","SEM_ID","NAME","VALUE","IS_LOCKED","BLOCKED_PROCESSES");
 		for(int idx=0; idx<semsCount; idx++) {
 			sys_sem_info(idx, buffer);
@@ -71,6 +74,8 @@ void sems() {
 				}
 			}
 		}
+	} else {
+		printf("No semaphores running.\n");
 	}
 }
 
@@ -153,6 +158,7 @@ int pr1(int argc, char **argv) {
 	}
 	return 0;
 }
+
 void assign_module(char * str) {
 	if(command_equal(str, "help") ) {
 		help();
@@ -212,7 +218,7 @@ void assign_module(char * str) {
 		char * info = sys_pipes_info();
 		printf("%s\n", info);
 	}
-	else if(command_equal(str, "test_pipes")) {
+	else if(command_equal(str, "pipes_test")) {
 		int fd1 = sys_pipe_open("p1");
 		int fd2 = sys_pipe_open("p2");
 		int fd3 = sys_pipe_open("p3");
@@ -230,7 +236,6 @@ void assign_module(char * str) {
 		sys_pipe_close(fd2);
 				
 	}
-	
 	else if(command_equal(str, "sync_test")) {
 		execv("sync_test", test_sync, (char*[]){NULL});
 	} 
@@ -239,6 +244,15 @@ void assign_module(char * str) {
 	}
 	else if(command_equal(str, "sems")) {
 		sems();
+	}
+	else if(command_equal(str, "wc")) {
+		execv("wc", wc, param_list[0]);
+	}
+	else if(command_equal(str, "cat")) {
+		execv("cat", cat, param_list[0]);
+	}
+	else if(command_equal(str, "filter")) {
+		execv("filer", filter, param_list[0]);
 	}
 	else {
 		printf("Ingrese un comando valido.\n");
@@ -258,6 +272,10 @@ unsigned int command_equal(char * str1, char * str2) {
     return eql;
     }
 
+unsigned int is_newline_char(char chr) {
+	return chr == '\n';
+}
+
 unsigned int console_finish_handler(char* input_buffer) {
 	input_buffer[input_read_size] = 0;
 	putchar('\n');
@@ -265,10 +283,6 @@ unsigned int console_finish_handler(char* input_buffer) {
 	input_read_size = 0;
 	input_buffer[0] = 0;
 	return 1;
-}
-
-unsigned int is_newline_char(char chr) {
-	return chr == '\n';
 }
 
 void console_key_handler(char input,char* input_buffer) {
@@ -283,4 +297,3 @@ void console_key_handler(char input,char* input_buffer) {
 		putchar(input);
 	}
 }
-

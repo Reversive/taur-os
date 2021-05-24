@@ -24,4 +24,5 @@ int scanf(char* source, char* format, ...);
 void hex_to_string(long num, char * buffer);
 char * strcpy(char* destination, const char* source);
 
+
 #endif
