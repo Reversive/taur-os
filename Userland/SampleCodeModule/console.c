@@ -113,16 +113,11 @@ void print_execve_output(pid_t pid) {
 }
 
 int pr1(int argc, char **argv) {
-	char r[6];
-	char big[1500];
-	for(int i= 0; i<1500; i++){
-		big[i] = 'a';
-	}
+	char r[50];
 	int fd = atoi(argv[0]);
-	sys_read(fd, r, 4);
-	sys_write(fd, big, 10);
-	printf("this is what i read %s\n", r);
-		
+	sys_read(fd, r, 30);
+	printf("Im process: %d this is what i read %s\n", sys_getpid() ,r);
+	//sys_pipe_close(fd);
 	while (1)
 	{
 		;
@@ -188,20 +183,22 @@ void assign_module(char * str) {
 		printf("%s\n", info);
 	}
 	else if(command_equal(str, "test_pipes")) {
-		printf("im going to open first pipe");
 		int fd1 = sys_pipe_open("p1");
 		int fd2 = sys_pipe_open("p2");
 		int fd3 = sys_pipe_open("p3");
 		sys_write(fd1, "0", 2);
 		sys_write(fd2, "1", 2);
-		sys_write(fd3, "hello", 5);
-		
+		sys_write(fd3, "Hello, this is taur-os using pipes", 35);
+		printf("Im process: %d this is what i wrote: Hello, this is taur-os using pipes\n\n", sys_getpid());
+		char * info = sys_pipes_info();
+		printf("%s\n", info);
 		
 		param_list[0][0] = itoa(fd3, param_list[0][0], 10);
-		pid_t pid1 = execv("pipe_test", pr1, param_list[0]);
+		execv("pipe_test", pr1, param_list[0]);
+
 		sys_pipe_close(fd1);
 		sys_pipe_close(fd2);
-		sys_pipe_close(fd3);
+		//
 				
 	}
 	 else {
