@@ -82,13 +82,13 @@ int lookPipe(char* name) {
 }
 
 int pipeOpen(char* name) {
-    _internal_print_string("pipe open\n");
+    //_internal_print_string("pipe open\n");
     int i;
     if((i = lookPipe(name)) != -1){
         // pipe already opened
-        _internal_print_string("pipe already open");
-        _internal_print_dec(i);
-        _internal_print_string("\n");
+        //_internal_print_string("pipe already open");
+        //_internal_print_dec(i);
+        //_internal_print_string("\n");
         return pipes[i].fd;
     }
     int firstFree = nextPipe();
@@ -99,9 +99,9 @@ int pipeOpen(char* name) {
     pipes[firstFree].usingPipe = 0;
     pipes[firstFree].waitingPid = -1;
     my_strcpy(pipes[firstFree].name, name);
-    _internal_print_string("new pipe");
-    _internal_print_dec(firstFree);
-    _internal_print_string("\n");
+    //_internal_print_string("new pipe");
+    //_internal_print_dec(firstFree);
+    //_internal_print_string("\n");
     return pipes[firstFree].fd; //devuelvo el file descriptor de mi pipe que sera el que use mi proceso para acceder al buffer
 }
 
@@ -172,17 +172,17 @@ void blockProcessPipe(int * p, int pid) {
     if (i == PROCESSES)
         return;
     p[i] = pid;
-    _internal_print_string("process blocked");
-    _internal_print_dec(pid);
-    _internal_print_string("\n");
+    //_internal_print_string("process blocked");
+    //_internal_print_dec(pid);
+    //_internal_print_string("\n");
     set_process_state(pid, BLOCKED);
 }
 
 void releaseProcessesPipe(int * p) {
     for (int i=0; i < PROCESSES && p[i] != 0;  i++) {
-        _internal_print_string("process ready");
-        _internal_print_dec(p[i]);
-        _internal_print_string("\n");
+        //_internal_print_string("process ready");
+        //_internal_print_dec(p[i]);
+        //_internal_print_string("\n");
         set_process_state(p[i], READY);
         p[i] = 0;
     }
