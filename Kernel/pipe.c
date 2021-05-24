@@ -5,12 +5,13 @@
 pipe_t pipes[MAXPIPES];
 
 void blockProcessPipe(int * p, int pid);
-void releaseProcessesPipe(int * p);
+void releaseProcessPipe(int * p, int pid);
 
 int pipeWrite(int index, char *addr, int n) {
-    // bloqueo proceso
+
+    blockProcessPipe(pipes[index].wProcesses, get_current_pid());
     semWait(pipes[index].name);
-    // desbloqueo el proceso
+    releaseProcessPipe(pipes[index].wProcesses, get_current_pid());
     int i;
     for (i = 0; i < n && addr[i] != 0; i++) {
         pipes[index].data[pipes[index].nwrite++ % PIPESIZE] = addr[i];
@@ -21,18 +22,13 @@ int pipeWrite(int index, char *addr, int n) {
     return i;
 }
 
-// process -->el que esta usando
-// bloq --->  
 
 int pipeRead(int index, char *addr, int n) {
-    //if(pipes[index].isusing != NULL){
-        // me bloqueo
-    //}
     
-    // bloqueo proceso
+    blockProcessPipe(pipes[index].rProcesses, get_current_pid());
     semWait(pipes[index].name);
-    //desbloqueo proceso
-    //_internal_print_string("after wait\n");
+    releaseProcessPipe(pipes[index].wProcesses, get_current_pid());
+    
     
     int i ;
     for (i = 0; i < n && pipes[index].data[pipes[index].nread % PIPESIZE] != -1; i++) {
@@ -175,22 +171,24 @@ char *pipesInfo() {
 
 void blockProcessPipe(int * p, int pid) {
     int i;
-    for(i = 0; i < PROCESSES && p[i] != 0; i++);
+    for(i = 0; i < PROCESSES && p[i] != 0; i++){
+        if(p[i] == pid){
+            set_process_state(pid, BLOCKED);
+            return;
+        }
+    }
     if (i == PROCESSES)
         return;
     p[i] = pid;
-    //_internal_print_string("process blocked");
-    //_internal_print_dec(pid);
-    //_internal_print_string("\n");
     set_process_state(pid, BLOCKED);
 }
 
-void releaseProcessesPipe(int * p) {
-    for (int i=0; i < PROCESSES && p[i] != 0;  i++) {
-        //_internal_print_string("process ready");
-        //_internal_print_dec(p[i]);
-        //_internal_print_string("\n");
-        set_process_state(p[i], READY);
-        p[i] = 0;
+void releaseProcessPipe(int * p, int pid) {
+    for (int i=0; i < PROCESSES ;  i++) {
+        if(p[i] == pid){
+            set_process_state(p[i], READY);
+            p[i] = 0;
+            return;
+        }
     }
 }

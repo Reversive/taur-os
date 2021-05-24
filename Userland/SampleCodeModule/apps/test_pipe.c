@@ -26,6 +26,7 @@ int pr2(int argc, char **argv) {
 		printf("Im process: %d this is what i read %s\n", sys_getpid() ,r);
         sys_write(fd, "Im pr2", 7);
     }
+    return 0;
 }
 
 char* params[] = {"9", NULL};
