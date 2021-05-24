@@ -4,47 +4,42 @@
 
 pipe_t pipes[MAXPIPES];
 
-
-void blockProcessPipe(int * p, int pid) {
-    int i;
-    for(i = 0; i < PROCESSES && p[i] != 0; i++);
-    if (i == PROCESSES)
-        return;
-    p[i] = pid;
-    set_process_state(pid, BLOCKED);
-}
-
-void releaseProcessesPipe(int * p) {
-    for (int i=0; i < PROCESSES && p[i] != 0;  i++) {
-        set_process_state(p[i], READY);
-        p[i] = 0;
-    }
-}
+void blockProcessPipe(int * p, int pid);
+void releaseProcessesPipe(int * p);
 
 int pipeWrite(int index, char *addr, int n) {
+    while(pipes[index].usingPipe){// si el pipe esta siendo usado bloque este proceso y espero a que me desbloqueen para poder acceder al buffer
+        blockProcessPipe(pipes[index].wProcesses, get_current_pid());   
+        //sem.wait()
+    }
+    pipes[index].usingPipe = 1;
     int i;
     for (i = 0; i < n && addr[i] != 0; i++) {
-        while (pipes[index].nwrite >= pipes[index].nread + PIPESIZE)
-            blockProcessPipe(pipes[index].wProcesses, get_current_pid());
         pipes[index].data[pipes[index].nwrite++ % PIPESIZE] = addr[i];
     }
     pipes[index].data[pipes[index].nwrite % PIPESIZE] = -1;
+    pipes[index].usingPipe = 0;
+    //sem.post
     releaseProcessesPipe(pipes[index].wProcesses);
     return i;
 }
 
 int pipeRead(int index, char *addr, int n) {
-    int i;
+    while(pipes[index].usingPipe){// si el pipe esta siendo usado bloque este proceso y espero a que me desbloqueen para poder acceder al buffer
+        blockProcessPipe(pipes[index].rProcesses, get_current_pid());   
+        //sem.wait()
+    }
+    pipes[index].usingPipe = 1;
+    int i ;
     for (i = 0; i < n && pipes[index].data[pipes[index].nread % PIPESIZE] != -1; i++) {
-        while (pipes[index].nread >= pipes[index].nwrite) {
-            blockProcessPipe(pipes[index].rProcesses, get_current_pid());
-        }
         addr[i] = pipes[index].data[pipes[index].nread++ % PIPESIZE];
     }
+    pipes[index].usingPipe = 0;
+    //sem.post
+    releaseProcessesPipe(pipes[index].rProcesses);
     addr[i] = 0;
     if (pipes[index].data[pipes[index].nread % PIPESIZE] == -1)
         pipes[index].data[pipes[index].nread % PIPESIZE] = 0;
-    releaseProcessesPipe(pipes[index].rProcesses);
     return i;
 }
 
@@ -54,6 +49,7 @@ int nextPipe() {
         aux++;
     return (aux == MAXPIPES) ? -1 : aux;
 }
+
 int my_strcmp(const char *X, const char *Y)
 {
     while (*X)
@@ -71,10 +67,12 @@ int my_strcmp(const char *X, const char *Y)
     // return the ASCII difference after converting `char*` to `unsigned char*`
     return *(const unsigned char*)X - *(const unsigned char*)Y;
 }
+
 int lookPipe(char* name) {
+
     for (int i = 0; i < MAXPIPES ; i++)
     {
-        if (my_strcmp(name, pipes[i].name))
+        if (my_strcmp(name, pipes[i].name) == 0)
         {
             return i;
         }
@@ -82,22 +80,29 @@ int lookPipe(char* name) {
     
     return -1;
 }
-int pipeOpen(char* name, int fd[2]) {
+
+int pipeOpen(char* name) {
+    _internal_print_string("pipe open\n");
     int i;
     if((i = lookPipe(name)) != -1){
         // pipe already opened
-        fd[0] = (i+1)*10;
-        fd[1] = fd[0] + 1;
-        return i;
+        _internal_print_string("pipe already open");
+        _internal_print_dec(i);
+        _internal_print_string("\n");
+        return pipes[i].fd;
     }
-    int aux = nextPipe();
-    if (aux == -1)
+    int firstFree = nextPipe();
+    if (firstFree == -1)
         return -1;
-    fd[0] = (aux+1)*10;
-    fd[1] = fd[0] + 1;
-    pipes[aux].created = 1;
-    my_strcpy(pipes[aux].name, name);
-    return aux;
+    pipes[firstFree].fd = firstFree+2;
+    pipes[firstFree].created = 1;
+    pipes[firstFree].usingPipe = 0;
+    pipes[firstFree].waitingPid = -1;
+    my_strcpy(pipes[firstFree].name, name);
+    _internal_print_string("new pipe");
+    _internal_print_dec(firstFree);
+    _internal_print_string("\n");
+    return pipes[firstFree].fd; //devuelvo el file descriptor de mi pipe que sera el que use mi proceso para acceder al buffer
 }
 
 void pipeClose(int index) {
@@ -111,11 +116,6 @@ void pipeClose(int index) {
     pipes[index].created = 0;
 }
 
-pipe_t * getPipe(int p) {
-    int aux = p/10 - 1;
-    return &pipes[aux];
-}
-
 void listBlockedProcesses(int * p, char * buf) {
     char pid[5]={0};
     for (int i = 0; i < PROCESSES; i++) {
@@ -127,22 +127,31 @@ void listBlockedProcesses(int * p, char * buf) {
     }
 }
 
+void fill0(char* arr){
+    int i =0;
+    while(arr[i]!= 0){
+        arr[i] = 0;
+    }
+}
+
 char retpipes[MAXPIPES*100] = {0};
+
 char *pipesInfo() {
+    fill0(retpipes);
     int cant = 0;
     char namePipe[10], brp[50] = {0}, bwp[50] = {0};
     for (int p=0; p < MAXPIPES; p++) {
         if (pipes[p].created != 0) {
             cant++;
-            itoa(p, namePipe, 10);
-            my_strcat(namePipe, pipes[p].name);
+            //itoa(p, namePipe, 10);
+            my_strcpy(namePipe, pipes[p].name);
             listBlockedProcesses(pipes[p].rProcesses, brp);
             listBlockedProcesses(pipes[p].wProcesses, bwp);
-            my_strcpy(retpipes, "Pipe: ");
+            my_strcat(retpipes, "Pipe: ");
             my_strcat(retpipes, namePipe);
             my_strcat(retpipes, "\n");
             my_strcat(retpipes, "State: ");
-            my_strcat(retpipes, pipes[p].data);
+            my_strcat(retpipes, pipes[p].data + (pipes[p].nread % PIPESIZE));
             my_strcat(retpipes, "\n");
             my_strcat(retpipes, "Blocked Read Processes: ");
             my_strcat(retpipes, brp);
@@ -155,4 +164,26 @@ char *pipesInfo() {
     if (cant == 0)
         my_strcpy(retpipes, "No pipes available\n");
     return retpipes;
+}
+
+void blockProcessPipe(int * p, int pid) {
+    int i;
+    for(i = 0; i < PROCESSES && p[i] != 0; i++);
+    if (i == PROCESSES)
+        return;
+    p[i] = pid;
+    _internal_print_string("process blocked");
+    _internal_print_dec(pid);
+    _internal_print_string("\n");
+    set_process_state(pid, BLOCKED);
+}
+
+void releaseProcessesPipe(int * p) {
+    for (int i=0; i < PROCESSES && p[i] != 0;  i++) {
+        _internal_print_string("process ready");
+        _internal_print_dec(p[i]);
+        _internal_print_string("\n");
+        set_process_state(p[i], READY);
+        p[i] = 0;
+    }
 }

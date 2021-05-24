@@ -3,11 +3,18 @@
 #include "../include/basic_lib.h"
 
 size_t sys_read(unsigned int fd, char * buffer, size_t length) {
-    return (size_t) _syscall(_SYSCALL_READ, fd, (uint64_t) buffer, length, 0, 0);
+    if(fd == 1){
+        return (size_t) _syscall(_SYSCALL_READ, fd, (uint64_t) buffer, length, 0, 0);
+    }
+    return _syscall(_SYSCALL_PIPE_READ, (uint64_t)(fd-2), (uint64_t)buffer, (uint64_t)length, 0, 0);
+
 }
 
 size_t sys_write(unsigned int fd, char * buffer, size_t length) {
-    return (size_t) _syscall(_SYSCALL_WRITE, fd, (uint64_t) buffer, length, 0, 0);
+    if(fd == 0){
+        return (size_t) _syscall(_SYSCALL_WRITE, fd, (uint64_t) buffer, length, 0, 0);
+    }
+    return (int)_syscall(_SYSCALL_PIPE_WRITE, (uint64_t) (fd-2), (uint64_t)buffer, (uint64_t)length, 0, 0);  
 }
 
 unsigned int sys_time(char format) {
@@ -99,17 +106,22 @@ void * sys_malloc(size_t size) {
 char * sys_pipes_info() {
     return (char *)_syscall(_SYSCALL_PIPE_INFO, 0, 0, 0, 0, 0);
 }
+
 int sys_pipe_write(int i, char* addr, int n) {
     return (int)_syscall(_SYSCALL_PIPE_WRITE, (uint64_t) i, (uint64_t)addr, (uint64_t)n, 0, 0);
 }
 int sys_pipe_read(int i , char* addr, int n) {
     return _syscall(_SYSCALL_PIPE_READ, (uint64_t)i, (uint64_t)addr, (uint64_t)n, 0, 0);
 }
-int sys_pipe_open(char* name, int fd[2]) {
+/*int sys_pipe_open(char* name, int fd[2]) {
     return (int)_syscall(_SYSCALL_PIPE_OPEN, (uint64_t)name, (uint64_t)fd, 0, 0, 0);
+}*/
+int sys_pipe_open(char* name) {
+    return (int)_syscall(_SYSCALL_PIPE_OPEN, (uint64_t)name, 0, 0, 0, 0);
 }
+
 void sys_pipe_close(int index) {
-    _syscall(_SYSCALL_PIPE_CLOSE, (int)index,0, 0, 0, 0);
+    _syscall(_SYSCALL_PIPE_CLOSE, (int)(index-2),0, 0, 0, 0);
 }
 int * sys_mem_info() {
     return (int *)_syscall(_SYSCALL_MEM_INFO, 0, 0, 0, 0, 0);

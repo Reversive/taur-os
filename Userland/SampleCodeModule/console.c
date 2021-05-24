@@ -28,10 +28,11 @@ void help() {
 	printf("block <pid> - Cambia el estado de un proceso entre bloqueado y listo dado su PID.\n");
 	printf("mem_info - Muestra el estado actual de la memoria\n");
 	printf("pipes - Muestra el estado de los pipes\n");
+	printf("test_pipes - test de los pipes\n");
 	return;
 }
 
-parameters param_list[PROGRAM_COUNT] = { { "Hola", NULL }, { "Hola", "Como Estas", NULL }};
+parameters param_list[PROGRAM_COUNT] = { { "9", NULL }, { "Hola", "Como Estas", NULL }};
 
 
 int endless_proc(int argc, char **argv) {
@@ -111,8 +112,23 @@ void print_execve_output(pid_t pid) {
 	}
 }
 
-
-
+int pr1(int argc, char **argv) {
+	char r[6];
+	char big[1500];
+	for(int i= 0; i<1500; i++){
+		big[i] = 'a';
+	}
+	int fd = atoi(argv[0]);
+	sys_read(fd, r, 4);
+	sys_write(fd, big, 10);
+	printf("this is what i read %s\n", r);
+		
+	while (1)
+	{
+		;
+	}
+	return 0;
+}
 void assign_module(char * str) {
 	if(command_equal(str, "help") ) {
 		help();
@@ -171,10 +187,28 @@ void assign_module(char * str) {
 		char * info = sys_pipes_info();
 		printf("%s\n", info);
 	}
+	else if(command_equal(str, "test_pipes")) {
+		printf("im going to open first pipe");
+		int fd1 = sys_pipe_open("p1");
+		int fd2 = sys_pipe_open("p2");
+		int fd3 = sys_pipe_open("p3");
+		sys_write(fd1, "0", 2);
+		sys_write(fd2, "1", 2);
+		sys_write(fd3, "hello", 5);
+		
+		
+		param_list[0][0] = itoa(fd3, param_list[0][0], 10);
+		pid_t pid1 = execv("pipe_test", pr1, param_list[0]);
+		sys_pipe_close(fd1);
+		sys_pipe_close(fd2);
+		sys_pipe_close(fd3);
+				
+	}
 	 else {
 		printf("Ingrese un comando valido.\n");
 	}
 }
+
 
 unsigned int command_equal(char * str1, char * str2) {
     while(*str1 == ' ')

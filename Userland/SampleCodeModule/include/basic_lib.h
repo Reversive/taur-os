@@ -42,7 +42,7 @@ int *sys_mem_info();
 char* sys_pipes_info();
 int sys_pipe_write(int i, char *addr, int n);
 int sys_pipe_read(int i, char *addr, int n);
-int sys_pipe_open(char *name, int *fd);
+int sys_pipe_open(char *name);
 void sys_pipe_close(int i);
 pid_t sys_create_process(char *name, main_function f, char **argv);
 pid_t sys_getpid();

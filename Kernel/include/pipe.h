@@ -19,7 +19,7 @@ typedef struct {
 
 int pipeWrite(int index, char *addr, int n);
 int pipeRead(int index, char *addr, int n);
-int pipeOpen(char* name, int fd[2]);
+int pipeOpen(char* name);
 void pipeClose(int index);
 char* pipesInfo();
 #endif

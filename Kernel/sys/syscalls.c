@@ -8,14 +8,18 @@ uint64_t syscall_read(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uin
     unsigned int fd = (unsigned int) rsi;
     char * buffer = (char *) rdx;
     size_t count = (size_t) rcx;
-    return read(fd, buffer, count);
+    if(fd == 1)
+        return read(fd, buffer, count);
+    return pipeWrite(fd-2, buffer, count);
 }
 
 uint64_t syscall_write(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
     unsigned int fd = (unsigned int) rsi;
     char * buffer = (char *) rdx;
     size_t count = (size_t) rcx;
-    return write(fd, buffer, count);
+    if(fd == 0)
+        return write(fd, buffer, count);
+    return pipeRead(fd, buffer, count);
 }
 
 uint64_t syscall_time(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
@@ -202,8 +206,7 @@ uint64_t syscall_pipe_read(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8
 uint64_t syscall_pipe_open(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
     
     char* name = (char*) rsi;
-    int* fd = (int*) rdx;
-    return (uint64_t)pipeOpen(name, fd);
+    return (uint64_t)pipeOpen(name);
 }
 uint64_t syscall_pipe_close(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
     int id = (int) rsi;
