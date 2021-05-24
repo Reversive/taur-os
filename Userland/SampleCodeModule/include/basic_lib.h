@@ -40,8 +40,6 @@ void * sys_malloc(size_t size);
 void sys_free(void * address);
 int *sys_mem_info();
 char* sys_pipes_info();
-int sys_pipe_write(int i, char *addr, int n);
-int sys_pipe_read(int i, char *addr, int n);
 int sys_pipe_open(char *name);
 void sys_pipe_close(int i);
 pid_t sys_create_process(char *name, main_function f, char **argv);
@@ -86,8 +84,6 @@ enum syscall_numbers {
     _SYSCALL_NICE,
     _SYSCALL_BLOCK,
     _SYSCALL_MEM_INFO,
-    _SYSCALL_PIPE_WRITE,
-    _SYSCALL_PIPE_READ,
     _SYSCALL_PIPE_OPEN,
     _SYSCALL_PIPE_INFO,
     _SYSCALL_PIPE_CLOSE,

@@ -199,7 +199,6 @@ void assign_module(char * str) {
 
 		sys_pipe_close(fd1);
 		sys_pipe_close(fd2);
-		//
 				
 	}
 	 else {

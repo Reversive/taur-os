@@ -54,8 +54,6 @@ enum syscall_numbers {
     _SYSCALL_NICE,
     _SYSCALL_BLOCK,
     _SYSCALL_MEM_INFO,
-    _SYSCALL_PIPE_WRITE,
-    _SYSCALL_PIPE_READ,
     _SYSCALL_PIPE_OPEN,
     _SYSCALL_PIPE_INFO,
     _SYSCALL_PIPE_CLOSE
@@ -97,9 +95,7 @@ syscall syscall_kill_process;
 syscall syscall_nice;
 syscall syscall_block;
 syscall syscall_mem_info;
-syscall syscall_pipe_write;
 syscall syscall_pipe_open;
-syscall syscall_pipe_read;
 syscall syscall_pipes_info;
 syscall syscall_pipe_close;
 

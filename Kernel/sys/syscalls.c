@@ -10,7 +10,7 @@ uint64_t syscall_read(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uin
     size_t count = (size_t) rcx;
     if(fd == 1)
         return read(fd, buffer, count);
-    return pipeWrite(fd-2, buffer, count);
+    return pipeRead(fd-2, buffer, count);
 }
 
 uint64_t syscall_write(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
@@ -19,7 +19,7 @@ uint64_t syscall_write(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, ui
     size_t count = (size_t) rcx;
     if(fd == 0)
         return write(fd, buffer, count);
-    return pipeRead(fd, buffer, count);
+    return pipeWrite(fd-2, buffer, count);
 }
 
 uint64_t syscall_time(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
@@ -187,24 +187,8 @@ uint64_t syscall_free(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uin
     return SUCCESS;
 }
 
-uint64_t syscall_pipe_write(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
-    
-    int id = (int) rsi;
-    char* addr = (char*) rdx;
-    int n = (int) rcx;
-    
-    return (uint64_t)pipeWrite(id, addr, n);
-}
-uint64_t syscall_pipe_read(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
-    
-    int id = (int) rsi;
-    char* addr = (char*) rdx;
-    int n = (int) rcx;
-    
-    return (uint64_t)pipeRead(id, addr, n);
-}
+
 uint64_t syscall_pipe_open(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
-    
     char* name = (char*) rsi;
     return (uint64_t)pipeOpen(name);
 }
@@ -255,21 +239,6 @@ uint64_t syscall_mem_info(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8,
     return (uint64_t) mem_info;
 }
 
-uint64_t syscall_sem_open(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
-
-}
-
-uint64_t syscall_sem_post(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
-
-}
-
-uint64_t syscall_sem_wait(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
-
-}
-
-uint64_t syscall_sem_close(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
-
-}
 
 int read(unsigned int fd, char * buffer, size_t count) {
     unsigned int bytes_read = 0;
