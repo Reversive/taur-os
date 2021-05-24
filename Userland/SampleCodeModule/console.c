@@ -160,15 +160,15 @@ void assign_module(char * str) {
 		sh_ps();
     }
 	else if(command_equal(str, "loop")) {
-		pid_t pid = execv("loop", loop, param_list[1]);
+		pid_t pid = execv("loop", loop, param_list[1], 1);
 		print_execve_output(pid);
 	}
 	else if(command_equal(str, "endless")) {
-		pid_t pid = execv("endless_proc", endless_proc, param_list[0]);
+		pid_t pid = execv("endless_proc", endless_proc, param_list[0], 1);
 		print_execve_output(pid);
 	}
 	else if(command_equal(str, "ending")) {
-		pid_t pid = execv("ending_proc", ending_proc, param_list[0]);
+		pid_t pid = execv("ending_proc", ending_proc, param_list[0], 1);
 		print_execve_output(pid);
 	}
 	else if(command_equal(str, "kill")) {
@@ -181,11 +181,11 @@ void assign_module(char * str) {
 		sh_block(str);
 	} 
 	else if(command_equal(str, "mm_test")) {
-		pid_t pid = execv("mm_test", main_test_mm, param_list[0]);
+		pid_t pid = execv("mm_test", main_test_mm, param_list[0], 1);
 		print_execve_output(pid);
 	}
 	else if(command_equal(str, "prio_test")) {
-		execv("prio_test", main_test_prio, (char*[]){NULL});
+		execv("prio_test", main_test_prio, (char*[]){NULL}, 1);
 	}
 	else if(command_equal(str, "pr_test")) {
 		test_processes();
@@ -205,10 +205,10 @@ void assign_module(char * str) {
 	}
 	
 	else if(command_equal(str, "sync_test")) {
-		execv("sync_test", test_sync, (char*[]){NULL});
+		execv("sync_test", test_sync, (char*[]){NULL}, 1);
 	} 
 	else if(command_equal(str, "no_sync_test")) {
-		execv("no_sync_test", test_no_sync, (char*[]){NULL});
+		execv("no_sync_test", test_no_sync, (char*[]){NULL}, 1);
 	}
 	else if(command_equal(str, "sems")) {
 		sems();

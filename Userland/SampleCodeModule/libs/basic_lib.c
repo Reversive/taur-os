@@ -114,8 +114,8 @@ int * sys_mem_info() {
 void sys_free(void * address) {
     _syscall(_SYSCALL_FREE, (uint64_t) address, 0, 0, 0, 0);
 }
-pid_t sys_create_process(char *name, main_function f, char **argv) {
-    return _syscall(_SYSCALL_CREATE_PROCESS, (uint64_t)name, (uint64_t)f, (uint64_t)argv, 0, 0);
+pid_t sys_create_process(char *name, main_function f, char **argv, int foreground) {
+    return _syscall(_SYSCALL_CREATE_PROCESS, (uint64_t)name, (uint64_t)f, (uint64_t)argv, (uint64_t)foreground, 0);
 }
 pid_t sys_getpid() {
     return _syscall(_SYSCALL_GET_PID, 0, 0, 0, 0, 0);

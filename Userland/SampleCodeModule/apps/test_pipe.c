@@ -45,8 +45,8 @@ void test_pipe(){
     sys_pipe_close(fd2);
 
     params[0] = itoa(fd3, params[0], 10);
-    execv("pipe_test", pr1, params);
-    execv("pipe_test", pr2, params);
+    execv("pipe_test", pr1, params, 1);
+    execv("pipe_test", pr2, params, 1);
     
     
 }

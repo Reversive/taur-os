@@ -47,7 +47,7 @@ void test_prio(){
   uint64_t i;
 
   for(i = 0; i < TOTAL_PROCESSES; i++)
-    pids[i] = execv("endless_loop", prio_endless_loop, (char*[]){NULL});
+    pids[i] = execv("endless_loop", prio_endless_loop, (char*[]){NULL}, 1);
 
   bussy_wait(WAIT);
   printf("\nCHANGING PRIORITIES...\n");

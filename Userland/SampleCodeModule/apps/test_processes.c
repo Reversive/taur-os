@@ -19,7 +19,7 @@ void test_processes(){
   uint8_t action;
   while (1) { 
     for(rq = 0; rq < MAX_PROCESSES; rq++){
-      p_rqs[rq].pid = execv("endless_loop", endless_loop, (char*[]){NULL});
+      p_rqs[rq].pid = execv("endless_loop", endless_loop, (char*[]){NULL}, 1);
       if (p_rqs[rq].pid == -1) {                          
         printf("Error creating process\n");              
         return;

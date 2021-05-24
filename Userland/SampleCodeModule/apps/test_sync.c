@@ -2,7 +2,7 @@
 #include "../include/console.h"
 #include "stdio.h"
 
-#define TOTAL_PAIR_PROCESSES 8
+#define TOTAL_PAIR_PROCESSES 3
 #define SEM_ID "sem"
 #define N "10"
 
@@ -31,7 +31,7 @@ void inc(uint64_t sem, int64_t value, uint64_t n){
 
   if (sem) sys_sem_close(SEM_ID);
   
-  printf("Final value: %d\n", global);
+  printf("[PROCESS %d] Final value: %d\n", sys_getpid(), global);
 }
 
 int inc_main(int argc, char **argv){
@@ -51,10 +51,10 @@ int test_sync(int argc, char **argv){
   
   int pid;
   for(i = 0; i < TOTAL_PAIR_PROCESSES; i++){
-    pid = execv("inc", (main_function) inc_main, arg1);
-    printf("PID1 %d\n",pid);
-    pid = execv("inc", (main_function) inc_main, arg2);
-    printf("PID2 %d\n",pid);
+    pid = execv("inc", (main_function) inc_main, arg1, 1);
+    printf("Created increment process %d\n", pid);
+    pid = execv("inc", (main_function) inc_main, arg2, 1);
+    printf("Created decrement process %d\n", pid);
   }
   return 0;
 }
@@ -71,11 +71,11 @@ int test_no_sync(int argc, char **argv){
   printf("CREATING PROCESSES...(WITHOUT SEM)\n");
 
   int pid;
-  for(i = 0; i < TOTAL_PAIR_PROCESSES; i++){
-    pid = execv("inc", (main_function) inc_main, arg1_no);
-    printf("PID1 %d\n",pid);
-    pid = execv("inc", (main_function) inc_main, arg2_no);
-    printf("PID2 %d\n",pid);
+  for(i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
+    pid = execv("inc", (main_function) inc_main, arg1_no, 1);
+    printf("Created increment process %d\n", pid);
+    pid = execv("inc", (main_function) inc_main, arg2_no, 1);
+    printf("Created decrement process %d\n", pid);
 
   }
   return 0;
