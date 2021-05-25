@@ -17,15 +17,14 @@ void test_processes(){
   uint8_t rq;
   uint8_t alive = 0;
   uint8_t action;
+  int times = 10;
   while (1) { 
     for(rq = 0; rq < MAX_PROCESSES; rq++){
-      p_rqs[rq].pid = execv("endless_loop", endless_loop, (char*[]){NULL}, 1);
+      p_rqs[rq].pid = execv("endless_loop", endless_loop, (char*[]){NULL}, 0);
       if (p_rqs[rq].pid == -1) {                          
         printf("Error creating process\n");              
         return;
       }else{
-        
-        printf("Creating process with pid: %d\n", p_rqs[rq].pid);
         p_rqs[rq].state = READY;
         alive++;
       }
@@ -42,9 +41,7 @@ void test_processes(){
                 printf("Error killing process\n");        
                 return;
               }
-              sys_set_text_color(WHITE);
-              printf("Deleting process with pid: %d\n", p_rqs[rq].pid);
-              sys_set_text_color(LIME);
+
               p_rqs[rq].state = KILLED; 
               alive--;
             }
@@ -72,6 +69,7 @@ void test_processes(){
         }
         
     } 
+    times--;
   }
 }
 
