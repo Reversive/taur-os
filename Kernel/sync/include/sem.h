@@ -12,22 +12,24 @@
 #define OUT_OF_BOUNDS -1
 #define ERROR -1
 
-typedef struct semInfo {
-    int semId;
+typedef struct {
+    int sem_id;
     char name[NAME_CHAR_LIMIT];
     uint64_t lock;   // lock
     uint64_t value;
-    uint64_t openCount;    // Counter of pending 'close' signals
-    uint64_t blockedProcesses[MAX_PROC];
-    uint64_t blockedFirst;
-    uint64_t blockedLast;
-} semInfo_t;
+    uint64_t open_count;    // Counter of pending 'close' signals
+    uint64_t blocked_processes[MAX_PROC];
+    uint64_t blocked_first;
+    uint64_t blocked_last;
+} sem_ts;
 
-int semOpen(char *semName, int initValue);
-int	semWait(char *semName);
-int semPost(char *semName);
-int semClose(char *semName);
-int getSemsCount();
-int getSemInfo(int idx, semInfo_t *buffer);
+typedef sem_ts *p_sem;
+
+int sem_open(char *name, int value);
+int	sem_wait(char *name);
+int sem_post(char *name);
+int sem_close(char *name);
+int get_sem_count();
+int get_sem_info(int idx, p_sem buffer);
 
 #endif

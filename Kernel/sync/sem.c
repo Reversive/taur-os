@@ -6,54 +6,52 @@
 #define NO_PID -1
 #define SUCCESS 1
 
-semInfo_t semaphores[MAX_SEMS];
+sem_ts semaphores[MAX_SEMS];
 
-int semInit(char *semName, int initValue);
-int getSemByName(char *semName);
-int getNewSem();
-bool isInUse(int idx);
-void updateSemProcesses(semInfo_t * sem);
+int sem_init(char *name, int value);
+int get_sem_by_name(char *name);
+int get_new_sem();
+bool is_in_use(int idx);
+void update_sem_processes(p_sem sem);
 
-// ---------------------------------------------------------------------------------------- //
-
-int semOpen(char *semName, int initValue) {
-    int idx = getSemByName(semName);
+int sem_open(char *name, int value) {
+    int idx = get_sem_by_name(name);
     if(idx == OUT_OF_BOUNDS) {
-        if((idx = semInit(semName, initValue)) == OUT_OF_BOUNDS) {
+        if((idx = sem_init(name, value)) == OUT_OF_BOUNDS) {
             return ERROR;
         }
     }
-    semInfo_t * sem = &semaphores[idx];
+    p_sem sem = &semaphores[idx];
     int count;
-    do count = sem->openCount; 
-    while(_cmpxchg(&sem->openCount, count+1, count) != count);  // Atomic add
+    do count = sem->open_count; 
+    while(_cmpxchg(&sem->open_count, count+1, count) != count);  // Atomic add
     return SUCCESS;
 }
 
-int	semWait(char *semName) {
+int	sem_wait(char *name) {
 
     // This macro guarantees that only one semaphore satifies it,
     // because only one sem has the lock and a value greater than zero.
     // The last part (by lazy OR) frees the lock if the value is less than zero.
     #define cond (!_xchg(&sem->lock, 1) && (sem->value > 0 || (sem->lock = 0)))
 
-    int idx = getSemByName(semName);
+    int idx = get_sem_by_name(name);
     if(idx == OUT_OF_BOUNDS) {
         return ERROR;
     }
-    semInfo_t * sem = &semaphores[idx];
+    p_sem sem = &semaphores[idx];
     while(!cond) {                          // Sleeping loop
         int pid = get_current_pid();
         scheduler_disable();                // From here it can't change the process => No race conditions
         // set_process_state(pid, BLOCKED); // DISABLED. It used to block the current process
         uint64_t last;
         do {                                // Searchs for a place in the list of blocked processes, and adds itself
-            last = sem->blockedLast;
-            sem->blockedProcesses[last % MAX_PROC] = pid;
+            last = sem->blocked_last;
+            sem->blocked_processes[last % MAX_PROC] = pid;
         }
-        while(_cmpxchg(&sem->blockedLast, last+1, last) != last);   // Atomic add
+        while(_cmpxchg(&sem->blocked_last, last+1, last) != last);   // Atomic add
         if(cond) {                          // Checks changes (they could be made by interrupts)
-            while((last = sem->blockedLast) - sem->blockedFirst > 0 && _cmpxchg(&sem->blockedLast, last-1, last) != last);  // The difference between the counters is the quantity of blocked processes. Atomic decrement of last
+            while((last = sem->blocked_last) - sem->blocked_first > 0 && _cmpxchg(&sem->blocked_last, last-1, last) != last);  // The difference between the counters is the quantity of blocked processes. Atomic decrement of last
             set_process_state(pid, READY);  // Unlocks the process
             scheduler_enable();             // Unlocks the scheduler
             break;
@@ -68,53 +66,53 @@ int	semWait(char *semName) {
     #undef cond
 }
 
-int semPost(char *semName) {
-    int idx = getSemByName(semName);
+int sem_post(char *name) {
+    int idx = get_sem_by_name(name);
     if(idx == OUT_OF_BOUNDS) {
         return ERROR;
     }
-    semInfo_t * sem = &semaphores[idx];
+    p_sem sem = &semaphores[idx];
     scheduler_disable();
     uint64_t value;
     do value = sem->value;
     while(_cmpxchg(&sem->value, value+1, value) != value);
-    updateSemProcesses(sem);    // Unblock the first process and update the array
+    update_sem_processes(sem);    // Unblock the first process and update the array
     scheduler_enable();
     return SUCCESS;
 }
 
-int semClose(char *semName) {
-    int idx = getSemByName(semName);
+int sem_close(char *name) {
+    int idx = get_sem_by_name(name);
     if(idx == OUT_OF_BOUNDS) {
         return ERROR;
     }
-    semInfo_t * sem = &semaphores[idx];
-    sem->openCount--;
-    if(sem->openCount == 0) {     // If it was closed by everyone, 'free' the sem
-        sem->semId = 2*idx;
+    p_sem sem = &semaphores[idx];
+    sem->open_count--;
+    if(sem->open_count == 0) {     // If it was closed by everyone, 'free' the sem
+        sem->sem_id = 2*idx;
         my_strcpy(sem->name, "");
     }
     return SUCCESS;
 }
 
-int getSemInfo(int idx, semInfo_t *buffer) {
+int get_sem_info(int idx, p_sem buffer) {
     if (idx < 0 || idx >= MAX_SEMS) {
         return ERROR;
     }
-    buffer->semId = semaphores[idx].semId;
+    buffer->sem_id = semaphores[idx].sem_id;
 	my_strcpy(buffer->name, semaphores[idx].name);
 	buffer->value = semaphores[idx].value;
-	for (int j = 0; j < semaphores[idx].openCount; j++)	{
-		buffer->blockedProcesses[j] = semaphores[idx].blockedProcesses[j];
-		buffer->openCount++;
+	for (int j = 0; j < semaphores[idx].open_count; j++)	{
+		buffer->blocked_processes[j] = semaphores[idx].blocked_processes[j];
+		buffer->open_count++;
 	}
     return SUCCESS;
 }
 
-int getSemsCount() {
+int get_sem_count() {
     int counter = 0;
     for(int idx = 0; idx < MAX_SEMS; idx++) {
-        if(isInUse(semaphores[idx].semId)) {
+        if(is_in_use(semaphores[idx].sem_id)) {
             counter++;
         }
     }
@@ -123,56 +121,56 @@ int getSemsCount() {
 
 // -------------------------------- PRIVATE FUNCTIONS ------------------------------------- //
 
-bool isInUse(int idx) {
+bool is_in_use(int idx) {
     return idx%2 != 0 ? true : false;   // If the ID is even, the sem has not been initialized
 }
 
-int getNewSem() {
+int get_new_sem() {
     for(int idx = 0; idx < MAX_SEMS; idx++) {
-        if(!isInUse(idx)) {
+        if(!is_in_use(idx)) {
             return idx;
         }
     }
     return OUT_OF_BOUNDS;
 }
 
-int semInit(char *semName, int initValue) {
-    int idx = getNewSem();
+int sem_init(char *name, int value) {
+    int idx = get_new_sem();
     if(idx == OUT_OF_BOUNDS) {          // No more sems available
         return ERROR;
     }
-    semaphores[idx].semId = idx*2+1;    // The ID will be odd
-    semaphores[idx].openCount = 0;      // The sem has never been 'opened' yet
-    semaphores[idx].value = initValue;
-    semaphores[idx].blockedFirst = 0;
-    semaphores[idx].blockedLast = 0;
+    semaphores[idx].sem_id = idx*2+1;    // The ID will be odd
+    semaphores[idx].open_count = 0;      // The sem has never been 'opened' yet
+    semaphores[idx].value = value;
+    semaphores[idx].blocked_first = 0;
+    semaphores[idx].blocked_last = 0;
     semaphores[idx].lock = 0;
 
-    my_strcpy(semaphores[idx].name, semName);
+    my_strcpy(semaphores[idx].name, name);
     for(int i = 0; i < MAX_PROC; i++) {
-        semaphores[idx].blockedProcesses[i] = NO_PID;   // Later, the PIDs of the blocked processes will be here
+        semaphores[idx].blocked_processes[i] = NO_PID;   // Later, the PIDs of the blocked processes will be here
     }
     return SUCCESS;
 }
 
-int getSemByName(char *semName) {
+int get_sem_by_name(char *name) {
     for(int idx = 0; idx < MAX_SEMS; idx++) {
-        if(strcomp(semaphores[idx].name,semName) == 0 && isInUse(semaphores[idx].semId)) {
+        if(strcomp(semaphores[idx].name,name) == 0 && is_in_use(semaphores[idx].sem_id)) {
             return idx;
         }
     }
     return OUT_OF_BOUNDS;
 }
 
-void updateSemProcesses(semInfo_t * sem) {
+void update_sem_processes(p_sem sem) {
     uint64_t idx;
     bool awake = true;
-    while(sem->blockedLast - (idx = sem->blockedFirst) > 0 || (awake = false)) {
-        if(_cmpxchg(&sem->blockedFirst, idx + 1, idx) == idx)
+    while(sem->blocked_last - (idx = sem->blocked_first) > 0 || (awake = false)) {
+        if(_cmpxchg(&sem->blocked_first, idx + 1, idx) == idx)
             break;
     }
     if(awake) {
-        int pid = sem->blockedProcesses[idx % MAX_PROC];  // First process blocked by sem
+        int pid = sem->blocked_processes[idx % MAX_PROC];  // First process blocked by sem
         set_process_state(pid, READY);                    // Unblock first process
     }
 }

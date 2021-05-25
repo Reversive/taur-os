@@ -91,7 +91,6 @@ pid_t create_process(char *name, address_t main, char **argv, size_t stack_size,
     processes[process->pid] = process;
     thread_st *thread = create_thread(main, argv, stack_size, process->threads, process->pid);
     if(thread == NULL) {
-        _internal_print_string("Falle en malloc thread");
         free_process(process->pid);
         return NOT_ENOUGH_MEMORY;
     }
