@@ -37,6 +37,7 @@ void help() {
 	printf("cat - Imprime el stdin tal como lo recibe\n");
 	printf("wc - Cuenta la cantidad de lineas del input\n");
 	printf("filter - Filtra las vocales del input\n");
+	printf("philo - Implementa el problema de los filosofos comensales\n");
 	printf("Tests:\n");
 	printf("pipes_test - test de los pipes\n");
 	printf("mm_test - Corre el test del Memory Manager.\n");
@@ -228,13 +229,16 @@ void assign_module(char * str) {
 		sems();
 	}
 	else if(command_equal(str, "wc")) {
-		execv("wc", wc, param_list[0], in_foreground);
+		execv("wc", wc, (char*[]){NULL}, in_foreground);
 	}
 	else if(command_equal(str, "cat")) {
-		execv("cat", cat, param_list[0], in_foreground);
+		execv("cat", cat, (char*[]){NULL}, in_foreground);
 	}
 	else if(command_equal(str, "filter")) {
-		execv("filer", filter, param_list[0], in_foreground);
+		execv("filer", filter, (char*[]){NULL}, in_foreground);
+	}
+	else if(command_equal(str, "philo")) {
+		execv("philo", philos, (char*[]){NULL}, 0);
 	}
 	else {
 		printf("Ingrese un comando valido.\n");
@@ -264,14 +268,32 @@ unsigned int is_newline_char(char chr) {
 	return chr == '\n';
 }
 
+int pipe_function(char* input){
+	char * found = strchr (input, '|');
+	if(found == 0)
+		return -1;
+	*found = 0;
+	// TODO: LLENAR CON ZEROS
+	char left[found - input];
+	char right[strlen(input) - (found- input)];
+	strcpy(left, input);
+	strcpy(right, found);
+	return 0;
+
+}
+
 unsigned int console_finish_handler(char* input_buffer) {
 	input_buffer[input_read_size] = 0;
 	putchar('\n');
-	assign_module(input_buffer);
+
+	if(pipe_function(input_buffer) == -1)
+		assign_module(input_buffer);
+
 	input_read_size = 0;
 	input_buffer[0] = 0;
 	return 1;
 }
+
 
 void console_key_handler(char input,char* input_buffer) {
 	if( input == ESC_ASCII) {
