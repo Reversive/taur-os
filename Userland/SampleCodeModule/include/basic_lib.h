@@ -57,7 +57,7 @@ int *sys_mem_info();
 char* sys_pipes_info();
 int sys_pipe_open(char *name);
 void sys_pipe_close(int i);
-pid_t sys_create_process(char *name, main_function f, char **argv);
+pid_t sys_create_process(char *name, main_function f, char **argv, int foreground);
 pid_t sys_getpid();
 pid_t sys_kill_process(pid_t pid);
 pid_t sys_set_niceness(pid_t pid, int priority);

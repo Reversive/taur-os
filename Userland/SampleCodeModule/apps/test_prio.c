@@ -1,10 +1,13 @@
 #include "./include/test_prio.h"
 
+#define TOTAL_PROCESSES 3
+int dead = 0;
+
 uint64_t my_getpid(){
   return sys_getpid();
 }
 
-uint64_t my_nice(uint64_t pid, uint64_t newPrio){
+uint64_t my_nice(uint64_t pid, uint64_t newPrio) {
   return sys_set_niceness(pid, newPrio);
 }
 
@@ -25,24 +28,26 @@ void bussy_wait(uint64_t n){
   for (i = 0; i < n; i++);
 }
 
-int prio_endless_loop(int argc, char **argv){
+int prio_endless_loop(int argc, char **argv) {
+  
   uint64_t pid = my_getpid();
 
   while(1){
+    if(dead) return 0;
     printf("%d ",pid);
     bussy_wait(MINOR_WAIT);
   }
   return 0;
 }
 
-#define TOTAL_PROCESSES 3
+
 
 void test_prio(){
   uint64_t pids[TOTAL_PROCESSES];
   uint64_t i;
 
   for(i = 0; i < TOTAL_PROCESSES; i++)
-    pids[i] = execv("endless_loop", prio_endless_loop, (char*[]){NULL});
+    pids[i] = execv("endless_loop", prio_endless_loop, (char*[]){NULL}, 1);
 
   bussy_wait(WAIT);
   printf("\nCHANGING PRIORITIES...\n");
@@ -90,8 +95,10 @@ void test_prio(){
   bussy_wait(WAIT);
   printf("\nKILLING...\n");
 
-  for(i = 0; i < TOTAL_PROCESSES; i++)
+  for(i = 0; i < TOTAL_PROCESSES; i++) {
+    dead = !dead;
     my_kill(pids[i]);
+  }
 }
 
 int main_test_prio(int argc, char **argv) {

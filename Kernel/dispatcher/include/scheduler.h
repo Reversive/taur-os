@@ -30,5 +30,6 @@ void initialize_scheduler();
 thread_st *get_current_thread();
 void scheduler_enable();
 void scheduler_disable();
+int get_foreground_pid();
 
 #endif

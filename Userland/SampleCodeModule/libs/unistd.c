@@ -3,8 +3,8 @@
 #include "../include/unistd.h"
 
 
-pid_t execv(char *name, main_function f, char **argv) {
-    return sys_create_process(name, f, argv);
+pid_t execv(char *name, main_function f, char **argv, int foreground) {
+    return sys_create_process(name, f, argv, foreground);
 }
 
 pid_t getpid() {

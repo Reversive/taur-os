@@ -72,7 +72,7 @@ void free_process(pid_t pid) {
     processes[pid] = NULL;
 }
 
-pid_t create_process(char *name, address_t main, char **argv, size_t stack_size, size_t heap_size, int prio) {
+pid_t create_process(char *name, address_t main, char **argv, size_t stack_size, size_t heap_size, int prio, int foreground) {
     pid_t pid = get_available_pid();
     if(pid == UNAVAILABLE || main == NULL) return UNAVAILABLE;
     process_st *process = (process_st *) malloc(sizeof(process_st));
@@ -80,7 +80,7 @@ pid_t create_process(char *name, address_t main, char **argv, size_t stack_size,
     process->pid = pid;
     process->status = READY;
     process->priority = prio;
-    process->foreground = 1;
+    process->foreground = foreground;
     if(set_process_name(process, name) == NOT_ENOUGH_MEMORY) {
         free_process(process->pid);
         return NOT_ENOUGH_MEMORY;

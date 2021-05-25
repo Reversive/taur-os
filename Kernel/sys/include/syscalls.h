@@ -4,7 +4,7 @@
 #include "../../drivers/keyboard/include/keyboard.h"
 #include "../../drivers/shell/include/shell.h"
 #include "../../include/lib.h"
-#include "../../task/include/process.h"
+#include "../../dispatcher/include/scheduler.h"
 #include "../../mem/include/mm.h"
 #include "../../mem/include/buddy.h"
 #include "../../sync/include/sem.h"

@@ -12,7 +12,7 @@
 #endif
 
 #ifndef MAX_PROCESS_COUNT
-#define MAX_PROCESS_COUNT 50
+#define MAX_PROCESS_COUNT 100
 #endif
 
 #ifndef SUCCESS
@@ -29,7 +29,7 @@
 
 extern int is_forcing;
 extern process_st *processes[MAX_PROCESS_COUNT];
-pid_t create_process(char *name, address_t main, char **argv, size_t stack_size, size_t heap_size, int prio);
+pid_t create_process(char *name, address_t main, char **argv, size_t stack_size, size_t heap_size, int prio, int foreground);
 pid_t get_available_pid();
 int kill_process(pid_t pid, size_t return_value);
 process_status_et get_process_state(pid_t pid);

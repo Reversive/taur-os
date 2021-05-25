@@ -8,6 +8,7 @@ scheduler_ts *scheduler;
 size_t current_quantum = START;
 int first_appearence = YES;
 uint64_t disable_count = 0;
+pid_t foreground_pid = START;
 
 int cmp(void * p1, void * p2) {
     return !(p1 == p2);
@@ -60,6 +61,10 @@ int get_current_pid() {
     return current_thread->pid;
 }
 
+int get_foreground_pid() {
+    return foreground_pid;
+}
+
 void initialize_scheduler() {
     current_thread = NULL;
     scheduler = init_no_prio_round_robin(BURST_TIME);
@@ -93,7 +98,9 @@ void *schedule_handler(void *_rsp) {
         return current_thread->stack.current;
     }
 
+    
     process_st *p = get_process_by_id(current_thread->pid);
+    if(p->foreground) foreground_pid = p->pid;
 
     if(p->status == KILLED) {
         rrnp_remove(scheduler, current_thread);

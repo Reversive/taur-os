@@ -5,26 +5,26 @@ int endless_loop(int argc, char **argv){
   while(1);
 }
 
-#define MAX_PROCESSES 3
+#define MAX_PROCESSES 5
 
 typedef struct P_rq{
   uint32_t pid;
   process_status_et state;
-}p_rq;
+} p_rq;
 
 void test_processes(){
   p_rq p_rqs[MAX_PROCESSES];
   uint8_t rq;
   uint8_t alive = 0;
   uint8_t action;
+  int times = 10;
   while (1) { 
     for(rq = 0; rq < MAX_PROCESSES; rq++){
-      p_rqs[rq].pid = execv("endless_loop", endless_loop, (char*[]){NULL});
+      p_rqs[rq].pid = execv("endless_loop", endless_loop, (char*[]){NULL}, 0);
       if (p_rqs[rq].pid == -1) {                          
         printf("Error creating process\n");              
         return;
       }else{
-
         p_rqs[rq].state = READY;
         alive++;
       }
@@ -41,6 +41,7 @@ void test_processes(){
                 printf("Error killing process\n");        
                 return;
               }
+
               p_rqs[rq].state = KILLED; 
               alive--;
             }
@@ -68,6 +69,7 @@ void test_processes(){
         }
         
     } 
+    times--;
   }
 }
 
