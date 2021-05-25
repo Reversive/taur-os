@@ -9,6 +9,7 @@
 unsigned int console_num;
 unsigned int input_read_size = 0;
 int rotation = 0;
+int in_foreground = 1;
 
 
 char data[136];
@@ -160,15 +161,15 @@ void assign_module(char * str) {
 		sh_ps();
     }
 	else if(command_equal(str, "loop")) {
-		pid_t pid = execv("loop", loop, param_list[1], 1);
+		pid_t pid = execv("loop", loop, param_list[1], in_foreground);
 		print_execve_output(pid);
 	}
 	else if(command_equal(str, "endless")) {
-		pid_t pid = execv("endless_proc", endless_proc, param_list[0], 1);
+		pid_t pid = execv("endless_proc", endless_proc, param_list[0], in_foreground);
 		print_execve_output(pid);
 	}
 	else if(command_equal(str, "ending")) {
-		pid_t pid = execv("ending_proc", ending_proc, param_list[0], 1);
+		pid_t pid = execv("ending_proc", ending_proc, param_list[0], in_foreground);
 		print_execve_output(pid);
 	}
 	else if(command_equal(str, "kill")) {
@@ -181,11 +182,11 @@ void assign_module(char * str) {
 		sh_block(str);
 	} 
 	else if(command_equal(str, "mm_test")) {
-		pid_t pid = execv("mm_test", main_test_mm, param_list[0], 1);
+		pid_t pid = execv("mm_test", main_test_mm, param_list[0], in_foreground);
 		print_execve_output(pid);
 	}
 	else if(command_equal(str, "prio_test")) {
-		execv("prio_test", main_test_prio, (char*[]){NULL}, 1);
+		execv("prio_test", main_test_prio, (char*[]){NULL}, in_foreground);
 	}
 	else if(command_equal(str, "pr_test")) {
 		test_processes();
@@ -202,12 +203,11 @@ void assign_module(char * str) {
 	else if(command_equal(str, "pipes_test")) {
 		test_pipe();
 	}
-	
 	else if(command_equal(str, "sync_test")) {
-		execv("sync_test", test_sync, (char*[]){NULL}, 1);
+		execv("sync_test", test_sync, (char*[]){NULL}, in_foreground);
 	} 
 	else if(command_equal(str, "no_sync_test")) {
-		execv("no_sync_test", test_no_sync, (char*[]){NULL}, 1);
+		execv("no_sync_test", test_no_sync, (char*[]){NULL}, in_foreground);
 	}
 	else if(command_equal(str, "sems")) {
 		sems();
@@ -221,14 +221,19 @@ void assign_module(char * str) {
 unsigned int command_equal(char * str1, char * str2) {
     while(*str1 == ' ')
         str1++;
+	
+	for(int i = 0; str1[i] != 0; i++) {
+		if(str1[i] == '&') in_foreground = 0;
+	}
     int eql = 1, i;
     for(i = 0; str2[i] != 0; i++)
         if(str1[i] != str2[i])
             eql = 0;
     if(str1[i] != 0 && str1[i] != ' ')
         eql = 0;
+	
     return eql;
-    }
+}
 
 unsigned int console_finish_handler(char* input_buffer) {
 	input_buffer[input_read_size] = 0;
