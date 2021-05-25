@@ -4,6 +4,7 @@
 #include "apps/include/test_sync.h"
 #include "basic_lib.h"
 #include "stdio.h"
+#include <stdint.h>
 
 #define NO_PID -1
 #define MAX_SEMS 256
@@ -59,20 +60,30 @@ int ending_proc(int argc, char **argv) {
 	return 0;
 }
 
+void mem_info(uint64_t total, uint64_t free) {
+	printf("ESTADO DE LA MEMORIA\n");
+	printf("%s %d\t%s %d\t%s %d\n","TOTAL",total,"LIBRE",free,"OCUPADA",total-free);
+}
+
 void sems() {
 	semInfo_t * buffer = sys_malloc(sizeof(semInfo_t));
 	int semsCount = sys_sems_count();
 	if(semsCount>0) {
-		printf("%s\t%s\t%s\t%s\t%s\n","SEM_ID","NAME","VALUE","IS_LOCKED","BLOCKED_PROCESSES");
+		char tmp[10][2];
+		printf("%10s%10s%10s%16s%s\n","SEM_ID","NAME","VALUE","IS_LOCKED","BLOCKED_PIDS");
 		for(int idx=0; idx<semsCount; idx++) {
 			sys_sem_info(idx, buffer);
-			printf("%d\t\t%s\t\t%d\t\t%d\t\t",buffer->semId,buffer->name,buffer->value,buffer->lock);
+			printf("%10s%10s%10s%16s",	itoa((uint64_t)buffer->semId, tmp[0], 10),
+										buffer->name,
+										itoa((uint64_t)buffer->value, tmp[1], 10),
+										buffer->lock ? "NO":"YES");
 			if(buffer->blockedProcesses[0] != NO_PID) {
-				printf("%d\n",buffer->blockedProcesses[0]);
+				printf("{ %d ",buffer->blockedProcesses[0]);
 				int cantBlockProc = (buffer->blockedLast)%MAX_PROC - (buffer->blockedFirst)%MAX_PROC;
 				for(int i=1; i<cantBlockProc; i++) {
-					printf("\t\t\t\t%d\n",buffer->blockedProcesses[i]);
+					printf("%d ",buffer->blockedProcesses[i]);
 				}
+				printf("}\n");
 			}
 		}
 	} else {
@@ -194,12 +205,11 @@ void assign_module(char * str) {
 		execv("prio_test", main_test_prio, (char*[]){NULL}, in_foreground);
 	}
 	else if(command_equal(str, "pr_test")) {
-		execv("pr_test", test_processes, (char*[]){NULL}, in_foreground);
+		execv("pr_test", test_processes_main, (char*[]){NULL}, in_foreground);
 	} 
 	else if(command_equal(str, "mem_info")) {
 		int * info = sys_mem_info();
-		printf("ESTADO DE LA MEMORIA\nTOTAL\t\t LIBRE\t\t OCUPADA\n");
-		printf("%d\t\t%d\t\t%d\n", info[0], info[1], info[0] - info[1]);
+		mem_info(info[0], info[1]);
 	}
 	else if(command_equal(str, "pipes")) {
 		char * info = sys_pipes_info();
@@ -218,13 +228,13 @@ void assign_module(char * str) {
 		sems();
 	}
 	else if(command_equal(str, "wc")) {
-		execv("wc", wc, param_list[0]);
+		execv("wc", wc, param_list[0], in_foreground);
 	}
 	else if(command_equal(str, "cat")) {
-		execv("cat", cat, param_list[0]);
+		execv("cat", cat, param_list[0], in_foreground);
 	}
 	else if(command_equal(str, "filter")) {
-		execv("filer", filter, param_list[0]);
+		execv("filer", filter, param_list[0], in_foreground);
 	}
 	else {
 		printf("Ingrese un comando valido.\n");
@@ -233,8 +243,9 @@ void assign_module(char * str) {
 
 
 unsigned int command_equal(char * str1, char * str2) {
-    while(*str1 == ' ')
+    while(*str1 == ' ') {
         str1++;
+	}
 	
 	for(int i = 0; str1[i] != 0; i++) {
 		if(str1[i] == '&') in_foreground = 0;
