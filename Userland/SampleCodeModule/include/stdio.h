@@ -23,6 +23,7 @@ int printf(char * fmt, ...);
 int scanf(char* source, char* format, ...);
 void hex_to_string(long num, char * buffer);
 char * strcpy(char* destination, const char* source);
+char * strchr (register const char *s, int c);
 
 
 #endif
