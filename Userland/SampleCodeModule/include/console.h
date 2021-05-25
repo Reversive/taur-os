@@ -15,12 +15,12 @@
 #include "../apps/include/wc.h"
 #include "../apps/include/filter.h"
 #include "../apps/include/cat.h"
-#include "../apps/include/philo.h"
+//#include "../apps/include/philo.h"
 #include "../apps/include/test_pipe.h"
 #include "unistd.h"
 #include "../apps/include/loop.h"
 
-#define PROGRAM_COUNT 2
+#define PROGRAM_COUNT 3
 typedef char *parameters[MAX_ARGS];
 
 unsigned int command_equal(char * str1, char * str2);
