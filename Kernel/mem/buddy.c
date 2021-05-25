@@ -43,7 +43,7 @@ typedef struct block_t
 //-----------------------------------------------------------------------------------------//
 
 
-int * memInfo()
+int * mem_info()
 {
     info[] = {(int)heapSize, (int) freeBytesRemaining}; 
     return info;

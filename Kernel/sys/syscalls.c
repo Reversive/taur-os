@@ -13,7 +13,7 @@ uint64_t syscall_read(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uin
         else return 0;
     }
        
-    return pipeRead(fd-2, buffer, count);
+    return pipe_read(fd-2, buffer, count);
 }
 
 uint64_t syscall_write(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
@@ -22,7 +22,7 @@ uint64_t syscall_write(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, ui
     size_t count = (size_t) rcx;
     if(fd == 0)
         return write(fd, buffer, count);
-    return pipeWrite(fd-2, buffer, count);
+    return pipe_write(fd-2, buffer, count);
 }
 
 uint64_t syscall_time(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
@@ -180,7 +180,7 @@ uint64_t syscall_malloc(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, u
     return (uint64_t)response;
 }
 uint64_t syscall_pipes_info(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
-    char *response = pipesInfo();
+    char *response = pipes_info();
     return (uint64_t)response;
 }
 
@@ -193,11 +193,11 @@ uint64_t syscall_free(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uin
 
 uint64_t syscall_pipe_open(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
     char* name = (char*) rsi;
-    return (uint64_t)pipeOpen(name);
+    return (uint64_t)pipe_open(name);
 }
 uint64_t syscall_pipe_close(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
     int id = (int) rsi;
-    pipeClose(id);
+    pipe_close(id);
     return SUCCESS;
 }
 
@@ -239,35 +239,35 @@ uint64_t syscall_block(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, ui
 }
 
 uint64_t syscall_mem_info(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
-    int * mem_info = memInfo();
-    return (uint64_t) mem_info;
+    int * mm_info = mem_info();
+    return (uint64_t) mm_info;
 }
 
 uint64_t syscall_sem_open(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
-    char *semName = (char*) rsi;
+    char *name = (char*) rsi;
     int initValue = rdx; 
-    return semOpen(semName,initValue);
+    return sem_open(name,initValue);
 }
 
 uint64_t syscall_sem_wait(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
-    char *semName = (char*) rsi;
-    return semWait(semName);
+    char *name = (char*) rsi;
+    return sem_wait(name);
 }
 
 uint64_t syscall_sem_post(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
-    char *semName = (char*) rsi;
-    return semPost(semName);
+    char *name = (char*) rsi;
+    return sem_post(name);
 }
 
 uint64_t syscall_sem_close(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
-    char *semName = (char*) rsi;
-    return semClose(semName);
+    char *name = (char*) rsi;
+    return sem_close(name);
 }
 
 uint64_t syscall_sem_info(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
     int idx = rsi;
-    semInfo_t *buffer = (semInfo_t *) rdx;
-    return getSemInfo(idx, buffer);
+    p_sem buffer = (p_sem)rdx;
+    return get_sem_info(idx, buffer);
 }
 
 uint64_t syscall_yield(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
@@ -277,7 +277,7 @@ uint64_t syscall_yield(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, ui
 }
 
 uint64_t syscall_sem_count(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
-    return getSemsCount();
+    return get_sem_count();
 }
 
 int read(unsigned int fd, char * buffer, size_t count) {
