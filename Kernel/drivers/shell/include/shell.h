@@ -4,7 +4,7 @@
 #include "../../../include/lib.h"
 #include "../../timer/include/time.h"
 
-void print_char(unsigned char key);
+void print_char(unsigned char c);
 void _enable_cursor();
 void _disable_cursor();
 void _set_bg_color(int color);

@@ -1,11 +1,20 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "include/pipe.h"
 
 pipe_t pipes[MAXPIPES];
 
 void block_process_pipe(int * p, int pid);
 void release_process_pipe(int * p, int pid);
+
+void fill0(char* arr, int size){
+    for (int i = 0; i < size; i++)
+    {
+        arr[i] = 0;
+    }
+}
 
 int pipe_write(int index, char *addr, int n) {
     if(!pipes[index].created)
@@ -130,14 +139,6 @@ void list_blocked_processes(int * p, char * buf) {
             my_strcat(buf, pid);
             my_strcat(buf, ", ");
         }
-    }
-}
-
-void fill0(char* arr, int size){
-    int i =0;
-    for (int i = 0; i < size; i++)
-    {
-        arr[i] = 0;
     }
 }
 

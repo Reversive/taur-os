@@ -18,7 +18,6 @@ unsigned int getchar(void);
 unsigned int putchar(char c);
 int puts(const char *str);
 unsigned int strlen(char * str);
-void print_string(char * str);
 char *itoa(uint64_t value, char *buffer, uint32_t base);
 int atoi(char* str);
 int printfd(char *fmt, ...);

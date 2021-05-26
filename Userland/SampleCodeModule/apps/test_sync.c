@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "include/test_sync.h"
 #include "../include/console.h"
 #include "stdio.h"
@@ -49,9 +51,9 @@ int test_sync(int argc, char **argv){
 
   printfd("CREATING PROCESSES...(WITH SEM)\n");
   
-  int pid;
+  
   for(i = 0; i < TOTAL_PAIR_PROCESSES; i++){
-    pid = execv("inc", (main_function) inc_main, arg1, 1);
+    int pid = execv("inc", (main_function) inc_main, arg1, 1);
     printfd("Created increment process %d\n", pid);
     pid = execv("inc", (main_function) inc_main, arg2, 1);
     printfd("Created decrement process %d\n", pid);
@@ -70,10 +72,8 @@ int test_no_sync(int argc, char **argv){
   global = 0;
 
   printfd("CREATING PROCESSES...(WITHOUT SEM)\n");
-
-  int pid;
   for(i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
-    pid = execv("inc", (main_function) inc_main, arg1_no, 1);
+    int pid = execv("inc", (main_function) inc_main, arg1_no, 1);
     printfd("Created increment process %d\n", pid);
     pid = execv("inc", (main_function) inc_main, arg2_no, 1);
     printfd("Created decrement process %d\n", pid);

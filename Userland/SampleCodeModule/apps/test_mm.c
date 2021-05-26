@@ -1,5 +1,7 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "include/test_mm.h"
 
 #define MAX_BLOCKS 128
@@ -12,12 +14,9 @@ typedef struct MM_rq{
 
 void test_mm(){
   mm_rq mm_rqs[MAX_BLOCKS];
-  uint8_t rq;
-  int32_t total;
-
   while (1){
-    rq = 0;
-    total = 0;
+    uint8_t rq = 0;
+    int32_t total = 0;
 
     // Request as many blocks as we can
     while(rq < MAX_BLOCKS && total < MAX_MEMORY){

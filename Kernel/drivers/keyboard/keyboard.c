@@ -1,7 +1,9 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "include/keyboard.h"
-static state key_state = NONE;
+static states key_state = NONE;
 static ring kb_ring = {0, 0, 0, {0}};
 static ring b_kb_ring = {0, 0, 0, {0}};
 int exists_kb_backup = 0;

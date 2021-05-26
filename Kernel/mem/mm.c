@@ -1,5 +1,7 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 
 /* Based on FreeRTOS Kernel V10.4.3
  * https://www.FreeRTOS.org
@@ -54,7 +56,7 @@ int * mem_info()
 
 void * malloc(size_t requestedSize)
 {
-    header * currp, * prevp, *insertp;
+    header * currp;
     void * returnp = NULL;
 
     if(pEnd == NULL)
@@ -80,10 +82,10 @@ void * malloc(size_t requestedSize)
                 }  
             }
         }
-
+        
         if((requestedSize > 0) && ( requestedSize <= freeBytesRemaining))       // We have free space for the requested size
         {                                                                       // Traverse the list from the start	block (lowest address) to find an adequate sized block
-            prevp = &start;
+            header *prevp = &start;
             currp = start.next;
 
             while((currp->size < requestedSize) && (currp->next != NULL))
@@ -99,7 +101,7 @@ void * malloc(size_t requestedSize)
 
                 if((currp->size - requestedSize) > HEAP_MINIMUM_BLOCK_SIZE)         // If the block is bigger than the required size, split it into two
                 {
-                    insertp = (void *) (((uint8_t *) currp) + requestedSize);       // Create a new block following the number of bytes requested. The (void *) cast is used to prevent byte alignment warnings
+                    header *insertp = (void *) (((uint8_t *) currp) + requestedSize);       // Create a new block following the number of bytes requested. The (void *) cast is used to prevent byte alignment warnings
                     insertp->size = currp->size - requestedSize;        // Calculate the sizes of the new two blocks
                     currp->size = requestedSize;
                     addBlockToFreeList(insertp);        // Insert the new block into the list of free blocks

@@ -3,5 +3,4 @@
 
 
 long long int pow(int base, int exp);
-unsigned int abs(int n);
 #endif

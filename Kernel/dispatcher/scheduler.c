@@ -1,5 +1,7 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "include/scheduler.h"
 #include "../task/include/process.h"
 
@@ -38,10 +40,6 @@ void rrnp_remove(scheduler_ts *scheduler, thread_st *thread) {
 void rrnp_add(scheduler_ts *scheduler, thread_st *thread) {
     rrnp_ts *queue = scheduler->queue;
     queue->tail = insert_tail(queue->tail, thread);
-}
-
-void dequeue_current_process() {
-    rrnp_remove(scheduler, current_thread);
 }
 
 scheduler_ts *init_no_prio_round_robin(size_t quantum) {

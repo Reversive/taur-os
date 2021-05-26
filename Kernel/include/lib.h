@@ -34,7 +34,8 @@
     void my_strcpy(char * dest, char * origin);
     void get_registers(unsigned char *data);
     int strcomp(char * str1, char * str2);
-
+    char* my_strcat(char* destination, const char* source);
+    char *itoa(uint64_t value, char *buffer, uint32_t base);
     extern void save_registers_data(unsigned char* data);
     void print_reg();
     extern int test();

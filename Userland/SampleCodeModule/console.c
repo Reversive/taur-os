@@ -1,5 +1,7 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "include/console.h"
 #include "apps/include/test_sync.h"
 #include "basic_lib.h"
@@ -29,7 +31,7 @@ void help() {
 	sys_write(fd_pipe[1], "inforeg - Estado de registros.\n", 32);
 	sys_write(fd_pipe[1], "endless - Crea un proceso que no termina.\n", 43);
 	sys_write(fd_pipe[1], "ending - Crea un proceso que termina.\n", 39);
-	sys_write(fd_pipe[1], "loop - Crea proceso loop donde imprime su PID con un saludo cada 2 segundos.\n", 78);
+	sys_write(fd_pipe[1], "loop - Crea proceso loop donde imprime su PID cada una cierta cantidad de tiempo.\n", 83);
 	sys_write(fd_pipe[1], "printmem 0xDIR - Volcado de memoria.\n", 38);
 	sys_write(fd_pipe[1], "mem_info - Muestra el estado actual de la memoria\n", 51);
 	sys_write(fd_pipe[1], "pipes - Muestra el estado de los pipes\n", 40);
@@ -39,12 +41,12 @@ void help() {
 	sys_write(fd_pipe[1], "filter - Filtra las vocales del input\n", 39);
 	sys_write(fd_pipe[1], "philo - Implementa el problema de los filosofos comensales\n", 60);
 	sys_write(fd_pipe[1], "Tests:\n", 8);
-	sys_write(fd_pipe[1], "pipes_test - test de los pipes\n", 32);
 	sys_write(fd_pipe[1], "mm_test - Corre el test del Memory Manager.\n", 45);
 	sys_write(fd_pipe[1], "pr_test - Corre el test de procesos.\n", 38);
 	sys_write(fd_pipe[1], "prio_test - Corre el test de prioridades.\n", 43);
 	sys_write(fd_pipe[1], "sync_test - Corre el test de sincronizacion de procesos con semaforos\n", 71);
 	sys_write(fd_pipe[1], "no_sync_test - Corre el test de sincronizacion de procesos sin semaforos\n", 74);
+	sys_write(fd_pipe[1], "pipes_test - test de los pipes\n", 32);
 	return;
 }
 
@@ -55,17 +57,15 @@ int endless_proc(int argc, char **argv) {
 	while(1) {
 		bussy_wait(MINOR_WAIT);
 	}
-	sys_sem_post("pipe");
 }
 
 int ending_proc(int argc, char **argv) {
 	return 0;
-	sys_sem_post("pipe");
 }
 
 void mem_info(uint64_t total, uint64_t free) {
 	printfd("ESTADO DE LA MEMORIA\n");
-	printfd("%s %d\t%s %d\t%s %d\n","TOTAL",total,"LIBRE",free,"OCUPADA",total-free);
+	printfd("%d / %d",total-free, total);
 }
 
 void sems() {
@@ -102,7 +102,6 @@ void sh_ps() {
 	printfd("%6s%16s%16s%12s%12s%10s%s\n", "PID", "NAME", "FOREGROUND", "PRIORITY", "STATUS", "STACK", "BASE POINTER");
 	for(int i = 0; i < process_count; i++) {
 		int status = process_buffer[i].status; 
-		if(status == 3) continue;
 		printfd("%6s%16s%16s%12s%12s%10s%X\n",	itoa((uint64_t)process_buffer[i].pid, tmp[0], 10),
 												process_buffer[i].process_name,
 												itoa((uint64_t)process_buffer[i].foreground, tmp[1], 10),

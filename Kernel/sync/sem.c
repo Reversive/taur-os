@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "include/sem.h"
 #include <stdbool.h>
 #include <stdint.h>
@@ -31,7 +33,7 @@ int sem_open(char *name, int value) {
 
 int	sem_wait(char *name) {
 
-    // This macro guarantees that only one semaphore satifies it,
+    // This macro guarantees that only one semaphore satisfies it,
     // because only one sem has the lock and a value greater than zero.
     // The last part (by lazy OR) frees the lock if the value is less than zero.
     #define cond (!_xchg(&sem->lock, 1) && (sem->value > 0 || (sem->lock = 0)))
