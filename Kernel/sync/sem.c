@@ -1,10 +1,11 @@
 #include "include/sem.h"
 #include <stdbool.h>
+#include <stdint.h>
 #include "../asm/include/libasm.h"
 #include "../dispatcher/include/scheduler.h"
 
 #define NO_PID -1
-#define SUCCESS 1
+#define SUCCESS_SIGNAL 0
 
 sem_ts semaphores[MAX_SEMS];
 
@@ -25,7 +26,7 @@ int sem_open(char *name, int value) {
     int count;
     do count = sem->open_count; 
     while(_cmpxchg(&sem->open_count, count+1, count) != count);  // Atomic add
-    return SUCCESS;
+    return SUCCESS_SIGNAL;
 }
 
 int	sem_wait(char *name) {
@@ -62,7 +63,7 @@ int	sem_wait(char *name) {
     sem->value--;   // Only one process gets here
     sem->lock = 0;
 
-    return SUCCESS;
+    return SUCCESS_SIGNAL;
     #undef cond
 }
 
@@ -78,7 +79,7 @@ int sem_post(char *name) {
     while(_cmpxchg(&sem->value, value+1, value) != value);
     update_sem_processes(sem);    // Unblock the first process and update the array
     scheduler_enable();
-    return SUCCESS;
+    return SUCCESS_SIGNAL;
 }
 
 int sem_close(char *name) {
@@ -87,12 +88,12 @@ int sem_close(char *name) {
         return ERROR;
     }
     p_sem sem = &semaphores[idx];
-    sem->open_count--;
-    if(sem->open_count == 0) {     // If it was closed by everyone, 'free' the sem
+    uint64_t c = --(sem->open_count);
+    if((int)c < 1) {     // If it was closed by everyone, 'free' the sem
         sem->sem_id = 2*idx;
         my_strcpy(sem->name, "");
     }
-    return SUCCESS;
+    return SUCCESS_SIGNAL;
 }
 
 int get_sem_info(int idx, p_sem buffer) {
@@ -106,7 +107,7 @@ int get_sem_info(int idx, p_sem buffer) {
 		buffer->blocked_processes[j] = semaphores[idx].blocked_processes[j];
 		buffer->open_count++;
 	}
-    return SUCCESS;
+    return SUCCESS_SIGNAL;
 }
 
 int get_sem_count() {
@@ -127,7 +128,7 @@ bool is_in_use(int idx) {
 
 int get_new_sem() {
     for(int idx = 0; idx < MAX_SEMS; idx++) {
-        if(!is_in_use(idx)) {
+        if(!is_in_use(semaphores[idx].sem_id)) {
             return idx;
         }
     }
@@ -150,7 +151,7 @@ int sem_init(char *name, int value) {
     for(int i = 0; i < MAX_PROC; i++) {
         semaphores[idx].blocked_processes[i] = NO_PID;   // Later, the PIDs of the blocked processes will be here
     }
-    return SUCCESS;
+    return SUCCESS_SIGNAL;
 }
 
 int get_sem_by_name(char *name) {
