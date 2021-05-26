@@ -10,5 +10,5 @@ unsigned int get_day_minutes();
 unsigned int get_day_hour();
 unsigned int get_day();
 
-void print_time();
+char* print_time();
 #endif

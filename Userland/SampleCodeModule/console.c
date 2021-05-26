@@ -19,32 +19,32 @@ int in_foreground = 1;
 char data[136];
 void invalid_opcode_test(void);
 void help() {
-	printf("Comandos posibles:\n");
-	printf("help - Ver comandos.\n");
-	printf("time - Consultar hora del sistema.\n");
-	printf("ps - Lista los procesos actuales.\n");
-	printf("kill <pid> - Mata el proceso del PID especificado.\n");
-	printf("nice <pid> <prio> - Cambia la prioridad de un proceso dado su PID y la nueva prioridad.\n");
-	printf("block <pid> - Cambia el estado de un proceso entre bloqueado y listo dado su PID.\n");
-	printf("inforeg - Estado de registros.\n");
-	printf("endless - Crea un proceso que no termina.\n");
-	printf("ending - Crea un proceso que termina.\n");
-	printf("loop - Crea proceso loop donde imprime su PID con un saludo cada 2 segundos.\n");
-	printf("printmem 0xDIR - Volcado de memoria.\n");
-	printf("mem_info - Muestra el estado actual de la memoria\n");
-	printf("pipes - Muestra el estado de los pipes\n");
-	printf("sems - Informacion sobre todos los semaforos\n");
-	printf("cat - Imprime el stdin tal como lo recibe\n");
-	printf("wc - Cuenta la cantidad de lineas del input\n");
-	printf("filter - Filtra las vocales del input\n");
-	printf("philo - Implementa el problema de los filosofos comensales\n");
-	printf("Tests:\n");
-	printf("pipes_test - test de los pipes\n");
-	printf("mm_test - Corre el test del Memory Manager.\n");
-	printf("pr_test - Corre el test de procesos.\n");
-	printf("prio_test - Corre el test de prioridades.\n");
-	printf("sync_test - Corre el test de sincronizacion de procesos con semaforos\n");
-	printf("no_sync_test - Corre el test de sincronizacion de procesos sin semaforos\n");
+	sys_write(fd_pipe[1], "Comandos posibles:\n", 20);
+	sys_write(fd_pipe[1], "help - Ver comandos.\n", 22);
+	sys_write(fd_pipe[1], "time - Consultar hora del sistema.\n", 36);
+	sys_write(fd_pipe[1], "ps - Lista los procesos actuales.\n", 35);
+	sys_write(fd_pipe[1], "kill <pid> - Mata el proceso del PID especificado.\n", 52);
+	sys_write(fd_pipe[1], "nice <pid> <prio> - Cambia la prioridad de un proceso dado su PID y la nueva prioridad.\n", 89);
+	sys_write(fd_pipe[1], "block <pid> - Cambia el estado de un proceso entre bloqueado y listo dado su PID.\n", 83);
+	sys_write(fd_pipe[1], "inforeg - Estado de registros.\n", 32);
+	sys_write(fd_pipe[1], "endless - Crea un proceso que no termina.\n", 43);
+	sys_write(fd_pipe[1], "ending - Crea un proceso que termina.\n", 39);
+	sys_write(fd_pipe[1], "loop - Crea proceso loop donde imprime su PID con un saludo cada 2 segundos.\n", 78);
+	sys_write(fd_pipe[1], "printmem 0xDIR - Volcado de memoria.\n", 38);
+	sys_write(fd_pipe[1], "mem_info - Muestra el estado actual de la memoria\n", 51);
+	sys_write(fd_pipe[1], "pipes - Muestra el estado de los pipes\n", 40);
+	sys_write(fd_pipe[1], "sems - Informacion sobre todos los semaforos\n", 46);
+	sys_write(fd_pipe[1], "cat - Imprime el stdin tal como lo recibe\n", 43);
+	sys_write(fd_pipe[1], "wc - Cuenta la cantidad de lineas del input\n", 45);
+	sys_write(fd_pipe[1], "filter - Filtra las vocales del input\n", 39);
+	sys_write(fd_pipe[1], "philo - Implementa el problema de los filosofos comensales\n", 60);
+	sys_write(fd_pipe[1], "Tests:\n", 8);
+	sys_write(fd_pipe[1], "pipes_test - test de los pipes\n", 32);
+	sys_write(fd_pipe[1], "mm_test - Corre el test del Memory Manager.\n", 45);
+	sys_write(fd_pipe[1], "pr_test - Corre el test de procesos.\n", 38);
+	sys_write(fd_pipe[1], "prio_test - Corre el test de prioridades.\n", 43);
+	sys_write(fd_pipe[1], "sync_test - Corre el test de sincronizacion de procesos con semaforos\n", 71);
+	sys_write(fd_pipe[1], "no_sync_test - Corre el test de sincronizacion de procesos sin semaforos\n", 74);
 	return;
 }
 
@@ -55,15 +55,17 @@ int endless_proc(int argc, char **argv) {
 	while(1) {
 		bussy_wait(MINOR_WAIT);
 	}
+	sys_sem_post("pipe");
 }
 
 int ending_proc(int argc, char **argv) {
 	return 0;
+	sys_sem_post("pipe");
 }
 
 void mem_info(uint64_t total, uint64_t free) {
-	printf("ESTADO DE LA MEMORIA\n");
-	printf("%s %d\t%s %d\t%s %d\n","TOTAL",total,"LIBRE",free,"OCUPADA",total-free);
+	printfd("ESTADO DE LA MEMORIA\n");
+	printfd("%s %d\t%s %d\t%s %d\n","TOTAL",total,"LIBRE",free,"OCUPADA",total-free);
 }
 
 void sems() {
@@ -71,24 +73,24 @@ void sems() {
 	int semsCount = sys_sems_count();
 	if(semsCount>0) {
 		char tmp[10][2];
-		printf("%10s%10s%10s%16s%s\n","SEM_ID","NAME","VALUE","IS_LOCKED","BLOCKED_PIDS");
+		printfd("%10s%10s%10s%16s%s\n","SEM_ID","NAME","VALUE","IS_LOCKED","BLOCKED_PIDS");
 		for(int idx=0; idx<semsCount; idx++) {
 			sys_sem_info(idx, buffer);
-			printf("%10s%10s%10s%16s",	itoa((uint64_t)buffer->semId, tmp[0], 10),
+			printfd("%10s%10s%10s%16s",	itoa((uint64_t)buffer->semId, tmp[0], 10),
 										buffer->name,
 										itoa((uint64_t)buffer->value, tmp[1], 10),
 										buffer->lock ? "NO":"YES");
 			if(buffer->blockedProcesses[0] != NO_PID) {
-				printf("{ %d ",buffer->blockedProcesses[0]);
+				printfd("{ %d ",buffer->blockedProcesses[0]);
 				int cantBlockProc = (buffer->blockedLast)%MAX_PROC - (buffer->blockedFirst)%MAX_PROC;
 				for(int i=1; i<cantBlockProc; i++) {
-					printf("%d ",buffer->blockedProcesses[i]);
+					printfd("%d ",buffer->blockedProcesses[i]);
 				}
-				printf("}\n");
+				printfd("}\n");
 			}
 		}
 	} else {
-		printf("No semaphores running.\n");
+		printfd("No semaphores running.\n");
 	}
 }
 
@@ -97,11 +99,11 @@ void sh_ps() {
 	int process_count = 0;
 	char tmp[20][4];
 	get_ps(process_buffer, &process_count);
-	printf("%6s%16s%16s%12s%12s%10s%s\n", "PID", "NAME", "FOREGROUND", "PRIORITY", "STATUS", "STACK", "BASE POINTER");
+	printfd("%6s%16s%16s%12s%12s%10s%s\n", "PID", "NAME", "FOREGROUND", "PRIORITY", "STATUS", "STACK", "BASE POINTER");
 	for(int i = 0; i < process_count; i++) {
 		int status = process_buffer[i].status; 
 		if(status == 3) continue;
-		printf("%6s%16s%16s%12s%12s%10s%X\n",	itoa((uint64_t)process_buffer[i].pid, tmp[0], 10),
+		printfd("%6s%16s%16s%12s%12s%10s%X\n",	itoa((uint64_t)process_buffer[i].pid, tmp[0], 10),
 												process_buffer[i].process_name,
 												itoa((uint64_t)process_buffer[i].foreground, tmp[1], 10),
 												itoa((uint64_t)process_buffer[i].priority, tmp[2], 10),
@@ -115,12 +117,12 @@ void sh_kill(char *str) {
 	pid_t pid;
 	if(scanf(str, "%d", &pid) > 0) {
 		if(kill(pid) == pid) {
-			printf("Proceso eliminado correctamente.\n");
+			printfd("Proceso eliminado correctamente.\n");
 		} else {
-			printf("PID invalido.\n");
+			printfd("PID invalido.\n");
 		}
 	} else {
-		printf("PID invalido.\n");
+		printfd("PID invalido.\n");
 	}
 }
 
@@ -128,12 +130,12 @@ void sh_nice(char *str) {
 	pid_t pid, priority;
 	if(scanf(str, "%d%d", &pid, &priority) > 0) {
 		if(nice(pid, priority) == pid) {
-			printf("Prioridad cambiada correctamente.\n");
+			printfd("Prioridad cambiada correctamente.\n");
 		} else {
-			printf("PID invalido.\n");
+			printfd("PID invalido.\n");
 		}
 	} else {
-		printf("PID invalido.\n");
+		printfd("PID invalido.\n");
 	}
 }
 
@@ -141,41 +143,52 @@ void sh_block(char *str) {
 	pid_t pid;
 	if(scanf(str, "%d", &pid) > 0) {
 		if(block(pid) == pid) {
-			printf("Proceso bloqueado/desbloqueado correctamente.\n");
+			printfd("Proceso bloqueado/desbloqueado correctamente.\n");
 		} else {
-			printf("PID invalido.\n");
+			printfd("PID invalido.\n");
 		}
 	} else {
-		printf("PID invalido.\n");
+		printfd("PID invalido.\n");
 	}
 }
 
 void print_execve_output(pid_t pid) {
 	if(pid != INVALID_PID)
 	{
-		printf("Se creo el proceso con pid %d\n", pid);
+		printfd("Se creo el proceso con pid %d\n", pid);
 	} else {
-		printf("No se pueden crear mas procesos o no hay suficiente memoria\n");
+		printfd("No se pueden crear mas procesos o no hay suficiente memoria\n");
 	}
 }
 
 void assign_module(char * str) {
 	if(command_equal(str, "help") ) {
 		help();
+		sys_sem_post("pipe");
 	}
 	else if(command_equal(str,"time") ){
-        print_time();
+		char* time = print_time();
+		printf("pipe: %d", fd_pipe[1]);
+        sys_write(fd_pipe[1], time, strlen(time));
+		sys_sem_post("pipe");
     }
 	else if(command_equal(str,"inforeg") ){
         get_inforeg(data);
-		print_info_reg(data);
+		char* info_reg = print_info_reg(data);
+		sys_write(fd_pipe[1], info_reg, strlen(info_reg));
+		sys_sem_post("pipe");
 	}
 	else if(command_equal(str, "printmem") ) {
-		if(!info_mem(str))
-			printf("Ingrese una direccion como argumento\n");
+		char* printmem = info_mem(str);
+		if(!printmem)
+			printfd("Ingrese una direccion como argumento\n");
+		else
+			sys_write(fd_pipe[1], printmem, strlen(printmem));
+		sys_sem_post("pipe");
 	}
 	else if(command_equal(str, "ps") ) {
 		sh_ps();
+		sys_sem_post("pipe");
     }
 	else if(command_equal(str, "loop")) {
 		pid_t pid = execv("loop", loop, param_list[1], in_foreground);
@@ -191,12 +204,15 @@ void assign_module(char * str) {
 	}
 	else if(command_equal(str, "kill")) {
 		sh_kill(str);
+		sys_sem_post("pipe");
 	}
 	else if(command_equal(str, "nice")) {
 		sh_nice(str);
+		sys_sem_post("pipe");
 	}
 	else if(command_equal(str, "block")) {
 		sh_block(str);
+		sys_sem_post("pipe");
 	} 
 	else if(command_equal(str, "mm_test")) {
 		pid_t pid = execv("mm_test", main_test_mm, param_list[0], in_foreground);
@@ -211,13 +227,16 @@ void assign_module(char * str) {
 	else if(command_equal(str, "mem_info")) {
 		int * info = sys_mem_info();
 		mem_info(info[0], info[1]);
+		sys_sem_post("pipe");
 	}
 	else if(command_equal(str, "pipes")) {
 		char * info = sys_pipes_info();
-		printf("%s\n", info);
+		printfd("%s\n", info);
+		sys_sem_post("pipe");
 	}
 	else if(command_equal(str, "pipes_test")) {
 		test_pipe();
+		sys_sem_post("pipe");
 	}
 	else if(command_equal(str, "sync_test")) {
 		execv("sync_test", test_sync, (char*[]){NULL}, in_foreground);
@@ -227,6 +246,7 @@ void assign_module(char * str) {
 	}
 	else if(command_equal(str, "sems")) {
 		sems();
+		sys_sem_post("pipe");
 	}
 	else if(command_equal(str, "wc")) {
 		execv("wc", wc, (char*[]){NULL}, in_foreground);
@@ -238,10 +258,12 @@ void assign_module(char * str) {
 		execv("filer", filter, (char*[]){NULL}, in_foreground);
 	}
 	else if(command_equal(str, "philo")) {
-		execv("philo", philos, (char*[]){NULL}, 0);
+		//execv("philo", philos, (char*[]){NULL}, 0);
+		sys_sem_post("pipe");
 	}
 	else {
-		printf("Ingrese un comando valido.\n");
+		printfd("Ingrese un comando valido.\n");
+		sys_sem_post("pipe");
 	}
 }
 
@@ -269,15 +291,38 @@ unsigned int is_newline_char(char chr) {
 }
 
 int pipe_function(char* input){
-	char * found = strchr (input, '|');
+	char aux_input[strlen(input)];
+	strcpy(aux_input, input);
+	char * found = strchr (aux_input, '|');
 	if(found == 0)
 		return -1;
-	*found = 0;
-	// TODO: LLENAR CON ZEROS
-	char left[found - input];
-	char right[strlen(input) - (found- input)];
-	strcpy(left, input);
-	strcpy(right, found);
+	int len_l = found - aux_input + 1;
+	int len_r = strlen(aux_input) - (found- aux_input);
+	char left[len_l];
+	char right[len_r];
+	strcpy(left, aux_input);
+	strcpy(right, found+1);
+	
+	
+	fd_pipe[1] = sys_pipe_open("pipe");
+	int fd_pipe_aux = fd_pipe[1];
+	
+	input_read_size = len_l-1;
+	fd_pipe[0] = 1;	// stdin es keyboard
+					// stdout es el pipe
+	sys_sem_open("pipe", 0);
+	console_finish_handler(left);
+	sys_sem_wait("pipe");
+	input_read_size = len_r -1;
+	fd_pipe[0] = fd_pipe_aux; // stdin es el pipe
+	fd_pipe[1] = 0;			  // stdout es la shell
+	console_finish_handler(right);
+	sys_sem_wait("pipe");
+	fd_pipe[0] = 1;		// stdin es keyboard
+	fd_pipe[1] = 0;		// stdout es shell
+
+	sys_pipe_close(fd_pipe_aux);
+	sys_sem_close("pipe");
 	return 0;
 
 }

@@ -28,26 +28,27 @@ unsigned int get_year() {
 }
 
 
-
-void print_time() {
+char string[40] = {0};
+char * print_time() {
   char buffer[3];
-  puts("Time: ");
+  strcpy(string, "Time: ");
   hex_to_string(get_day_hour(), buffer);
-  puts(buffer);
-  puts("hs ");
+  strcat(string, buffer);
+  strcat(string,"hs " );
   hex_to_string(get_day_minutes(), buffer);
-  puts(buffer);
-  puts("m ");
+  strcat(string, buffer);
+  strcat(string,"m ");
   hex_to_string(get_day_seconds(), buffer);
-  puts(buffer);
-  puts("s\nDate: ");
+  strcat(string, buffer);
+  strcat(string,"s\nDate: ");
   hex_to_string(get_day(), buffer);
-  puts(buffer);
-  puts("/");
+  strcat(string, buffer);
+  strcat(string,"/");
   hex_to_string(get_month(), buffer);
-  puts(buffer);
-  puts("/");
+  strcat(string, buffer);
+  strcat(string,"/");
   hex_to_string(get_year(), buffer);
-  puts(buffer);
-  puts("\n");
+  strcat(string, buffer);
+  strcat(string,"\n");
+  return string;
 }

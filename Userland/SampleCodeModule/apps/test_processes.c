@@ -22,7 +22,7 @@ void test_processes(){
     for(rq = 0; rq < MAX_PROCESSES; rq++){
       p_rqs[rq].pid = execv("endless_loop", endless_loop, (char*[]){NULL}, 0);
       if (p_rqs[rq].pid == -1) {                          
-        printf("Error creating process\n");              
+        printfd("Error creating process\n");              
         return;
       }else{
         p_rqs[rq].state = READY;
@@ -38,7 +38,7 @@ void test_processes(){
           case 0:
             if (p_rqs[rq].state == READY || p_rqs[rq].state == BLOCKED) {
               if (kill(p_rqs[rq].pid) == -1) {          
-                printf("Error killing process\n");        
+                printfd("Error killing process\n");        
                 return;
               }
 
@@ -50,7 +50,7 @@ void test_processes(){
           case 1:
             if (p_rqs[rq].state == READY){
               if(block(p_rqs[rq].pid) == -1){          
-                printf("Error blocking process\n");       
+                printfd("Error blocking process\n");       
                 return;
               }
               p_rqs[rq].state = BLOCKED; 
@@ -62,7 +62,7 @@ void test_processes(){
       for(rq = 0; rq < MAX_PROCESSES; rq++)
         if (p_rqs[rq].state == BLOCKED && GetUniform(2) % 2){
           if(block(p_rqs[rq].pid) == -1){            
-            printf("Error unblocking process\n");         
+            printfd("Error unblocking process\n");         
             return;
           }
           p_rqs[rq].state = READY; 
@@ -75,5 +75,6 @@ void test_processes(){
 
 int test_processes_main(int argc, char **argv){
   test_processes();
+  sys_sem_post("pipe");
   return 0;
 }

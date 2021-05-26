@@ -6,7 +6,7 @@ bool isVowel(char c) {
 
 int filter(int argc, char **argv) {
 	char buf[128];
-	while(sys_read(STDIN, buf, sizeof(buf))) {
+	while(sys_read(fd_pipe[0], buf, sizeof(buf))) {
 		char out[128];
 		int j = 0;
 		for(int i = 0; i < sizeof(buf) && buf[i]; i++){
@@ -15,7 +15,8 @@ int filter(int argc, char **argv) {
 				out[j++] = c;
 		}
 		out[j] = 0;
-		printf("%s", out);
+		printfd("%s", out);
 	}
+	sys_sem_post("pipe");
 	return 0;
 }
