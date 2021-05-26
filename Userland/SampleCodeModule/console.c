@@ -71,13 +71,12 @@ void sems() {
 	int semsCount = sys_sems_count();
 	if(semsCount>0) {
 		char tmp[10][2];
-		printf("%10s%10s%10s%16s%s\n","SEM_ID","NAME","VALUE","IS_LOCKED","BLOCKED_PIDS");
+		printf("%10s%10s%10s%s\n","SEM_ID","NAME","VALUE","BLOCKED_PIDS");
 		for(int idx=0; idx<semsCount; idx++) {
 			sys_sem_info(idx, buffer);
-			printf("%10s%10s%10s%16s",	itoa((uint64_t)buffer->semId, tmp[0], 10),
-										buffer->name,
-										itoa((uint64_t)buffer->value, tmp[1], 10),
-										buffer->lock ? "NO":"YES");
+			printf("%10s%10s%10s",	itoa((uint64_t)buffer->semId, tmp[0], 10),
+									buffer->name,
+									itoa((uint64_t)buffer->value, tmp[1], 10));
 			if(buffer->blockedProcesses[0] != NO_PID) {
 				printf("{ %d ",buffer->blockedProcesses[0]);
 				int cantBlockProc = (buffer->blockedLast)%MAX_PROC - (buffer->blockedFirst)%MAX_PROC;
@@ -86,6 +85,7 @@ void sems() {
 				}
 				printf("}\n");
 			}
+			printf("\n");
 		}
 	} else {
 		printf("No semaphores running.\n");
@@ -238,7 +238,7 @@ void assign_module(char * str) {
 		execv("filer", filter, (char*[]){NULL}, in_foreground);
 	}
 	else if(command_equal(str, "philo")) {
-		execv("philo", philos, (char*[]){NULL}, 0);
+		execv("philo", philos, (char*[]){NULL}, in_foreground);
 	}
 	else {
 		printf("Ingrese un comando valido.\n");
