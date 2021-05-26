@@ -100,7 +100,7 @@ int pipe_open(char* name) {
     pipes[first_free].waitingPid = -1;
     pipes[first_free].nread = 0;
     pipes[first_free].nwrite = 0;
-    fill0(pipes[first_free].data);
+    fill0(pipes[first_free].data, PIPESIZE);
     sem_open(name, 1);
     my_strcpy(pipes[first_free].name, name);
     return pipes[first_free].fd; //devuelvo el file descriptor de mi pipe que sera el que use mi proceso para acceder al buffer
@@ -112,8 +112,8 @@ void pipe_close(int index) {
         pipes[index].rProcesses[i] = 0;
         pipes[index].wProcesses[i] = 0;
     }
-    fill0(pipes[index].name);
-    fill0(pipes[index].data);
+    fill0(pipes[index].name, MAX_NAM);
+    fill0(pipes[index].data, PIPESIZE);
     pipes[index].data[0] = 0;
     pipes[index].nread = 0;
     pipes[index].nwrite = 0;
@@ -131,9 +131,10 @@ void list_blocked_processes(int * p, char * buf) {
     }
 }
 
-void fill0(char* arr){
+void fill0(char* arr, int size){
     int i =0;
-    while(arr[i]!= 0){
+    for (int i = 0; i < size; i++)
+    {
         arr[i] = 0;
     }
 }
@@ -141,7 +142,7 @@ void fill0(char* arr){
 char retpipes[MAXPIPES*100] = {0};
 
 char *pipes_info() {
-    fill0(retpipes);
+    fill0(retpipes, MAXPIPES*100);
     int cant = 0;
     char namePipe[10], brp[50] = {0}, bwp[50] = {0};
     for (int p=0; p < MAXPIPES; p++) {
