@@ -15,7 +15,7 @@
 #include "../apps/include/wc.h"
 #include "../apps/include/filter.h"
 #include "../apps/include/cat.h"
-//#include "../apps/include/philo.h"
+#include "../apps/include/philo.h"
 #include "../apps/include/test_pipe.h"
 #include "unistd.h"
 #include "../apps/include/loop.h"
