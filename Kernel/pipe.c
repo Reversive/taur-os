@@ -8,7 +8,8 @@ void block_process_pipe(int * p, int pid);
 void release_process_pipe(int * p, int pid);
 
 int pipe_write(int index, char *addr, int n) {
-
+    if(!pipes[index].created)
+        return -1;
     block_process_pipe(pipes[index].wProcesses, get_current_pid());
     sem_wait(pipes[index].name);
     release_process_pipe(pipes[index].wProcesses, get_current_pid());
@@ -23,7 +24,8 @@ int pipe_write(int index, char *addr, int n) {
 
 
 int pipe_read(int index, char *addr, int n) {
-    
+    if(!pipes[index].created)
+        return -1;
     block_process_pipe(pipes[index].rProcesses, get_current_pid());
     sem_wait(pipes[index].name);
     release_process_pipe(pipes[index].wProcesses, get_current_pid());
