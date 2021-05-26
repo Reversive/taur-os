@@ -161,14 +161,13 @@ void print_execve_output(pid_t pid) {
 	}
 }
 
-void assign_module(char * str) {
+int assign_module(char * str) {
 	if(command_equal(str, "help") ) {
 		help();
 		sys_sem_post("pipe");
 	}
 	else if(command_equal(str,"time") ){
 		char* time = print_time();
-		printf("pipe: %d", fd_pipe[1]);
         sys_write(fd_pipe[1], time, strlen(time));
 		sys_sem_post("pipe");
     }
@@ -261,9 +260,12 @@ void assign_module(char * str) {
 		execv("philo", philos, (char*[]){NULL}, in_foreground);
 	}
 	else {
-		printfd("Ingrese un comando valido.\n");
+		if(fd_pipe[1] == 0)
+			printfd("Ingrese un comando valido.\n");
 		sys_sem_post("pipe");
+		return 1;
 	}
+	return 0;
 }
 
 
@@ -302,17 +304,20 @@ int pipe_function(char* input){
 	strcpy(left, aux_input);
 	strcpy(right, found+1);
 	
-	
-	fd_pipe[1] = sys_pipe_open("pipe");
+	fd_pipe[1] = sys_pipe_open("pipes");
 	int fd_pipe_aux = fd_pipe[1];
-	
+
 	input_read_size = len_l-1;
 	fd_pipe[0] = 1;	// stdin es keyboard
 					// stdout es el pipe
 	sys_sem_open("pipe", 0);
-	console_finish_handler(left);
+	int aux = console_finish_handler(left);
 	sys_sem_wait("pipe");
+	if(aux){
+		sys_write(fd_pipe[1], aux_input, len_l-1);
+	}
 	input_read_size = len_r -1;
+
 	fd_pipe[0] = fd_pipe_aux; // stdin es el pipe
 	fd_pipe[1] = 0;			  // stdout es la shell
 	console_finish_handler(right);
@@ -329,13 +334,14 @@ int pipe_function(char* input){
 unsigned int console_finish_handler(char* input_buffer) {
 	input_buffer[input_read_size] = 0;
 	putchar('\n');
-
-	//if(pipe_function(input_buffer) == -1)
-	assign_module(input_buffer);
+	unsigned int ret = 0;
+	if(pipe_function(input_buffer) == -1)
+		if(assign_module(input_buffer)==1)
+			ret = 1;
 
 	input_read_size = 0;
 	input_buffer[0] = 0;
-	return 1;
+	return ret;
 }
 
 

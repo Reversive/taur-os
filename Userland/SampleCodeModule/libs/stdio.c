@@ -210,7 +210,6 @@ int printfd(char *fmt, ...){
 
         format++;
     }
-    printf("fd in printf: %d", fd_pipe);
     string[cur_char] = 0;
     sys_write(fd_pipe[1], string, strlen(string));
 

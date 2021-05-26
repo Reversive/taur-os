@@ -15,7 +15,7 @@
 #include "../apps/include/wc.h"
 #include "../apps/include/filter.h"
 #include "../apps/include/cat.h"
-//#include "../apps/include/philo.h"
+#include "../apps/include/philo.h"
 #include "../apps/include/test_pipe.h"
 #include "unistd.h"
 #include "../apps/include/loop.h"
@@ -24,7 +24,7 @@
 typedef char *parameters[MAX_ARGS];
 
 unsigned int command_equal(char * str1, char * str2);
-void assign_module(char * str);
+int assign_module(char * str);
 unsigned int console_finish_handler(char* input_buffer);
 unsigned int is_newline_char(char chr);
 void console_key_handler(char input, char* input_buffer);
