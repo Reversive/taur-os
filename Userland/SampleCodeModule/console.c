@@ -269,9 +269,14 @@ int assign_module(char * str) {
 }
 
 
-unsigned int command_equal(char * str1, char * str2) {
-    while(*str1 == ' ') {
-        str1++;
+unsigned int command_equal(char * s1, char * s2) {
+	char str1[strlen(s1)];
+	char str2[strlen(s2)];
+	strcpy(str1, s1);
+	strcpy(str2, s2);
+	int j = 0;
+    while(str1[j] == ' ') {
+        j++;
 	}
 	
 	for(int i = 0; str1[i] != 0; i++) {
@@ -303,7 +308,9 @@ int pipe_function(char* input){
 	char right[len_r];
 	strcpy(left, aux_input);
 	strcpy(right, found+1);
-	
+	left[len_l-1]=0;
+	right[len_r-1] = 0;
+
 	fd_pipe[1] = sys_pipe_open("pipes");
 	int fd_pipe_aux = fd_pipe[1];
 
@@ -312,9 +319,10 @@ int pipe_function(char* input){
 					// stdout es el pipe
 	sys_sem_open("pipe", 0);
 	int aux = console_finish_handler(left);
+	strcpy(left, input);
 	sys_sem_wait("pipe");
 	if(aux){
-		sys_write(fd_pipe[1], aux_input, len_l-1);
+		sys_write(fd_pipe[1], left, len_l-1);
 	}
 	input_read_size = len_r -1;
 

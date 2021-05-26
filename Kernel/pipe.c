@@ -34,13 +34,14 @@ int pipe_read(int index, char *addr, int n) {
     for (i = 0; i < n && pipes[index].data[pipes[index].nread % PIPESIZE] != -1; i++) {
         addr[i] = pipes[index].data[pipes[index].nread++ % PIPESIZE];
     }
-    sem_post(pipes[index].name);
+    
     /*if(pipes[index].bloqProcesses!= NULL){
         pipes[index].wProcesses
     }*/
     addr[i] = 0;
     if (pipes[index].data[pipes[index].nread % PIPESIZE] == -1)
         pipes[index].data[pipes[index].nread % PIPESIZE] = 0;
+    sem_post(pipes[index].name);
     return i;
 }
 

@@ -2,6 +2,14 @@
 #include "stdio.h"
 
 int cat(int argc, char *args[]) {
+    char c[] = {0,0};
+    sys_read(fd_pipe[0], c, 1);
+    while(c[0]!=0){
+        printfd("%s", c);
+        sys_read(fd_pipe[0], c, 1);
+    }
+    sys_sem_post("pipe");
+/*
 	int sizebuff=512;
 	char * buff = sys_malloc(sizebuff);
     if (buff == NULL) {
@@ -18,6 +26,6 @@ int cat(int argc, char *args[]) {
         pos = cant - 1;
     }
     sys_free(buff);
-    sys_sem_post("pipe");
+    sys_sem_post("pipe");*/
 	return 0;
 }
