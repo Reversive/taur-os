@@ -100,16 +100,20 @@ int pipe_open(char* name) {
     pipes[first_free].waitingPid = -1;
     pipes[first_free].nread = 0;
     pipes[first_free].nwrite = 0;
+    fill0(pipes[first_free].data);
     sem_open(name, 1);
     my_strcpy(pipes[first_free].name, name);
     return pipes[first_free].fd; //devuelvo el file descriptor de mi pipe que sera el que use mi proceso para acceder al buffer
 }
 
 void pipe_close(int index) {
+    sem_close(pipes[index].name);
     for (int i=0; i < PROCESSES;  i++) {
         pipes[index].rProcesses[i] = 0;
         pipes[index].wProcesses[i] = 0;
     }
+    fill0(pipes[index].name);
+    fill0(pipes[index].data);
     pipes[index].data[0] = 0;
     pipes[index].nread = 0;
     pipes[index].nwrite = 0;
