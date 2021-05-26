@@ -13,11 +13,10 @@ int pipe_write(int index, char *addr, int n) {
     sem_wait(pipes[index].name);
     release_process_pipe(pipes[index].wProcesses, get_current_pid());
     int i;
-    for (i = 0; i < n && addr[i] != 0; i++) {
+    for (i = 0; i < n && addr[i] != 0 && (pipes[index].nread)!= (pipes[index].nwrite+1); i++) {
         pipes[index].data[pipes[index].nwrite++ % PIPESIZE] = addr[i];
     }
     pipes[index].data[pipes[index].nwrite % PIPESIZE] = -1;
-    
     sem_post(pipes[index].name);
     return i;
 }
@@ -28,19 +27,23 @@ int pipe_read(int index, char *addr, int n) {
     block_process_pipe(pipes[index].rProcesses, get_current_pid());
     sem_wait(pipes[index].name);
     release_process_pipe(pipes[index].wProcesses, get_current_pid());
-    
+    /// 
     
     int i ;
-    for (i = 0; i < n && pipes[index].data[pipes[index].nread % PIPESIZE] != -1; i++) {
+    for (i = 0; i < n && pipes[index].data[pipes[index].nread % PIPESIZE] != -1 && (pipes[index].nread +1)!= (pipes[index].nwrite); i++) {
+        //print_char(pipes[index].data[pipes[index].nread % PIPESIZE]);
         addr[i] = pipes[index].data[pipes[index].nread++ % PIPESIZE];
     }
-    
-    /*if(pipes[index].bloqProcesses!= NULL){
-        pipes[index].wProcesses
-    }*/
-    addr[i] = 0;
+    if((pipes[index].nread+1) == (pipes[index].nwrite)){
+        addr[i] = pipes[index].data[(pipes[index].nread) % PIPESIZE];
+        addr[i+1] = 0;
+        pipes[index].nread++;
+    }else{
+        addr[i] = 0;
+    }
     if (pipes[index].data[pipes[index].nread % PIPESIZE] == -1)
         pipes[index].data[pipes[index].nread % PIPESIZE] = 0;
+    //_internal_print_string("post\n");
     sem_post(pipes[index].name);
     return i;
 }
@@ -84,13 +87,8 @@ int look_pipe(char* name) {
 }
 
 int pipe_open(char* name) {
-    //_internal_print_string("pipe open\n");
     int i;
     if((i = look_pipe(name)) != -1){
-        // pipe already opened
-        //_internal_print_string("pipe already open");
-        //_internal_print_dec(i);
-        //_internal_print_string("\n");
         return pipes[i].fd;
     }
     int first_free = next_pipe();
@@ -100,11 +98,10 @@ int pipe_open(char* name) {
     pipes[first_free].created = 1;
     pipes[first_free].usingPipe = 0;
     pipes[first_free].waitingPid = -1;
+    pipes[first_free].nread = 0;
+    pipes[first_free].nwrite = 0;
     sem_open(name, 1);
     my_strcpy(pipes[first_free].name, name);
-    //_internal_print_string("new pipe");
-    //_internal_print_dec(first_free);
-    //_internal_print_string("\n");
     return pipes[first_free].fd; //devuelvo el file descriptor de mi pipe que sera el que use mi proceso para acceder al buffer
 }
 
