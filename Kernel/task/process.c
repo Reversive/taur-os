@@ -24,7 +24,7 @@ process_st *get_process_by_id(pid_t pid) {
 }
 
 pid_t set_process_state(pid_t pid, process_status_et status) {
-    if(pid >= MAX_PROCESS_COUNT || pid <= 0 || processes[pid] == NULL) return INVALID_PID;
+    if(pid >= MAX_PROCESS_COUNT || pid < 0 || processes[pid] == NULL) return INVALID_PID;
     processes[pid]->status = status;
     return pid;
 }

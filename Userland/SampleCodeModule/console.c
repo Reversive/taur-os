@@ -139,7 +139,7 @@ void sh_nice(char *str) {
 
 void sh_block(char *str) {
 	pid_t pid;
-	if(scanf(str, "%d", &pid) > 0) {
+	if(scanf(str, "%d", &pid) > 0 && pid != 0) {
 		if(block(pid) == pid) {
 			printf("Proceso bloqueado/desbloqueado correctamente.\n");
 		} else {

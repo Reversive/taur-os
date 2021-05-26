@@ -147,6 +147,8 @@ int add_philo(int idx) {
 
 int philos(int argc, char ** argv){
 
+	block(0);
+
 	printf("Problema de los filosofos comensales:\n");
     printf("Para agregar un filosofo, presione 'a' (Max: %d)\n", MAX_PHIL);
     printf("Para remover un filosofo, presione 'r' (Min: %d)\n", MIN_PHIL);
@@ -183,7 +185,6 @@ int philos(int argc, char ** argv){
 			}
 			break;
 		case 'r':
-			printf("LEYO R\n");
 			if(cant > 0) {
 				kill_philo(cant-1);
 			}
@@ -201,6 +202,8 @@ int philos(int argc, char ** argv){
 			break;
 		}
 	}
+
+	block(0);
 
 	return 0;
 }
