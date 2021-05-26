@@ -8,13 +8,11 @@ int wc(int argc, char **argv) {
 	int count = 1;
 	//printf("wc will read from: %d", fd_pipe[0]);
 
-	sys_read(fd_pipe[0], c, 1); // puse 2 paa probar nomas, tendria que ser fd_pipe[0]
+	sys_read(fd_pipe[0], c, 1); 
 
-	while( c[0]!= 0){
-		//printf("%s",c);
+	while( c[0] != 0){
 		if(c[0] == '\n'){
 			count++;
-			//printf("im gonna print\n");
 		}
 		sys_read(fd_pipe[0], c, 1); // same
 	}	

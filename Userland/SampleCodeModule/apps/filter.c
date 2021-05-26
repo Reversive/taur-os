@@ -8,8 +8,9 @@ int filter(int argc, char **argv) {
 	char c[] = {0,0,0};
 	sys_read(fd_pipe[0], c, 1);
 	while(c[0] !=0) {
+		//if(!isVowel(c[0]) && c[0]!= '\n'){
 		if(!isVowel(c[0])){
-			printfd("%s", c);
+			printfd("%c", c[0]);
 		}
 		sys_read(fd_pipe[0], c, 1);
 	}
