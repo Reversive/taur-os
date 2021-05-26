@@ -5,15 +5,24 @@ bool isVowel(char c) {
 }
 
 int filter(int argc, char **argv) {
-	char c[] = {0,0,0};
-	sys_read(fd_pipe[0], c, 1);
-	while(c[0] !=0) {
-		//if(!isVowel(c[0]) && c[0]!= '\n'){
-		if(!isVowel(c[0])){
-			printfd("%c", c[0]);
-		}
-		sys_read(fd_pipe[0], c, 1);
-	}
-	sys_sem_post("pipe");
+	char buff[1000]={0};
+    
+	int cant = sys_read(fd_pipe[0], buff, 1000);
+    
+    for(int i = 0; buff[i]!=0; i++){
+        if(!isVowel(buff[i])){
+            printfd("%c", buff[i]);
+    	}
+    }
+    
+    while ( cant==1000) {
+        cant = sys_read(fd_pipe[0], buff, 1000);
+	    for(int i = 0; buff[i]!=0; i++){
+            if(!isVowel(buff[i]))
+                printfd("%c", buff[i]);
+        }       
+        
+    }
+    sys_sem_post("pipe");
 	return 0;
 }
