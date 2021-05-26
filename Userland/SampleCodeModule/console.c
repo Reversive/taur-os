@@ -48,7 +48,7 @@ void help() {
 	return;
 }
 
-parameters param_list[PROGRAM_COUNT] = { { "9", NULL }, { "Hola", "Como Estas", NULL }};
+parameters param_list[PROGRAM_COUNT] = { { "9", NULL }, { "Hola", "Como Estas", NULL }, {NULL}};
 
 
 int endless_proc(int argc, char **argv) {
@@ -182,11 +182,11 @@ void assign_module(char * str) {
 		print_execve_output(pid);
 	}
 	else if(command_equal(str, "endless")) {
-		pid_t pid = execv("endless_proc", endless_proc, param_list[0], in_foreground);
+		pid_t pid = execv("endless_proc", endless_proc, param_list[2], in_foreground);
 		print_execve_output(pid);
 	}
 	else if(command_equal(str, "ending")) {
-		pid_t pid = execv("ending_proc", ending_proc, param_list[0], in_foreground);
+		pid_t pid = execv("ending_proc", ending_proc, param_list[2], in_foreground);
 		print_execve_output(pid);
 	}
 	else if(command_equal(str, "kill")) {
@@ -199,14 +199,14 @@ void assign_module(char * str) {
 		sh_block(str);
 	} 
 	else if(command_equal(str, "mm_test")) {
-		pid_t pid = execv("mm_test", main_test_mm, param_list[0], in_foreground);
+		pid_t pid = execv("mm_test", main_test_mm, param_list[2], in_foreground);
 		print_execve_output(pid);
 	}
 	else if(command_equal(str, "prio_test")) {
-		execv("prio_test", main_test_prio, (char*[]){NULL}, in_foreground);
+		execv("prio_test", main_test_prio, param_list[2], in_foreground);
 	}
 	else if(command_equal(str, "pr_test")) {
-		execv("pr_test", test_processes_main, (char*[]){NULL}, in_foreground);
+		execv("pr_test", test_processes_main, param_list[2], in_foreground);
 	} 
 	else if(command_equal(str, "mem_info")) {
 		int * info = sys_mem_info();
@@ -220,22 +220,22 @@ void assign_module(char * str) {
 		test_pipe();
 	}
 	else if(command_equal(str, "sync_test")) {
-		execv("sync_test", test_sync, (char*[]){NULL}, in_foreground);
+		execv("sync_test", test_sync, param_list[2], in_foreground);
 	} 
 	else if(command_equal(str, "no_sync_test")) {
-		execv("no_sync_test", test_no_sync, (char*[]){NULL}, in_foreground);
+		execv("no_sync_test", test_no_sync, param_list[2], in_foreground);
 	}
 	else if(command_equal(str, "sems")) {
 		sems();
 	}
 	else if(command_equal(str, "wc")) {
-		execv("wc", wc, (char*[]){NULL}, in_foreground);
+		execv("wc", wc, param_list[2], in_foreground);
 	}
 	else if(command_equal(str, "cat")) {
-		execv("cat", cat, (char*[]){NULL}, in_foreground);
+		execv("cat", cat, param_list[2], in_foreground);
 	}
 	else if(command_equal(str, "filter")) {
-		execv("filer", filter, (char*[]){NULL}, in_foreground);
+		execv("filer", filter, param_list[2], in_foreground);
 	}
 	else if(command_equal(str, "philo")) {
 		execv("philo", philos, (char*[]){NULL}, in_foreground);
@@ -286,8 +286,8 @@ unsigned int console_finish_handler(char* input_buffer) {
 	input_buffer[input_read_size] = 0;
 	putchar('\n');
 
-	if(pipe_function(input_buffer) == -1)
-		assign_module(input_buffer);
+	//if(pipe_function(input_buffer) == -1)
+	assign_module(input_buffer);
 
 	input_read_size = 0;
 	input_buffer[0] = 0;
