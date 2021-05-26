@@ -4,8 +4,7 @@
 #include "../../include/stdio.h"
 #include "../../include/unistd.h"
 #include <stdint.h>
-#include <stdio.h>
-
+#include "../../include/basic_lib.h"
 void test_pipe();
 
 #endif

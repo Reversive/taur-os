@@ -2,7 +2,9 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "../include/stdio.h"
 #include "../include/print_mem.h"
-
+int fd_pipe[2] = {1, 0};
+//fd_pipe[0] =  0; // in
+//fd_pipe[1] = 1; //out
 
 unsigned int getchar(void) {
     char c;
@@ -49,6 +51,22 @@ unsigned int strlen(char * str){
         i++;
     }
     return i;
+}
+char* strcat(char* destination, const char* source)
+{
+    // make `ptr` point to the end of the destination string
+    char* ptr = destination + strlen(destination);
+ 
+    // appends characters of the source to the destination string
+    while (*source != '\0') {
+        *ptr++ = *source++;
+    }
+ 
+    // null terminate destination string
+    *ptr = '\0';
+ 
+    // the destination is returned by standard `strcat()`
+    return destination;
 }
 
 void print_string(char * str){
@@ -130,7 +148,75 @@ void align_string(char * str, char * buffer, int length) {
 
 	buffer[i + j] = '\0';
 }
+int printfd(char *fmt, ...){
+    va_list pa;
+    va_start(pa, fmt);
+    char *format = fmt;
 
+    char buffer[255];
+
+    char string[255]; 
+    int cur_char = 0;
+
+    char *tmp;
+    int zeroes = 0;
+
+    while (*format != '\0') {
+        if (*format != '%') {
+
+            string[cur_char] = *format;
+            cur_char++;
+            format++;
+            continue;
+        }
+
+        format++;
+
+        zeroes = 0;
+        while ('0' <= *format && *format <= '9') {
+            zeroes = zeroes * 10 + (*format - '0');
+            format++;
+        }
+
+        switch (*format) {
+            case 'd':
+            case 'X':
+                tmp = itoa(va_arg(pa, int), buffer, (*format == 'd') ? 10 : 16);
+                zeroes -= strlen(tmp);
+                while (zeroes > 0) {
+                    string[cur_char] = '0';
+                    cur_char++;
+                    zeroes--;
+                }
+
+                strcpy(&string[cur_char], tmp);
+                cur_char += strlen(tmp);
+                break;
+            case 'c':
+                string[cur_char] = va_arg(pa, int);
+                cur_char++;
+                break;
+            case 's':
+                cur_char += 0;
+                tmp = va_arg(pa, char *);
+
+                align_string(tmp, buffer, zeroes);
+
+                strcpy(&string[cur_char], buffer);
+                cur_char += strlen(buffer);
+
+                break;
+        }
+
+        format++;
+    }
+    string[cur_char] = 0;
+    sys_write(fd_pipe[1], string, strlen(string));
+
+    va_end(pa);
+    return 0;
+
+}
 int printf(char *fmt, ...) {
     va_list pa;
     va_start(pa, fmt);

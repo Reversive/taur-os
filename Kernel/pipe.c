@@ -8,39 +8,45 @@ void block_process_pipe(int * p, int pid);
 void release_process_pipe(int * p, int pid);
 
 int pipe_write(int index, char *addr, int n) {
-
+    if(!pipes[index].created)
+        return -1;
     block_process_pipe(pipes[index].wProcesses, get_current_pid());
     sem_wait(pipes[index].name);
     release_process_pipe(pipes[index].wProcesses, get_current_pid());
     int i;
-    for (i = 0; i < n && addr[i] != 0; i++) {
+    for (i = 0; i < n && addr[i] != 0 && (pipes[index].nread)!= (pipes[index].nwrite+1); i++) {
         pipes[index].data[pipes[index].nwrite++ % PIPESIZE] = addr[i];
     }
     pipes[index].data[pipes[index].nwrite % PIPESIZE] = -1;
-    
     sem_post(pipes[index].name);
     return i;
 }
 
 
 int pipe_read(int index, char *addr, int n) {
-    
+    if(!pipes[index].created)
+        return -1;
     block_process_pipe(pipes[index].rProcesses, get_current_pid());
     sem_wait(pipes[index].name);
     release_process_pipe(pipes[index].wProcesses, get_current_pid());
-    
+    /// 
     
     int i ;
-    for (i = 0; i < n && pipes[index].data[pipes[index].nread % PIPESIZE] != -1; i++) {
+    for (i = 0; i < n && pipes[index].data[pipes[index].nread % PIPESIZE] != -1 && (pipes[index].nread +1)!= (pipes[index].nwrite); i++) {
+        //print_char(pipes[index].data[pipes[index].nread % PIPESIZE]);
         addr[i] = pipes[index].data[pipes[index].nread++ % PIPESIZE];
     }
-    sem_post(pipes[index].name);
-    /*if(pipes[index].bloqProcesses!= NULL){
-        pipes[index].wProcesses
-    }*/
-    addr[i] = 0;
+    if((pipes[index].nread+1) == (pipes[index].nwrite)){
+        addr[i] = pipes[index].data[(pipes[index].nread) % PIPESIZE];
+        addr[i+1] = 0;
+        pipes[index].nread++;
+    }else{
+        addr[i] = 0;
+    }
     if (pipes[index].data[pipes[index].nread % PIPESIZE] == -1)
         pipes[index].data[pipes[index].nread % PIPESIZE] = 0;
+    //_internal_print_string("post\n");
+    sem_post(pipes[index].name);
     return i;
 }
 
@@ -83,13 +89,8 @@ int look_pipe(char* name) {
 }
 
 int pipe_open(char* name) {
-    //_internal_print_string("pipe open\n");
     int i;
     if((i = look_pipe(name)) != -1){
-        // pipe already opened
-        //_internal_print_string("pipe already open");
-        //_internal_print_dec(i);
-        //_internal_print_string("\n");
         return pipes[i].fd;
     }
     int first_free = next_pipe();
@@ -99,19 +100,22 @@ int pipe_open(char* name) {
     pipes[first_free].created = 1;
     pipes[first_free].usingPipe = 0;
     pipes[first_free].waitingPid = -1;
+    pipes[first_free].nread = 0;
+    pipes[first_free].nwrite = 0;
+    fill0(pipes[first_free].data, PIPESIZE);
     sem_open(name, 1);
     my_strcpy(pipes[first_free].name, name);
-    //_internal_print_string("new pipe");
-    //_internal_print_dec(first_free);
-    //_internal_print_string("\n");
     return pipes[first_free].fd; //devuelvo el file descriptor de mi pipe que sera el que use mi proceso para acceder al buffer
 }
 
 void pipe_close(int index) {
+    sem_close(pipes[index].name);
     for (int i=0; i < PROCESSES;  i++) {
         pipes[index].rProcesses[i] = 0;
         pipes[index].wProcesses[i] = 0;
     }
+    fill0(pipes[index].name, MAX_NAM);
+    fill0(pipes[index].data, PIPESIZE);
     pipes[index].data[0] = 0;
     pipes[index].nread = 0;
     pipes[index].nwrite = 0;
@@ -129,9 +133,10 @@ void list_blocked_processes(int * p, char * buf) {
     }
 }
 
-void fill0(char* arr){
+void fill0(char* arr, int size){
     int i =0;
-    while(arr[i]!= 0){
+    for (int i = 0; i < size; i++)
+    {
         arr[i] = 0;
     }
 }
@@ -139,7 +144,7 @@ void fill0(char* arr){
 char retpipes[MAXPIPES*100] = {0};
 
 char *pipes_info() {
-    fill0(retpipes);
+    fill0(retpipes, MAXPIPES*100);
     int cant = 0;
     char namePipe[10], brp[50] = {0}, bwp[50] = {0};
     for (int p=0; p < MAXPIPES; p++) {

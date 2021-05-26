@@ -24,7 +24,7 @@ void test_mm(){
       mm_rqs[rq].size = GetUniform(MAX_MEMORY - total - 1) + 1;
       mm_rqs[rq].address = sys_malloc(mm_rqs[rq].size); // TODO: Port this call as required
       if(mm_rqs[rq].address == 0) {
-        printf("malloc: NULL pointer returned\n");
+        printfd("malloc: NULL pointer returned\n");
         // exit(-1);
         break;
       }
@@ -42,7 +42,7 @@ void test_mm(){
     for (i = 0; i < rq; i++)
       if (mm_rqs[i].address != 0)
         if(!memcheck(mm_rqs[i].address, i, mm_rqs[i].size))
-          printf("memcheck: ERROR!\n"); // TODO: Port this call as required
+          printfd("memcheck: ERROR!\n"); // TODO: Port this call as required
 
     // Free
     for (i = 0; i < rq; i++)
@@ -53,5 +53,6 @@ void test_mm(){
 
 int main_test_mm(int argc, char **argv) {
     test_mm();
+    sys_sem_post("pipe");
     return 0;
 }

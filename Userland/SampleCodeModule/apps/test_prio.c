@@ -34,7 +34,7 @@ int prio_endless_loop(int argc, char **argv) {
 
   while(1){
     if(dead) return 0;
-    printf("%d ",pid);
+    printfd("%d ",pid);
     bussy_wait(MINOR_WAIT);
   }
   return 0;
@@ -50,7 +50,7 @@ void test_prio(){
     pids[i] = execv("endless_loop", prio_endless_loop, (char*[]){NULL}, 1);
 
   bussy_wait(WAIT);
-  printf("\nCHANGING PRIORITIES...\n");
+  printfd("\nCHANGING PRIORITIES...\n");
 
   for(i = 0; i < TOTAL_PROCESSES; i++){
     switch (i % 3){
@@ -67,12 +67,12 @@ void test_prio(){
   }
 
   bussy_wait(WAIT);
-  printf("\nBLOCKING...\n");
+  printfd("\nBLOCKING...\n");
 
   for(i = 0; i < TOTAL_PROCESSES; i++)
     my_block(pids[i]);
 
-  printf("CHANGING PRIORITIES WHILE BLOCKED...\n");
+  printfd("CHANGING PRIORITIES WHILE BLOCKED...\n");
   for(i = 0; i < TOTAL_PROCESSES; i++){
     switch (i % 3){
       case 0:
@@ -87,13 +87,13 @@ void test_prio(){
     }
   }
 
-  printf("UNBLOCKING...\n");
+  printfd("UNBLOCKING...\n");
 
   for(i = 0; i < TOTAL_PROCESSES; i++)
     my_unblock(pids[i]);
 
   bussy_wait(WAIT);
-  printf("\nKILLING...\n");
+  printfd("\nKILLING...\n");
 
   for(i = 0; i < TOTAL_PROCESSES; i++) {
     dead = !dead;
@@ -103,5 +103,6 @@ void test_prio(){
 
 int main_test_prio(int argc, char **argv) {
   test_prio();
+  sys_sem_post("pipe");
   return 0;
 }

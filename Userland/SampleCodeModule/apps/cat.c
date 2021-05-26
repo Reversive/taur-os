@@ -2,21 +2,33 @@
 #include "stdio.h"
 
 int cat(int argc, char *args[]) {
-	int sizebuff=512;
-	char * buff = sys_malloc(sizebuff);
-    if (buff == NULL) {
-        printf("Error: Malloc");
-        return -1;
+/*    char c[] = {0,0};
+    sys_read(fd_pipe[0], c, 1);
+    while(c[0]!=0){
+        printfd("%s", c);
+        sys_read(fd_pipe[0], c, 1);
     }
-	int cant = sys_read(STDIN, buff, sizebuff);
-    int pos = cant - 1;
-	printf("%s", buff);
-
-    while (cant == sizebuff && buff[pos] != 0) {
-        cant = sys_read(STDIN, buff, sizebuff);
-	    printf("%s", buff);
-        pos = cant - 1;
+    sys_sem_post("pipe");*/
+int sizebuff=1000;
+	char buff[1000]={0};
+    
+	int cant = sys_read(fd_pipe[0], buff, sizebuff);
+    
+    for(int i = 0; buff[i]!=0; i++){
+        //if(buff[i] != '\n'){
+            printfd("%c", buff[i]);
+            
+        //}
     }
-    sys_free(buff);
+    
+    while ( cant==1000) {
+        cant = sys_read(fd_pipe[0], buff, sizebuff);
+	    for(int i = 0; buff[i]!=0; i++){
+        //    if(buff[i] != '\n')
+                printfd("%c", buff[i]);
+        }       
+        
+    }
+    sys_sem_post("pipe");
 	return 0;
 }

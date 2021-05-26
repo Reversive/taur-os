@@ -10,7 +10,7 @@ int pr1(int argc, char **argv) {
 	for (size_t i = 0; i < MAXTIMES; i++)
     {
         sys_read(fd, r, 5);
-		printf("Im process: %d this is what i read %s\n", sys_getpid() ,r);
+		printfd("Im process: %d this is what i read %s\n", sys_getpid() ,r);
         sys_write(fd, "Im pr1", 7);
     }
     
@@ -23,7 +23,7 @@ int pr2(int argc, char **argv) {
     for (size_t i = 0; i < MAXTIMES; i++)
     {
         sys_read(fd, r, 5);
-		printf("Im process: %d this is what i read %s\n", sys_getpid() ,r);
+		printfd("Im process: %d this is what i read %s\n", sys_getpid() ,r);
         sys_write(fd, "Im pr2", 7);
     }
     return 0;
@@ -40,7 +40,7 @@ void test_pipe(){
     sys_write(fd3, "Hello, this is taur-os using pipes", 35);
     
     char * info = sys_pipes_info();
-    printf("%s\n", info);
+    printfd("%s\n", info);
     sys_pipe_close(fd1);
     sys_pipe_close(fd2);
 

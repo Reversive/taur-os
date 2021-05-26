@@ -48,7 +48,7 @@ typedef struct {
 } ps_ts;
 
 #define MAXPIPES 10
-#define PIPESIZE 1000
+#define PIPESIZE 3000
 #define PROCESSES 10
 #define MAX_NAM 100
 typedef struct {

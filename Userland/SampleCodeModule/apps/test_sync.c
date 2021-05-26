@@ -19,7 +19,7 @@ void inc(uint64_t sem, int64_t value, uint64_t n){
   uint64_t i;
 
   if (sem && sys_sem_open(SEM_ID, 1) < 0){
-    printf("ERROR OPENING SEM\n");
+    printfd("ERROR OPENING SEM\n");
     return;
   }
   
@@ -31,7 +31,7 @@ void inc(uint64_t sem, int64_t value, uint64_t n){
 
   if (sem) sys_sem_close(SEM_ID);
   
-  printf("[PROCESS %d] Final value: %d\n", sys_getpid(), global);
+  printfd("[PROCESS %d] Final value: %d\n", sys_getpid(), global);
 }
 
 int inc_main(int argc, char **argv){
@@ -47,15 +47,16 @@ int test_sync(int argc, char **argv){
   uint64_t i;
   global = 0;
 
-  printf("CREATING PROCESSES...(WITH SEM)\n");
+  printfd("CREATING PROCESSES...(WITH SEM)\n");
   
   int pid;
   for(i = 0; i < TOTAL_PAIR_PROCESSES; i++){
     pid = execv("inc", (main_function) inc_main, arg1, 1);
-    printf("Created increment process %d\n", pid);
+    printfd("Created increment process %d\n", pid);
     pid = execv("inc", (main_function) inc_main, arg2, 1);
-    printf("Created decrement process %d\n", pid);
+    printfd("Created decrement process %d\n", pid);
   }
+  sys_sem_post("pipe");
   return 0;
 }
 
@@ -68,15 +69,16 @@ int test_no_sync(int argc, char **argv){
   uint64_t i;
   global = 0;
 
-  printf("CREATING PROCESSES...(WITHOUT SEM)\n");
+  printfd("CREATING PROCESSES...(WITHOUT SEM)\n");
 
   int pid;
   for(i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
     pid = execv("inc", (main_function) inc_main, arg1_no, 1);
-    printf("Created increment process %d\n", pid);
+    printfd("Created increment process %d\n", pid);
     pid = execv("inc", (main_function) inc_main, arg2_no, 1);
-    printf("Created decrement process %d\n", pid);
+    printfd("Created decrement process %d\n", pid);
 
   }
+  sys_sem_post("pipe");
   return 0;
 }
