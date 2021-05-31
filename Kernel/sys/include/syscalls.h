@@ -9,7 +9,7 @@
 #include "../../mem/include/buddy.h"
 #include "../../sync/include/sem.h"
 #include "../../include/pipe.h"
-
+#include "../../mem/include/shmem.h"
 #define _STDIN 0x1
 #define SUCCESS 1
 #define ERROR -1
@@ -66,9 +66,10 @@ enum syscall_numbers {
     _SYSCALL_SEM_INFO,
     _SYSCALL_SEM_COUNT,
     _SYSCALL_YIELD,
+    _SYSCALL_SHM_OPEN
 };
 
-#define _SYSCALLS_LAST _SYSCALL_YIELD
+#define _SYSCALLS_LAST _SYSCALL_SHM_OPEN
 #define _SYSCALLS_SIZE (_SYSCALLS_LAST + 1)
 
 syscall syscall_read;
@@ -114,6 +115,7 @@ syscall syscall_sem_close;
 syscall syscall_sem_info;
 syscall syscall_sem_count;
 syscall syscall_yield;
+syscall syscall_shm_open;
 
 extern syscall * syscalls_table[_SYSCALLS_SIZE];
 extern unsigned int get_time(char t);

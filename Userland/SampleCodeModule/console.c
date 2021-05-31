@@ -47,6 +47,7 @@ void help() {
 	sys_write(fd_pipe[1], "sync_test - Corre el test de sincronizacion de procesos con semaforos\n", 71);
 	sys_write(fd_pipe[1], "no_sync_test - Corre el test de sincronizacion de procesos sin semaforos\n", 74);
 	sys_write(fd_pipe[1], "pipes_test - test de los pipes\n", 32);
+	sys_write(fd_pipe[1], "shm_test - test de shm\n", 24);
 	return;
 }
 
@@ -257,6 +258,9 @@ int assign_module(char * str) {
 	}
 	else if(command_equal(str, "philo")) {
 		execv("philo", philos, (char*[]){NULL}, in_foreground);
+	}
+	else if(command_equal(str, "shm_test")) {
+		execv("shm_test", shm_test, (char*[]){NULL}, in_foreground);
 	}
 	else {
 		if(fd_pipe[1] == 0)

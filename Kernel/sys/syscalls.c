@@ -282,6 +282,12 @@ uint64_t syscall_sem_count(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8
     return get_sem_count();
 }
 
+uint64_t syscall_shm_open(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+    int key = (int)rsi;
+    return (uint64_t)malloc_shmem(key);
+}
+
+
 int read(unsigned int fd, char * buffer, size_t count) {
     unsigned int bytes_read = 0;
     char popped_key;

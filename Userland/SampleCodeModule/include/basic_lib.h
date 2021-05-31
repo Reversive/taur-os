@@ -69,6 +69,7 @@ int sys_sem_close(char *semName);
 int sys_sem_info(int idx, semInfo_t *buffer);
 int sys_sems_count();
 void sys_yield();
+void *sys_shm_open(int key);
 
 typedef enum { READY = 0, BLOCKED, KILLED } process_status_et;
 
@@ -116,6 +117,7 @@ enum syscall_numbers {
     _SYSCALL_SEM_INFO,
     _SYSCALL_SEMS_COUNT,
     _SYSCALL_YIELD,
+    _SYSCALL_SHM_OPEN
 };
 
 enum status {

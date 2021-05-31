@@ -162,3 +162,7 @@ int sys_sems_count() {
 void sys_yield() {
     _syscall(_SYSCALL_YIELD, 0, 0, 0, 0, 0);
 }
+
+void *sys_shm_open(int key) {
+    return (void*)_syscall(_SYSCALL_SHM_OPEN, key, 0, 0, 0, 0);
+}
